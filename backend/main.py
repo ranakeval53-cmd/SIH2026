@@ -419,6 +419,21 @@ async def websocket_endpoint(websocket: WebSocket):
         pass
 
 
+# -------------------------------------------------------------------------
+# Static Frontend Serving (for Production Deployment)
+# -------------------------------------------------------------------------
+from fastapi.staticfiles import StaticFiles
+
+dist_dir = PROJECT_ROOT / "frontend" / "dist"
+if dist_dir.exists():
+    app.mount("/", StaticFiles(directory=str(dist_dir), html=True), name="frontend-dist")
+elif (PROJECT_ROOT / "frontend").exists():
+    app.mount("/static", StaticFiles(directory=str(PROJECT_ROOT / "frontend")), name="frontend-raw")
+
+
 if __name__ == "__main__":
+    import os
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
+
