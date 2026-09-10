@@ -29,7 +29,8 @@ export default function ApproverDashboard({
   currentUser, 
   onApproveBlock, 
   onViewMemo,
-  scheduleData
+  scheduleData,
+  onScheduleUpdated
 }) {
   const userRole = currentUser?.systemRole || currentUser?.role || 'VIEWER';
   const canApprove = userRole === 'APPROVER' || userRole === 'PLANNER';
@@ -138,28 +139,49 @@ export default function ApproverDashboard({
         },
         {
           request_id: 'BLK_KRJ_04',
-          title: '25kV Catenary Stagger Adjustment',
+          title: '25kV Catenary Dropper Replacement',
           type: 'STANDALONE_BLOCK',
           department: 'TDMS',
           section_id: 'SEC_KRJ_SOM_DN',
           track_line: 'DN',
-          km_range: '93.5 - 98.0',
-          requested_start: '01:45',
-          requested_end: '04:00',
-          duration_mins: 135,
+          km_range: '94.0 - 96.0',
+          requested_start: '02:15',
+          requested_end: '03:45',
+          duration_mins: 90,
           downtime_saved_mins: 0,
-          priority: 'HIGH',
-          ai_risk_score: 28.0,
-          ai_recommendation: 'PROCEED_WITH_PRECAUTION',
-          ai_reason: 'High-speed pantograph wear prevention. Requires discharge rods on Feeder #2.',
+          priority: 'NORMAL',
+          ai_risk_score: 15.0,
+          ai_recommendation: 'RECOMMENDED_FOR_SANCTION',
+          ai_reason: 'Low train movement window. TRD Tower Wagon positioned at Khurja siding.',
           affected_trains: [],
-          affected_assets: ['KRJ Catenary Tensioner'],
+          affected_assets: ['OHE Mast 94/12'],
+          conflicts_count: 0,
+          status: 'PENDING_APPROVAL'
+        },
+        {
+          request_id: 'BLK_SOM_05',
+          title: 'Digital Axle Counter Calibration',
+          type: 'STANDALONE_BLOCK',
+          department: 'SMMS',
+          section_id: 'SEC_SOM_ALJN_UP',
+          track_line: 'UP',
+          km_range: '118.0 - 119.5',
+          requested_start: '02:30',
+          requested_end: '03:30',
+          duration_mins: 60,
+          downtime_saved_mins: 0,
+          priority: 'NORMAL',
+          ai_risk_score: 12.0,
+          ai_recommendation: 'RECOMMENDED_FOR_SANCTION',
+          ai_reason: 'Routine quarterly sensor check. Zero delay on running lines.',
+          affected_trains: [],
+          affected_assets: ['Axle Counter Block Track 118 UP'],
           conflicts_count: 0,
           status: 'OFFICIALLY_SANCTIONED'
         }
       ];
       setRequests(fallbackReqs);
-      setCounts({ total: 4, pending: 3, critical: 2, approved: 1, rejected: 0 });
+      setCounts({ total: 5, pending: 4, critical: 2, approved: 1, rejected: 0 });
     }
   };
 
@@ -174,6 +196,7 @@ export default function ApproverDashboard({
     }
     const approverName = currentUser?.name || 'Sri Rajesh Sharma, IRTS';
     const designation = currentUser?.role || 'Senior Divisional Operations Manager (Sr. DOM)';
+    const prevStatus = req.status;
 
     try {
       await fetch('http://127.0.0.1:8000/api/approvals/action', {
@@ -192,11 +215,31 @@ export default function ApproverDashboard({
       // Local state fallback
     }
 
-    setRequests(prev => prev.map(r => r.request_id === req.request_id ? { ...r, status: 'OFFICIALLY_SANCTIONED' } : r));
-    setCounts(prev => ({ ...prev, pending: Math.max(0, prev.pending - 1), approved: prev.approved + 1 }));
-    setActionSuccessMsg(`Block ${req.request_id} has been officially SANCTIONED. Memo generated.`);
+    setRequests(prev => prev.map(r => r.request_id === req.request_id ? { 
+      ...r, 
+      status: 'OFFICIALLY_SANCTIONED',
+      sanction_info: {
+        ...(r.sanction_info || {}),
+        approval_status: 'OFFICIALLY_SANCTIONED',
+        approver_name: approverName,
+        timestamp: new Date().toISOString()
+      }
+    } : r));
+
+    setCounts(prev => ({ 
+      ...prev, 
+      pending: prevStatus === 'PENDING_APPROVAL' ? Math.max(0, prev.pending - 1) : prev.pending, 
+      rejected: (prevStatus === 'REJECTED' || prevStatus === 'REJECT') ? Math.max(0, prev.rejected - 1) : prev.rejected,
+      approved: prev.approved + 1 
+    }));
+
+    setActionSuccessMsg(`Block ${req.request_id} has been officially SANCTIONED. Memo generated & active on tracks.`);
     setTimeout(() => setActionSuccessMsg(null), 3500);
     setSelectedRequest(null);
+
+    if (onScheduleUpdated) {
+      onScheduleUpdated();
+    }
   };
 
   const handleOpenRejectModal = (req, actionType) => {
@@ -206,26 +249,35 @@ export default function ApproverDashboard({
     }
     setSelectedRequest(req);
     setRejectActionType(actionType);
-    setRejectComment(actionType === 'REJECT' ? 'Conflicting with priority freight corridor slot. Reschedule to afternoon window.' : 'Clarification required regarding OHE discharge staff.');
+    setRejectComment(
+      req.status === 'OFFICIALLY_SANCTIONED'
+        ? 'Sanction revoked: Priority freight/express train diversion scheduled in this corridor slot. Possession cancelled.'
+        : actionType === 'REJECT' 
+          ? 'Conflicting with priority freight corridor slot. Reschedule to afternoon window.' 
+          : 'Clarification required regarding OHE discharge staff.'
+    );
     setIsRejectModalOpen(true);
   };
 
   const handleConfirmRejectAction = async () => {
-    if (!canApprove || !selectedRequest || !rejectComment.trim()) return;
+    if (!canApprove || !selectedRequest) return;
 
     const approverName = currentUser?.name || 'Sri Rajesh Sharma, IRTS';
     const designation = currentUser?.role || 'Senior Divisional Operations Manager (Sr. DOM)';
+    const reqId = selectedRequest.request_id;
+    const prevStatus = selectedRequest.status;
+    const comment = rejectComment.trim() || 'Block rejected/revoked by Approver (Sr. DOM).';
 
     try {
       await fetch('http://127.0.0.1:8000/api/approvals/action', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          request_id: selectedRequest.request_id,
+          request_id: reqId,
           action: rejectActionType,
           approver_name: approverName,
           designation: designation,
-          comment: rejectComment,
+          comment: comment,
           user_role: userRole
         })
       });
@@ -233,18 +285,43 @@ export default function ApproverDashboard({
       // Local state fallback
     }
 
-    setRequests(prev => prev.map(r => r.request_id === selectedRequest.request_id ? { ...r, status: rejectActionType } : r));
-    setCounts(prev => ({ ...prev, pending: Math.max(0, prev.pending - 1), rejected: prev.rejected + 1 }));
+    const newStatus = rejectActionType === 'REJECT' ? 'REJECTED' : rejectActionType;
+
+    setRequests(prev => prev.map(r => r.request_id === reqId ? { 
+      ...r, 
+      status: newStatus,
+      sanction_info: {
+        ...(r.sanction_info || {}),
+        approval_status: newStatus,
+        comment: comment,
+        approver_name: approverName,
+        designation: designation,
+        timestamp: new Date().toISOString()
+      }
+    } : r));
+
+    setCounts(prev => ({ 
+      ...prev, 
+      pending: prevStatus === 'PENDING_APPROVAL' ? Math.max(0, prev.pending - 1) : prev.pending, 
+      approved: prevStatus === 'OFFICIALLY_SANCTIONED' ? Math.max(0, prev.approved - 1) : prev.approved,
+      rejected: prev.rejected + 1 
+    }));
+
     setIsRejectModalOpen(false);
-    setActionSuccessMsg(`Request ${selectedRequest.request_id} marked as ${rejectActionType}. Audit logged.`);
-    setTimeout(() => setActionSuccessMsg(null), 3500);
+    setActionSuccessMsg(`Block ${reqId} successfully REJECTED & deleted from active corridor schedule. All departments notified.`);
+    setTimeout(() => setActionSuccessMsg(null), 4000);
     setSelectedRequest(null);
+
+    if (onScheduleUpdated) {
+      onScheduleUpdated();
+    }
   };
 
   const filteredRequests = requests.filter(r => {
     if (activeFilter === 'PENDING') return r.status === 'PENDING_APPROVAL';
     if (activeFilter === 'CRITICAL') return r.priority === 'CRITICAL';
     if (activeFilter === 'APPROVED') return r.status === 'OFFICIALLY_SANCTIONED';
+    if (activeFilter === 'REJECTED') return r.status === 'REJECTED' || r.status === 'REJECT';
     if (activeFilter === 'FUSED') return r.type === 'FUSED_MEGA_BLOCK';
     return true;
   });
@@ -479,7 +556,8 @@ export default function ApproverDashboard({
               { id: 'PENDING', label: 'Pending Only' },
               { id: 'CRITICAL', label: 'Critical' },
               { id: 'FUSED', label: 'Fused Mega-Blocks' },
-              { id: 'APPROVED', label: 'Sanctioned' }
+              { id: 'APPROVED', label: 'Sanctioned' },
+              { id: 'REJECTED', label: 'Rejected' }
             ].map(f => (
               <button
                 key={f.id}
@@ -521,20 +599,29 @@ export default function ApproverDashboard({
               {filteredRequests.map(req => {
                 const isFused = req.type === 'FUSED_MEGA_BLOCK';
                 const isPending = req.status === 'PENDING_APPROVAL';
+                const isApproved = req.status === 'OFFICIALLY_SANCTIONED';
+                const isRejected = req.status === 'REJECTED' || req.status === 'REJECT';
 
                 return (
-                  <tr key={req.request_id}>
+                  <tr key={req.request_id} style={{ background: isRejected ? 'rgba(220, 38, 38, 0.02)' : 'transparent' }}>
                     <td>
-                      <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>
-                        {req.title}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        {isFused ? (
+                          <Sparkles size={14} color="var(--color-primary)" />
+                        ) : (
+                          <Layers size={14} color="var(--text-muted)" />
+                        )}
+                        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+                          {req.request_id}
+                        </span>
                       </div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
-                        {req.request_id}
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
+                        {req.title}
                       </div>
                     </td>
 
                     <td>
-                      <span className={`badge ${isFused ? 'badge-fused' : req.department.includes('SMMS') ? 'badge-smms' : req.department.includes('TDMS') ? 'badge-tdms' : 'badge-tms'}`}>
+                      <span className={`badge ${req.department.includes('TMS') ? 'badge-tms' : req.department.includes('TDMS') ? 'badge-tdms' : 'badge-smms'}`}>
                         {req.department}
                       </span>
                     </td>
@@ -584,10 +671,13 @@ export default function ApproverDashboard({
                     </td>
 
                     <td>
-                      {req.status === 'OFFICIALLY_SANCTIONED' ? (
+                      {isApproved ? (
                         <span className="badge badge-success">Sanctioned</span>
-                      ) : req.status === 'REJECTED' ? (
-                        <span className="badge badge-danger">Rejected</span>
+                      ) : isRejected ? (
+                        <span className="badge badge-danger" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                          <XCircle size={11} />
+                          <span>Rejected</span>
+                        </span>
                       ) : req.status === 'SENT_BACK' ? (
                         <span className="badge badge-warning">Sent Back</span>
                       ) : (
@@ -607,6 +697,7 @@ export default function ApproverDashboard({
                           <span>Review</span>
                         </button>
 
+                        {/* Pending Actions for Approver */}
                         {isPending && canApprove && (
                           <>
                             <button
@@ -636,23 +727,76 @@ export default function ApproverDashboard({
                           </>
                         )}
 
-                        {isPending && !canApprove && (
+                        {/* If already approved and canApprove: Allow Revoke / Reject */}
+                        {isApproved && canApprove && (
+                          <button
+                            onClick={() => handleOpenRejectModal(req, 'REJECT')}
+                            className="btn-outline"
+                            style={{
+                              padding: '0.3rem 0.55rem',
+                              fontSize: '0.72rem',
+                              color: 'var(--color-danger)',
+                              borderColor: 'rgba(220, 38, 38, 0.35)',
+                              gap: '0.25rem'
+                            }}
+                            title="Revoke Sanction Order & Reject Block"
+                          >
+                            <RotateCcw size={12} />
+                            <span>Revoke</span>
+                          </button>
+                        )}
+
+                        {/* If rejected and canApprove: Allow Re-Approve */}
+                        {isRejected && canApprove && (
+                          <button
+                            onClick={() => handleApprove(req)}
+                            className="btn-outline"
+                            style={{
+                              padding: '0.3rem 0.55rem',
+                              fontSize: '0.72rem',
+                              color: 'var(--color-success)',
+                              borderColor: 'rgba(22, 163, 74, 0.35)',
+                              gap: '0.25rem'
+                            }}
+                            title="Re-Approve Block"
+                          >
+                            <CheckCircle2 size={12} />
+                            <span>Re-Approve</span>
+                          </button>
+                        )}
+
+                        {/* For other departments (!canApprove) */}
+                        {!canApprove && (
                           <span 
                             style={{ 
                               display: 'inline-flex', 
                               alignItems: 'center', 
                               gap: '0.25rem', 
                               fontSize: '0.7rem', 
-                              color: 'var(--text-muted)',
-                              padding: '0.25rem 0.5rem',
-                              borderRadius: '4px',
-                              background: 'var(--bg-card-subtle)',
-                              border: '1px solid var(--border-subtle)'
+                              color: isRejected ? 'var(--color-danger)' : isApproved ? 'var(--color-success)' : 'var(--text-muted)',
+                              padding: '0.25rem 0.5rem', 
+                              borderRadius: '4px', 
+                              background: isRejected ? 'rgba(220, 38, 38, 0.08)' : isApproved ? 'rgba(22, 163, 74, 0.08)' : 'var(--bg-card-subtle)', 
+                              border: `1px solid ${isRejected ? 'rgba(220, 38, 38, 0.25)' : isApproved ? 'rgba(22, 163, 74, 0.25)' : 'var(--border-subtle)'}`,
+                              fontWeight: isRejected || isApproved ? 700 : 400
                             }}
-                            title="View-Only: Sanction authority restricted to Approver & Planner accounts"
                           >
-                            <Lock size={11} color="var(--text-dim)" />
-                            <span>View Only</span>
+                            {isRejected ? (
+                              <>
+                                <XCircle size={11} color="var(--color-danger)" />
+                                <span>Rejected by Approver</span>
+                              </>
+                            ) : isApproved ? (
+                              <>
+                                <CheckCircle2 size={11} color="var(--color-success)" />
+                                <span>Sanctioned</span>
+                              </>
+                            ) : (
+                              <>
+                                <Lock size={11} color="var(--text-dim)" />
+                                <span>View Only</span>
+                              </>
+                            )}
                           </span>
                         )}
                       </div>
@@ -695,6 +839,58 @@ export default function ApproverDashboard({
                 Request Identifier: <strong>{selectedRequest.request_id}</strong> • Section: <strong>{selectedRequest.section_id}</strong> ({selectedRequest.track_line} Line)
               </p>
             </div>
+
+            {/* If Rejected Banner */}
+            {(selectedRequest.status === 'REJECTED' || selectedRequest.status === 'REJECT') && (
+              <div style={{
+                background: 'rgba(220, 38, 38, 0.08)',
+                border: '1px solid var(--color-danger)',
+                borderRadius: '8px',
+                padding: '0.85rem 1.1rem',
+                marginBottom: '1.25rem',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '0.75rem'
+              }}>
+                <XCircle size={22} color="var(--color-danger)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--color-danger)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>SANCTION REJECTED / REVOKED</span>
+                    <span className="badge badge-danger" style={{ fontSize: '0.68rem' }}>DELETED FROM SCHEDULE</span>
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-main)', marginTop: '0.25rem' }}>
+                    This corridor block was <strong>REJECTED</strong> by Sr. DOM Operating Control and has been <strong>deleted from active track possession</strong>. All participating engineering departments (TMS, TDMS, SMMS) must stand down.
+                  </div>
+                  {selectedRequest.sanction_info?.comment && (
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem', background: 'var(--bg-card)', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid var(--border-subtle)' }}>
+                      <strong style={{ color: 'var(--text-main)' }}>Justification / Reason:</strong> {selectedRequest.sanction_info.comment}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* If Approved Banner */}
+            {selectedRequest.status === 'OFFICIALLY_SANCTIONED' && (
+              <div style={{
+                background: 'rgba(22, 163, 74, 0.08)',
+                border: '1px solid var(--color-success)',
+                borderRadius: '8px',
+                padding: '0.75rem 1rem',
+                marginBottom: '1.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <CheckCircle2 size={18} color="var(--color-success)" />
+                  <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-success)' }}>
+                    Officially Sanctioned by Sr. DOM • Active in Corridor Schedule
+                  </span>
+                </div>
+                <span className="badge badge-success" style={{ fontSize: '0.68rem' }}>ACTIVE POSSESSION</span>
+              </div>
+            )}
 
             {/* Details Grid */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.25rem' }}>
@@ -816,32 +1012,6 @@ export default function ApproverDashboard({
               </div>
             </div>
 
-            {/* Affected Train Paths Evaluation */}
-            <div style={{ marginBottom: '1.25rem' }}>
-              <h4 style={{ fontSize: '0.825rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-                Passenger & Freight Timetable Headway Protection:
-              </h4>
-              {selectedRequest.affected_trains?.length > 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                  {selectedRequest.affected_trains.map((t, idx) => (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-card-subtle)', padding: '0.5rem 0.75rem', borderRadius: '6px', fontSize: '0.78rem' }}>
-                      <span style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                        <Train size={13} color="var(--color-primary)" />
-                        Train #{t.train_no} ({t.name})
-                      </span>
-                      <span className="badge badge-success" style={{ fontSize: '0.7rem' }}>
-                        {t.impact}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ fontSize: '0.78rem', color: 'var(--color-success)', background: 'rgba(22, 163, 74, 0.08)', padding: '0.5rem 0.75rem', borderRadius: '6px' }}>
-                  ✓ Zero conflict with passenger trains. Operates entirely inside isolated freight headway slot.
-                </div>
-              )}
-            </div>
-
             {/* Decision Action Buttons */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem' }}>
               <button
@@ -855,32 +1025,61 @@ export default function ApproverDashboard({
 
               {canApprove ? (
                 <div style={{ display: 'flex', gap: '0.6rem' }}>
-                  <button
-                    onClick={() => handleOpenRejectModal(selectedRequest, 'SEND_BACK')}
-                    className="btn-outline"
-                    style={{ fontSize: '0.78rem', color: 'var(--color-warning)' }}
-                  >
-                    <RotateCcw size={13} />
-                    <span>Send Back</span>
-                  </button>
+                  {/* If Approved: Allow Revoke & Reject */}
+                  {selectedRequest.status === 'OFFICIALLY_SANCTIONED' && (
+                    <button
+                      onClick={() => handleOpenRejectModal(selectedRequest, 'REJECT')}
+                      className="btn-outline"
+                      style={{ fontSize: '0.78rem', color: 'var(--color-danger)', borderColor: 'var(--color-danger)', gap: '0.4rem' }}
+                    >
+                      <RotateCcw size={13} />
+                      <span>Revoke Sanction & Reject Block</span>
+                    </button>
+                  )}
 
-                  <button
-                    onClick={() => handleOpenRejectModal(selectedRequest, 'REJECT')}
-                    className="btn-outline"
-                    style={{ fontSize: '0.78rem', color: 'var(--color-danger)' }}
-                  >
-                    <XCircle size={13} />
-                    <span>Reject</span>
-                  </button>
+                  {/* If Rejected: Allow Re-Approve */}
+                  {(selectedRequest.status === 'REJECTED' || selectedRequest.status === 'REJECT') && (
+                    <button
+                      onClick={() => handleApprove(selectedRequest)}
+                      className="btn-primary"
+                      style={{ fontSize: '0.78rem', background: 'var(--color-success)', gap: '0.4rem' }}
+                    >
+                      <CheckCircle2 size={14} />
+                      <span>Re-Approve & Restore Block</span>
+                    </button>
+                  )}
 
-                  <button
-                    onClick={() => handleApprove(selectedRequest)}
-                    className="btn-primary"
-                    style={{ fontSize: '0.78rem', background: 'var(--color-success)', gap: '0.4rem' }}
-                  >
-                    <CheckCircle2 size={14} />
-                    <span>Officially Approve Block</span>
-                  </button>
+                  {/* If Pending: Standard 3 Actions */}
+                  {selectedRequest.status === 'PENDING_APPROVAL' && (
+                    <>
+                      <button
+                        onClick={() => handleOpenRejectModal(selectedRequest, 'SEND_BACK')}
+                        className="btn-outline"
+                        style={{ fontSize: '0.78rem', color: 'var(--color-warning)' }}
+                      >
+                        <RotateCcw size={13} />
+                        <span>Send Back</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleOpenRejectModal(selectedRequest, 'REJECT')}
+                        className="btn-outline"
+                        style={{ fontSize: '0.78rem', color: 'var(--color-danger)' }}
+                      >
+                        <XCircle size={13} />
+                        <span>Reject</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleApprove(selectedRequest)}
+                        className="btn-primary"
+                        style={{ fontSize: '0.78rem', background: 'var(--color-success)', gap: '0.4rem' }}
+                      >
+                        <CheckCircle2 size={14} />
+                        <span>Officially Approve Block</span>
+                      </button>
+                    </>
+                  )}
                 </div>
               ) : (
                 <div style={{
@@ -889,14 +1088,28 @@ export default function ApproverDashboard({
                   gap: '0.5rem',
                   padding: '0.45rem 0.85rem',
                   borderRadius: '6px',
-                  background: 'rgba(245, 158, 11, 0.1)',
-                  border: '1px solid rgba(245, 158, 11, 0.3)',
-                  color: 'var(--color-warning)',
+                  background: (selectedRequest.status === 'REJECTED' || selectedRequest.status === 'REJECT') ? 'rgba(220, 38, 38, 0.08)' : 'rgba(245, 158, 11, 0.1)',
+                  border: `1px solid ${(selectedRequest.status === 'REJECTED' || selectedRequest.status === 'REJECT') ? 'rgba(220, 38, 38, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
+                  color: (selectedRequest.status === 'REJECTED' || selectedRequest.status === 'REJECT') ? 'var(--color-danger)' : 'var(--color-warning)',
                   fontSize: '0.75rem',
                   fontWeight: 600
                 }}>
-                  <Lock size={13} />
-                  <span>View-Only Mode: Block sanction authority is restricted exclusively to Approver (Sr. DOM) & Planner accounts.</span>
+                  {(selectedRequest.status === 'REJECTED' || selectedRequest.status === 'REJECT') ? (
+                    <>
+                      <XCircle size={14} color="var(--color-danger)" />
+                      <span>Notice to Department: Block has been REJECTED by Operating Control (Sr. DOM) and removed from track possession.</span>
+                    </>
+                  ) : selectedRequest.status === 'OFFICIALLY_SANCTIONED' ? (
+                    <>
+                      <CheckCircle2 size={14} color="var(--color-success)" />
+                      <span>Notice to Department: Block is SANCTIONED by Operating Control. Gangs authorized for track possession.</span>
+                    </>
+                  ) : (
+                    <>
+                      <Lock size={13} />
+                      <span>View-Only Mode: Block sanction authority is restricted exclusively to Approver (Sr. DOM) & Planner accounts.</span>
+                    </>
+                  )}
                 </div>
               )}
             </div>

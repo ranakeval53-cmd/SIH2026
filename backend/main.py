@@ -512,6 +512,22 @@ def generate_schedule(horizon: Optional[str] = "DAILY"):
             if b_id in state.sanctioned_blocks:
                 b.update(state.sanctioned_blocks[b_id])
 
+        # If a block was REJECTED, DELETE it from active scheduled blocks!
+        rejected_ids = {
+            r_id for r_id, s in state.sanctioned_blocks.items()
+            if s.get("approval_status") in ("REJECTED", "REJECT", "REVOKED", "SENT_BACK")
+        }
+
+        plan["rejected_blocks"] = [
+            b for b in plan["scheduled_blocks"]
+            if b.get("id") in rejected_ids or b.get("block_id") in rejected_ids
+        ]
+
+        plan["scheduled_blocks"] = [
+            b for b in plan["scheduled_blocks"]
+            if b.get("id") not in rejected_ids and b.get("block_id") not in rejected_ids
+        ]
+
     return plan
 
 
@@ -531,6 +547,8 @@ def list_approval_requests():
         b_id = fb["block_id"]
         sanction = state.sanctioned_blocks.get(b_id, {})
         status = sanction.get("approval_status", "PENDING_APPROVAL")
+        if status in ("REJECT", "REVOKED"):
+            status = "REJECTED"
 
         requests.append({
             "request_id": b_id,
@@ -562,6 +580,8 @@ def list_approval_requests():
         t_id = st.get("task_id")
         sanction = state.sanctioned_blocks.get(t_id, {})
         status = sanction.get("approval_status", "PENDING_APPROVAL")
+        if status in ("REJECT", "REVOKED"):
+            status = "REJECTED"
 
         requests.append({
             "request_id": t_id,
@@ -619,21 +639,31 @@ def take_approval_action(req: ApprovalActionRequest):
             detail=f"Access Denied: Role '{req.user_role}' is not authorized to grant or modify block sanctions. Only Approver (Sr. DOM) and Planner accounts possess statutory sanction authority."
         )
 
-    if req.action in ("REJECT", "SEND_BACK") and not req.comment.strip():
-        raise HTTPException(status_code=400, detail="A mandatory justification comment is required when rejecting or sending back a request.")
+    norm_action = (req.action or "").strip().upper()
+    if norm_action in ("APPROVE", "SANCTION"):
+        new_status = "OFFICIALLY_SANCTIONED"
+    elif norm_action in ("REJECT", "REVOKE", "DELETE", "CANCEL"):
+        new_status = "REJECTED"
+    elif norm_action in ("SEND_BACK", "MODIFY"):
+        new_status = "SENT_BACK"
+    else:
+        new_status = norm_action
+
+    comment = req.comment.strip() if (req.comment and req.comment.strip()) else (
+        "Sanctioned under Indian Railways G&SR Para 4.12." if new_status == "OFFICIALLY_SANCTIONED" else "Block rejected/revoked by Approver (Sr. DOM)."
+    )
 
     timestamp = datetime.now().isoformat()
     sanction_id = f"SANCTION_{req.request_id}_{datetime.now().strftime('%Y%m%d%H%M')}"
-    new_status = "OFFICIALLY_SANCTIONED" if req.action == "APPROVE" else req.action
 
     record = {
         "sanction_id": sanction_id,
         "request_id": req.request_id,
-        "action": req.action,
+        "action": norm_action,
         "approver_name": req.approver_name,
         "designation": req.designation,
         "timestamp": timestamp,
-        "comment": req.comment,
+        "comment": comment,
         "modified_start_time": req.modified_start_time,
         "modified_duration_mins": req.modified_duration_mins,
         "approval_status": new_status
@@ -642,9 +672,16 @@ def take_approval_action(req: ApprovalActionRequest):
     state.sanctioned_blocks[req.request_id] = record
     state.approval_history.insert(0, record)
 
+    # If rejected, remove from custom fused blocks if present
+    if new_status == "REJECTED":
+        state.custom_fused_blocks = [
+            fb for fb in state.custom_fused_blocks 
+            if fb.get("block_id") != req.request_id and fb.get("id") != req.request_id
+        ]
+
     return {
         "status": "SUCCESS",
-        "message": f"Request {req.request_id} successfully marked as {new_status}.",
+        "message": f"Request {req.request_id} successfully marked as {new_status} and updated across all departments.",
         "record": record
     }
 
@@ -683,14 +720,16 @@ def get_approver_analytics():
 @app.post("/api/blocks/approve")
 def sanction_block(req: SanctionRequest):
     """Backward-compatible endpoint for sanctioning blocks."""
+    is_approve = req.action in ("SANCTION", "APPROVE")
     action_req = ApprovalActionRequest(
         request_id=req.block_id,
-        action="APPROVE" if req.action == "SANCTION" else req.action,
+        action="APPROVE" if is_approve else "REJECT",
         approver_name=req.controller_name,
         designation=req.designation,
-        comment=req.remarks or "Sanctioned in accordance with G&SR rules.",
+        comment=req.remarks or ("Sanctioned in accordance with G&SR rules." if is_approve else "Block rejected/revoked by Approver."),
         modified_start_time=req.modified_start_time,
-        modified_duration_mins=req.modified_duration_mins
+        modified_duration_mins=req.modified_duration_mins,
+        user_role="APPROVER"
     )
     return take_approval_action(action_req)
 

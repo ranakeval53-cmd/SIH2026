@@ -93,6 +93,34 @@ export default function App() {
     }
   };
 
+  const handleSanctionModalAction = async (payload) => {
+    const isReject = payload.action === 'REJECT' || payload.action === 'REVOKE';
+    try {
+      await fetch(`${API_BASE}/api/approvals/action`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          request_id: payload.block_id,
+          action: isReject ? 'REJECT' : 'APPROVE',
+          approver_name: payload.controller_name || currentUser?.name || 'Sri Rajesh Sharma, IRTS',
+          designation: payload.designation || currentUser?.role || 'Senior Divisional Operations Manager (Sr. DOM)',
+          comment: payload.remarks || (isReject ? 'Block rejected/revoked by Approver (Sr. DOM).' : 'Officially sanctioned under Indian Railways G&SR Para 4.12.'),
+          user_role: currentUser?.systemRole || currentUser?.role || 'APPROVER'
+        })
+      });
+    } catch (err) {
+      console.warn(err);
+    }
+
+    if (isReject) {
+      showToast(`Block ${payload.block_id} REJECTED & deleted from corridor schedule.`);
+    } else {
+      showToast(`Sanction Memo DRM/OPT/BLK/${payload.block_id} confirmed.`);
+    }
+    setSelectedBlock(null);
+    await fetchAllData();
+  };
+
   const handleLogin = (user) => {
     setCurrentUser(user);
     const newMode = user.systemRole === 'APPROVER' ? 'APPROVER' : 'OPERATIONS';
@@ -317,6 +345,7 @@ export default function App() {
                 onApproveBlock={(b) => setSelectedBlock(b)}
                 onViewMemo={handleOpenMemo}
                 scheduleData={scheduleData}
+                onScheduleUpdated={fetchAllData}
               />
             )}
 
@@ -326,6 +355,7 @@ export default function App() {
                 onApproveBlock={(b) => setSelectedBlock(b)}
                 onViewMemo={handleOpenMemo}
                 scheduleData={scheduleData}
+                onScheduleUpdated={fetchAllData}
               />
             )}
 
@@ -350,6 +380,7 @@ export default function App() {
                   onApproveBlock={(b) => setSelectedBlock(b)}
                   onViewMemo={handleOpenMemo}
                   scheduleData={scheduleData}
+                  onScheduleUpdated={fetchAllData}
                 />
               </div>
             )}
@@ -426,11 +457,7 @@ export default function App() {
         <SanctionModal 
           block={selectedBlock}
           onClose={() => setSelectedBlock(null)}
-          onApprove={async (payload) => {
-            showToast(`Sanction Memo DRM/OPT/BLK/${payload.block_id} confirmed.`);
-            setSelectedBlock(null);
-            await fetchAllData();
-          }}
+          onApprove={handleSanctionModalAction}
           currentUser={currentUser}
         />
       )}
