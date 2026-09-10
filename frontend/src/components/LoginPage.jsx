@@ -11,7 +11,9 @@ import {
   EyeOff,
   Radio,
   Clock,
-  Sparkles
+  Sparkles,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 const RAILWAY_WALLPAPERS = [
@@ -35,7 +37,7 @@ const RAILWAY_WALLPAPERS = [
   }
 ];
 
-export default function LoginPage({ onLogin }) {
+export default function LoginPage({ onLogin, theme, onToggleTheme }) {
   const [email, setEmail] = useState('approver@ir.gov.in');
   const [password, setPassword] = useState('TrackShield@2026');
   const [showPassword, setShowPassword] = useState(false);
@@ -175,9 +177,37 @@ export default function LoginPage({ onLogin }) {
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#CBD5E1', fontSize: '0.75rem' }}>
-          <Radio size={12} color="#22C55E" />
-          <span>Northern & North Central Corridor Live</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#CBD5E1', fontSize: '0.75rem' }}>
+            <Radio size={12} color="#22C55E" />
+            <span>Northern & North Central Corridor Live</span>
+          </div>
+
+          {onToggleTheme && (
+            <button
+              onClick={onToggleTheme}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                padding: '0.4rem 0.85rem',
+                borderRadius: '20px',
+                background: 'rgba(255, 255, 255, 0.18)',
+                border: '1px solid rgba(255, 255, 255, 0.4)',
+                color: '#FFFFFF',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                backdropFilter: 'blur(8px)',
+                transition: 'all 0.2s ease',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+              }}
+              title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+            >
+              {theme === 'dark' ? <Moon size={13} color="#38BDF8" /> : <Sun size={13} color="#FBBF24" />}
+              <span>{theme === 'dark' ? 'Dark Theme' : 'Light Theme'}</span>
+            </button>
+          )}
         </div>
       </header>
 

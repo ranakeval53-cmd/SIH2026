@@ -218,7 +218,11 @@ export default function App() {
             <span>{toastMessage}</span>
           </div>
         )}
-        <LoginPage onLogin={handleLogin} />
+        <LoginPage 
+          onLogin={handleLogin} 
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
+        />
       </>
     );
   }

@@ -235,25 +235,37 @@ export default function Navbar({
             <span>{currentTime.toLocaleTimeString('en-IN', { hour12: false })} IST</span>
           </div>
 
-          {/* Theme Toggle (☀️ Light / 🌙 Dark) */}
+          {/* Enterprise Theme Toggle Pill (☀️ Light / 🌙 Dark) */}
           <button
             onClick={onToggleTheme}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.3rem',
-              padding: '0.35rem 0.6rem',
-              borderRadius: '6px',
-              background: 'var(--bg-card-subtle)',
-              border: '1px solid var(--border-subtle)',
-              fontSize: '0.72rem',
-              fontWeight: 600,
+              gap: '0.4rem',
+              padding: '0.35rem 0.75rem',
+              borderRadius: '20px',
+              background: theme === 'dark' ? 'rgba(56, 189, 248, 0.15)' : '#E2E8F0',
+              border: `1px solid ${theme === 'dark' ? 'rgba(56, 189, 248, 0.5)' : '#CBD5E1'}`,
+              fontSize: '0.74rem',
+              fontWeight: 700,
               color: 'var(--text-main)',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+              transition: 'all 0.2s ease'
             }}
-            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+            title={`Current: ${theme === 'dark' ? 'Dark Mode' : 'Light Mode'}. Click to toggle.`}
           >
-            {theme === 'light' ? <Moon size={13} /> : <Sun size={13} color="#FBBF24" />}
+            {theme === 'dark' ? (
+              <>
+                <Moon size={13} color="#38BDF8" />
+                <span style={{ color: '#38BDF8' }}>Dark</span>
+              </>
+            ) : (
+              <>
+                <Sun size={13} color="#D97706" />
+                <span style={{ color: '#1E293B' }}>Light</span>
+              </>
+            )}
           </button>
 
           {/* User Profile & Logout */}

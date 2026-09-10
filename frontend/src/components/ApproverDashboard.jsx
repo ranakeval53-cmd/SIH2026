@@ -17,7 +17,11 @@ import {
   MessageSquare,
   X,
   Zap,
-  Filter
+  Filter,
+  Users,
+  HelpCircle,
+  Info,
+  Check
 } from 'lucide-react';
 
 export default function ApproverDashboard({ 
@@ -33,6 +37,9 @@ export default function ApproverDashboard({
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [activeFilter, setActiveFilter] = useState('ALL');
   
+  // Multi-Department Concurrence Explanation Modal State
+  const [isWhyModalOpen, setIsWhyModalOpen] = useState(false);
+
   // Rejection / Send Back Modal State
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [rejectActionType, setRejectActionType] = useState('REJECT'); // 'REJECT' or 'SEND_BACK'
@@ -281,6 +288,27 @@ export default function ApproverDashboard({
             <CheckCircle2 size={13} />
             <span>Sanction Authority Active</span>
           </span>
+          <button
+            onClick={() => setIsWhyModalOpen(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              padding: '0.4rem 0.75rem',
+              borderRadius: '8px',
+              background: 'rgba(23, 105, 170, 0.12)',
+              border: '1px solid var(--color-primary)',
+              color: 'var(--color-primary)',
+              fontSize: '0.74rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+            title="Learn why Indian Railways mandates multi-department concurrence for track blocks"
+          >
+            <HelpCircle size={14} />
+            <span>Why All Departments Approve</span>
+          </button>
         </div>
       </div>
 
@@ -372,6 +400,42 @@ export default function ApproverDashboard({
           </div>
         </div>
 
+      </div>
+
+      {/* Multi-Department Joint Sanction Protocol Explanation Card */}
+      <div className="enterprise-card" style={{
+        padding: '1.1rem 1.35rem',
+        marginBottom: '1.5rem',
+        background: 'linear-gradient(90deg, rgba(23, 105, 170, 0.05) 0%, rgba(22, 163, 74, 0.05) 100%)',
+        borderLeft: '4px solid var(--color-primary)'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.85rem' }}>
+          <div style={{ flex: 1, minWidth: '280px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Users size={16} color="var(--color-primary)" />
+              <h3 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>
+                Unified Multi-Department Concurrence Protocol (Indian Railways JPO)
+              </h3>
+              <span className="badge badge-primary" style={{ fontSize: '0.68rem', padding: '0.15rem 0.5rem' }}>
+                G&SR RULE COMPLIANT
+              </span>
+            </div>
+            <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.35rem', lineHeight: 1.45 }}>
+              <strong>Why All Departments Approve:</strong> In Indian Railways, track possession cannot be granted in isolation. 
+              <strong> Civil (TMS)</strong> certifies rail & bed safety, 
+              <strong> Electrical (TDMS)</strong> guarantees 25kV OHE isolation & grounding, and 
+              <strong> S&T (SMMS)</strong> secures point interlocking. Operating (Sr. DOM) provides the final Traffic Sanction only when all 3 engineering departments concurrently sign off.
+            </p>
+          </div>
+          <button
+            onClick={() => setIsWhyModalOpen(true)}
+            className="btn-outline"
+            style={{ fontSize: '0.75rem', padding: '0.4rem 0.85rem', gap: '0.4rem', borderColor: 'var(--color-primary)', color: 'var(--color-primary)' }}
+          >
+            <HelpCircle size={14} />
+            <span>View Full Protocol Guide</span>
+          </button>
+        </div>
       </div>
 
       {/* 3. Filter Ribbon & Pending Requests Table */}
@@ -646,6 +710,71 @@ export default function ApproverDashboard({
               </div>
             </div>
 
+            {/* Multi-Department Concurrence Checklist (Why All Departments Approve) */}
+            <div style={{
+              background: 'var(--bg-card-subtle)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '8px',
+              padding: '0.9rem',
+              marginBottom: '1.25rem'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                  <Users size={15} color="var(--color-primary)" />
+                  <span>Joint Departmental Concurrence (Why All Departments Sign Off):</span>
+                </div>
+                <button
+                  onClick={() => setIsWhyModalOpen(true)}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--color-primary)', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+                >
+                  <HelpCircle size={12} />
+                  <span>Why Mandatory?</span>
+                </button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem' }}>
+                <div style={{ background: 'var(--bg-base)', padding: '0.5rem 0.6rem', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-main)' }}>TMS (Civil / Track)</span>
+                    <CheckCircle2 size={13} color="var(--color-success)" />
+                  </div>
+                  <div style={{ fontSize: '0.67rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                    Track possession & machine gang readiness certified.
+                  </div>
+                </div>
+
+                <div style={{ background: 'var(--bg-base)', padding: '0.5rem 0.6rem', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-main)' }}>TDMS (Traction / OHE)</span>
+                    <CheckCircle2 size={13} color="var(--color-success)" />
+                  </div>
+                  <div style={{ fontSize: '0.67rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                    25kV power cut scheduled & discharge rod assigned.
+                  </div>
+                </div>
+
+                <div style={{ background: 'var(--bg-base)', padding: '0.5rem 0.6rem', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-main)' }}>SMMS (Signal / S&T)</span>
+                    <CheckCircle2 size={13} color="var(--color-success)" />
+                  </div>
+                  <div style={{ fontSize: '0.67rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                    Point machine disconnection notice acknowledged.
+                  </div>
+                </div>
+
+                <div style={{ background: 'var(--bg-base)', padding: '0.5rem 0.6rem', borderRadius: '6px', border: '1px solid var(--color-primary)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--color-primary)' }}>Operating (DOM)</span>
+                    <Clock size={13} color="var(--color-warning)" />
+                  </div>
+                  <div style={{ fontSize: '0.67rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                    Final Traffic Sanction (awaiting your executive approval).
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Affected Train Paths Evaluation */}
             <div style={{ marginBottom: '1.25rem' }}>
               <h4 style={{ fontSize: '0.825rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
@@ -765,6 +894,125 @@ export default function ApproverDashboard({
                 Confirm {rejectActionType === 'REJECT' ? 'Rejection' : 'Send Back'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 6. Comprehensive Protocol Modal: Why All Departments Approve */}
+      {isWhyModalOpen && (
+        <div className="modal-overlay">
+          <div className="enterprise-card" style={{ width: '100%', maxWidth: '680px', maxHeight: '90vh', overflowY: 'auto', padding: '1.75rem', position: 'relative' }}>
+            <button
+              onClick={() => setIsWhyModalOpen(false)}
+              style={{ position: 'absolute', right: '1.25rem', top: '1.25rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+            >
+              <X size={20} />
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.85rem', marginBottom: '1.25rem' }}>
+              <div style={{ width: '38px', height: '38px', borderRadius: '8px', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF' }}>
+                <Users size={20} />
+              </div>
+              <div>
+                <h2 className="text-h2" style={{ margin: 0, fontSize: '1.2rem' }}>
+                  Why All Departments Must Approve the Action
+                </h2>
+                <p className="text-sub" style={{ margin: 0 }}>
+                  Indian Railways Joint Procedure Order (JPO) & Safety Concurrence Protocol
+                </p>
+              </div>
+            </div>
+
+            {/* Core Rationale Explanation */}
+            <div style={{
+              background: 'rgba(23, 105, 170, 0.08)',
+              border: '1px solid rgba(23, 105, 170, 0.25)',
+              borderRadius: '8px',
+              padding: '1rem',
+              marginBottom: '1.25rem',
+              fontSize: '0.825rem',
+              lineHeight: 1.55,
+              color: 'var(--text-main)'
+            }}>
+              <strong>Operational Reality:</strong> On Indian Railways electrified trunk routes, the track rails (Civil), overhead 25kV catenary wire (Electrical), signalling point relays (S&T), and train movements (Operating) share the <em>exact same physical space</em>. A block cannot be granted in isolation by any single department without immediate hazard to lives and rolling stock.
+            </div>
+
+            {/* The 4 Departmental Pillars */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.5rem' }}>
+              
+              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.9rem 1rem', borderRadius: '8px', borderLeft: '4px solid #16A34A' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
+                  <span style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                    1. Civil Engineering / P-Way (TMS)
+                  </span>
+                  <span className="badge badge-success" style={{ fontSize: '0.68rem' }}>TRACK INTEGRITY</span>
+                </div>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.45 }}>
+                  Certifies that heavy track machinery (BCM, CSM, Tamping, Duomatic) is on site, sleeper/rail replacements are staged, and rail temperature permits de-stressing. <em>If skipped: Risk of track buckling and catastrophic derailment.</em>
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.9rem 1rem', borderRadius: '8px', borderLeft: '4px solid #F59E0B' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
+                  <span style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                    2. Electrical / Traction Distribution (TDMS / TRD)
+                  </span>
+                  <span className="badge badge-warning" style={{ fontSize: '0.68rem' }}>25kV LIFE SAFETY</span>
+                </div>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.45 }}>
+                  Issues the mandatory <strong>Power Block</strong>. De-energizes 25,000 Volts AC catenary, opens substation circuit breakers, and clamps earthing discharge rods. <em>If skipped: Immediate fatal electrocution of track machine operators and gang staff.</em>
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.9rem 1rem', borderRadius: '8px', borderLeft: '4px solid #8B5CF6' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
+                  <span style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                    3. Signalling & Telecom (SMMS / S&T)
+                  </span>
+                  <span className="badge" style={{ background: 'rgba(139,92,246,0.15)', color: '#8B5CF6', fontSize: '0.68rem' }}>INTERLOCKING CONTROL</span>
+                </div>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.45 }}>
+                  Clamps and locks motorized switch points, disconnects track circuit relays, and sets automatic signals to Danger. <em>If skipped: A pointsman or dispatcher could inadvertently throw points under an active maintenance machine.</em>
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.9rem 1rem', borderRadius: '8px', borderLeft: '4px solid var(--color-primary)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
+                  <span style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                    4. Operating / Traffic (Sr. DOM / CPTM)
+                  </span>
+                  <span className="badge badge-primary" style={{ fontSize: '0.68rem' }}>CORRIDOR SANCTION</span>
+                </div>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.45 }}>
+                  The sole executive authority empowered to halt train movements. Sr. DOM evaluates passenger timetable buffers, regulates freight paths into shadow loops, and issues the official <strong>Traffic Block Sanction Warrant</strong>.
+                </p>
+              </div>
+
+            </div>
+
+            {/* Why Fused Mega-Blocks Make This Essential */}
+            <div style={{ background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '1rem', marginBottom: '1.25rem' }}>
+              <h4 style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Zap size={15} color="var(--color-warning)" />
+                <span>The Power of Fused Mega-Blocks:</span>
+              </h4>
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.5, margin: 0 }}>
+                Historically, Civil, Electrical, and Signal squads requested 3 separate blocks on different days, shutting down the section for 6+ hours weekly. 
+                <strong> TrackShield AI fuses them into a single 150-minute mega-window.</strong> 
+                Because all 3 teams work simultaneously in the same kilometer boundaries, <em>joint concurrence from every department is mandatory</em> to ensure harmonious entry, coordinated power cuts, and joint line clearance.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setIsWhyModalOpen(false)}
+                className="btn-primary"
+                style={{ fontSize: '0.8rem', padding: '0.45rem 1.25rem' }}
+              >
+                Understood & Acknowledged
+              </button>
+            </div>
+
           </div>
         </div>
       )}
