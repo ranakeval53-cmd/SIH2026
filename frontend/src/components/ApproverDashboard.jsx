@@ -21,7 +21,8 @@ import {
   Users,
   HelpCircle,
   Info,
-  Check
+  Check,
+  Lock
 } from 'lucide-react';
 
 export default function ApproverDashboard({ 
@@ -30,6 +31,9 @@ export default function ApproverDashboard({
   onViewMemo,
   scheduleData
 }) {
+  const userRole = currentUser?.systemRole || currentUser?.role || 'VIEWER';
+  const canApprove = userRole === 'APPROVER' || userRole === 'PLANNER';
+
   const [requests, setRequests] = useState([]);
   const [counts, setCounts] = useState({ total: 0, pending: 0, critical: 0, approved: 0, rejected: 0 });
   const [analytics, setAnalytics] = useState(null);
@@ -164,6 +168,10 @@ export default function ApproverDashboard({
   }, []);
 
   const handleApprove = async (req) => {
+    if (!canApprove) {
+      alert("Access Denied: Only Approver (Sr. DOM) and Planner accounts possess sanction authority. Other roles operate in View-Only mode.");
+      return;
+    }
     const approverName = currentUser?.name || 'Sri Rajesh Sharma, IRTS';
     const designation = currentUser?.role || 'Senior Divisional Operations Manager (Sr. DOM)';
 
@@ -176,7 +184,8 @@ export default function ApproverDashboard({
           action: 'APPROVE',
           approver_name: approverName,
           designation: designation,
-          comment: 'Officially sanctioned under Indian Railways G&SR Para 4.12.'
+          comment: 'Officially sanctioned under Indian Railways G&SR Para 4.12.',
+          user_role: userRole
         })
       });
     } catch {
@@ -191,6 +200,10 @@ export default function ApproverDashboard({
   };
 
   const handleOpenRejectModal = (req, actionType) => {
+    if (!canApprove) {
+      alert("Access Denied: Only Approver and Planner accounts possess rejection authority.");
+      return;
+    }
     setSelectedRequest(req);
     setRejectActionType(actionType);
     setRejectComment(actionType === 'REJECT' ? 'Conflicting with priority freight corridor slot. Reschedule to afternoon window.' : 'Clarification required regarding OHE discharge staff.');
@@ -198,7 +211,7 @@ export default function ApproverDashboard({
   };
 
   const handleConfirmRejectAction = async () => {
-    if (!selectedRequest || !rejectComment.trim()) return;
+    if (!canApprove || !selectedRequest || !rejectComment.trim()) return;
 
     const approverName = currentUser?.name || 'Sri Rajesh Sharma, IRTS';
     const designation = currentUser?.role || 'Senior Divisional Operations Manager (Sr. DOM)';
@@ -212,7 +225,8 @@ export default function ApproverDashboard({
           action: rejectActionType,
           approver_name: approverName,
           designation: designation,
-          comment: rejectComment
+          comment: rejectComment,
+          user_role: userRole
         })
       });
     } catch {
@@ -284,10 +298,17 @@ export default function ApproverDashboard({
               Senior Divisional Operations Manager (Sr. DOM)
             </div>
           </div>
-          <span className="badge badge-success" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem' }}>
-            <CheckCircle2 size={13} />
-            <span>Sanction Authority Active</span>
-          </span>
+          {canApprove ? (
+            <span className="badge badge-success" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', gap: '0.35rem' }}>
+              <CheckCircle2 size={13} />
+              <span>Sanction Authority Active ({userRole})</span>
+            </span>
+          ) : (
+            <span className="badge badge-warning" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', gap: '0.35rem' }}>
+              <Lock size={13} />
+              <span>View-Only Access ({userRole})</span>
+            </span>
+          )}
           <button
             onClick={() => setIsWhyModalOpen(true)}
             style={{
@@ -586,7 +607,7 @@ export default function ApproverDashboard({
                           <span>Review</span>
                         </button>
 
-                        {isPending && (
+                        {isPending && canApprove && (
                           <>
                             <button
                               onClick={() => handleApprove(req)}
@@ -613,6 +634,26 @@ export default function ApproverDashboard({
                               <XCircle size={13} />
                             </button>
                           </>
+                        )}
+
+                        {isPending && !canApprove && (
+                          <span 
+                            style={{ 
+                              display: 'inline-flex', 
+                              alignItems: 'center', 
+                              gap: '0.25rem', 
+                              fontSize: '0.7rem', 
+                              color: 'var(--text-muted)',
+                              padding: '0.25rem 0.5rem',
+                              borderRadius: '4px',
+                              background: 'var(--bg-card-subtle)',
+                              border: '1px solid var(--border-subtle)'
+                            }}
+                            title="View-Only: Sanction authority restricted to Approver & Planner accounts"
+                          >
+                            <Lock size={11} color="var(--text-dim)" />
+                            <span>View Only</span>
+                          </span>
                         )}
                       </div>
                     </td>
@@ -812,34 +853,52 @@ export default function ApproverDashboard({
                 <span>View Sanction Memo</span>
               </button>
 
-              <div style={{ display: 'flex', gap: '0.6rem' }}>
-                <button
-                  onClick={() => handleOpenRejectModal(selectedRequest, 'SEND_BACK')}
-                  className="btn-outline"
-                  style={{ fontSize: '0.78rem', color: 'var(--color-warning)' }}
-                >
-                  <RotateCcw size={13} />
-                  <span>Send Back</span>
-                </button>
+              {canApprove ? (
+                <div style={{ display: 'flex', gap: '0.6rem' }}>
+                  <button
+                    onClick={() => handleOpenRejectModal(selectedRequest, 'SEND_BACK')}
+                    className="btn-outline"
+                    style={{ fontSize: '0.78rem', color: 'var(--color-warning)' }}
+                  >
+                    <RotateCcw size={13} />
+                    <span>Send Back</span>
+                  </button>
 
-                <button
-                  onClick={() => handleOpenRejectModal(selectedRequest, 'REJECT')}
-                  className="btn-outline"
-                  style={{ fontSize: '0.78rem', color: 'var(--color-danger)' }}
-                >
-                  <XCircle size={13} />
-                  <span>Reject</span>
-                </button>
+                  <button
+                    onClick={() => handleOpenRejectModal(selectedRequest, 'REJECT')}
+                    className="btn-outline"
+                    style={{ fontSize: '0.78rem', color: 'var(--color-danger)' }}
+                  >
+                    <XCircle size={13} />
+                    <span>Reject</span>
+                  </button>
 
-                <button
-                  onClick={() => handleApprove(selectedRequest)}
-                  className="btn-primary"
-                  style={{ fontSize: '0.78rem', background: 'var(--color-success)', gap: '0.4rem' }}
-                >
-                  <CheckCircle2 size={14} />
-                  <span>Officially Approve Block</span>
-                </button>
-              </div>
+                  <button
+                    onClick={() => handleApprove(selectedRequest)}
+                    className="btn-primary"
+                    style={{ fontSize: '0.78rem', background: 'var(--color-success)', gap: '0.4rem' }}
+                  >
+                    <CheckCircle2 size={14} />
+                    <span>Officially Approve Block</span>
+                  </button>
+                </div>
+              ) : (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.45rem 0.85rem',
+                  borderRadius: '6px',
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  color: 'var(--color-warning)',
+                  fontSize: '0.75rem',
+                  fontWeight: 600
+                }}>
+                  <Lock size={13} />
+                  <span>View-Only Mode: Block sanction authority is restricted exclusively to Approver (Sr. DOM) & Planner accounts.</span>
+                </div>
+              )}
             </div>
 
           </div>

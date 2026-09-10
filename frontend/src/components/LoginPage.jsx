@@ -259,28 +259,32 @@ export default function LoginPage({ onLogin, theme, onToggleTheme }) {
             </label>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem' }}>
               {[
-                { id: 'APPROVER', label: 'Sr. DOM (Approver)' },
-                { id: 'PLANNER', label: 'Planner (Operating)' },
-                { id: 'DEPARTMENT', label: 'Department User' },
-                { id: 'ADMIN', label: 'Corridor Admin' }
+                { id: 'APPROVER', label: 'Sr. DOM (Approver)', tag: 'Sanction Authority' },
+                { id: 'PLANNER', label: 'Planner (Operating)', tag: 'Sanction Authority' },
+                { id: 'DEPARTMENT', label: 'Department User', tag: 'View Only' },
+                { id: 'ADMIN', label: 'Corridor Admin', tag: 'View Only' }
               ].map(r => (
                 <button
                   key={r.id}
                   type="button"
                   onClick={() => handleRolePresetSelect(r.id)}
                   style={{
-                    padding: '0.4rem',
+                    padding: '0.45rem 0.5rem',
                     borderRadius: '6px',
-                    fontSize: '0.72rem',
-                    fontWeight: selectedPresetRole === r.id ? 700 : 500,
+                    textAlign: 'left',
                     background: selectedPresetRole === r.id ? 'var(--color-primary)' : 'var(--bg-card-subtle)',
-                    color: selectedPresetRole === r.id ? '#FFFFFF' : 'var(--text-muted)',
+                    color: selectedPresetRole === r.id ? '#FFFFFF' : 'var(--text-main)',
                     border: '1px solid var(--border-subtle)',
                     cursor: 'pointer',
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  {r.label}
+                  <div style={{ fontSize: '0.74rem', fontWeight: 700 }}>
+                    {r.label}
+                  </div>
+                  <div style={{ fontSize: '0.65rem', opacity: selectedPresetRole === r.id ? 0.9 : 0.65, fontWeight: 500 }}>
+                    {r.tag}
+                  </div>
                 </button>
               ))}
             </div>

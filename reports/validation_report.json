@@ -9,17 +9,17 @@
       "category": "Maintenance (maintenance_tasks)",
       "test_name": "task_count",
       "passed": true,
-      "details": "Expected 17 maintenance tasks, found 17",
+      "details": "Expected 39 maintenance tasks, found 39",
       "context": {
-        "count": 17,
-        "expected": 17
+        "count": 39,
+        "expected": 39
       }
     },
     {
       "category": "Maintenance (maintenance_tasks)",
       "test_name": "task_id_uniqueness",
       "passed": true,
-      "details": "Task IDs must be unique and non-empty. Unique: 17, Total: 17",
+      "details": "Task IDs must be unique and non-empty. Unique: 39, Total: 39",
       "context": {
         "duplicate_count": 0
       }
@@ -64,17 +64,17 @@
       "category": "Maintenance (maintenance_tasks_enriched)",
       "test_name": "task_count",
       "passed": true,
-      "details": "Expected 17 maintenance tasks, found 17",
+      "details": "Expected 39 maintenance tasks, found 39",
       "context": {
-        "count": 17,
-        "expected": 17
+        "count": 39,
+        "expected": 39
       }
     },
     {
       "category": "Maintenance (maintenance_tasks_enriched)",
       "test_name": "task_id_uniqueness",
       "passed": true,
-      "details": "Task IDs must be unique and non-empty. Unique: 17, Total: 17",
+      "details": "Task IDs must be unique and non-empty. Unique: 39, Total: 39",
       "context": {
         "duplicate_count": 0
       }
@@ -119,17 +119,17 @@
       "category": "Maintenance (task_features)",
       "test_name": "task_count",
       "passed": true,
-      "details": "Expected 17 maintenance tasks, found 17",
+      "details": "Expected 39 maintenance tasks, found 39",
       "context": {
-        "count": 17,
-        "expected": 17
+        "count": 39,
+        "expected": 39
       }
     },
     {
       "category": "Maintenance (task_features)",
       "test_name": "task_id_uniqueness",
       "passed": true,
-      "details": "Task IDs must be unique and non-empty. Unique: 17, Total: 17",
+      "details": "Task IDs must be unique and non-empty. Unique: 39, Total: 39",
       "context": {
         "duplicate_count": 0
       }
@@ -174,9 +174,9 @@
       "category": "Stations (stations_clean)",
       "test_name": "station_code_uniqueness",
       "passed": true,
-      "details": "Station codes must be unique. Total: 20, Unique: 20",
+      "details": "Station codes must be unique. Total: 59, Unique: 59",
       "context": {
-        "total_stations": 20
+        "total_stations": 59
       }
     },
     {
@@ -201,9 +201,9 @@
       "category": "Trains (trains_clean)",
       "test_name": "train_no_uniqueness",
       "passed": true,
-      "details": "Train identifiers must be unique. Total: 26, Unique: 26",
+      "details": "Train identifiers must be unique. Total: 59, Unique: 59",
       "context": {
-        "total_trains": 26
+        "total_trains": 59
       }
     },
     {
@@ -265,20 +265,20 @@
       "category": "Integration & Enrichment",
       "test_name": "concatenation_row_preservation",
       "passed": true,
-      "details": "Total raw maintenance tasks (17) must equal unified maintenance tasks (17)",
+      "details": "Total raw maintenance tasks (39) must equal unified maintenance tasks (39)",
       "context": {
-        "raw_total": 17,
-        "unified_total": 17
+        "raw_total": 39,
+        "unified_total": 39
       }
     },
     {
       "category": "Integration & Enrichment",
       "test_name": "station_enrichment_no_multiplication",
       "passed": true,
-      "details": "Rows before enrichment (17) must equal rows after enrichment (17)",
+      "details": "Rows before enrichment (39) must equal rows after enrichment (39)",
       "context": {
-        "rows_before": 17,
-        "rows_after": 17
+        "rows_before": 39,
+        "rows_after": 39
       }
     }
   ]

@@ -19,3 +19,42 @@ CNB,Kanpur Central,Prayagraj,NCR,Uttar Pradesh,26.4540,80.3500,436.0,True,10
 FTP,Fatehpur,Prayagraj,NCR,Uttar Pradesh,25.9260,80.8130,514.0,False,4
 PRYJ,Prayagraj Jn,Prayagraj,NCR,Uttar Pradesh,25.4358,81.8463,630.0,True,10
 DDU,Pt Deen Dayal Upadhyaya Jn,Pt Deen Dayal Upadhyaya,ECR,Uttar Pradesh,25.2790,83.1180,783.0,True,8
+VAPI,Vapi,Mumbai WR,WR,Gujarat,20.3720,72.9100,850.0,True,3
+BL,Valsad,Mumbai WR,WR,Gujarat,20.6100,72.9300,876.0,True,5
+NVS,Navsari,Mumbai WR,WR,Gujarat,20.9500,72.9300,915.0,False,3
+ST,Surat,Mumbai WR,WR,Gujarat,21.2040,72.8400,945.0,True,6
+UDN,Udhna Jn,Mumbai WR,WR,Gujarat,21.1600,72.8500,949.0,True,4
+AKV,Ankleshwar Jn,Vadodara,WR,Gujarat,21.6300,73.0000,994.0,True,4
+BH,Bharuch Jn,Vadodara,WR,Gujarat,21.7100,72.9800,1004.0,True,5
+MYG,Miyagam Karjan Jn,Vadodara,WR,Gujarat,22.0500,73.1700,1044.0,False,3
+BRC,Vadodara Jn,Vadodara,WR,Gujarat,22.3106,73.1812,1075.0,True,7
+ANND,Anand Jn,Vadodara,WR,Gujarat,22.5600,72.9600,1110.0,True,6
+ND,Nadiad Jn,Vadodara,WR,Gujarat,22.6900,72.8600,1129.0,True,4
+MHD,Mahemdavad Kheda Rd,Ahmedabad,WR,Gujarat,22.8300,72.7600,1147.0,False,3
+MAN,Maninagar,Ahmedabad,WR,Gujarat,22.9970,72.6050,1168.0,False,2
+ADI,Ahmedabad Jn,Ahmedabad,WR,Gujarat,23.0225,72.5714,1172.0,True,12
+SBIB,Sabarmati BG,Ahmedabad,WR,Gujarat,23.0700,72.5800,1178.0,True,6
+GNC,Gandhinagar Capital,Ahmedabad,WR,Gujarat,23.2300,72.6500,1202.0,True,3
+MSH,Mehsana Jn,Ahmedabad,WR,Gujarat,23.6000,72.4000,1242.0,True,6
+UJA,Unjha,Ahmedabad,WR,Gujarat,23.8000,72.3900,1264.0,False,3
+SID,Siddhpur,Ahmedabad,WR,Gujarat,23.9200,72.3800,1277.0,False,2
+PNU,Palanpur Jn,Ahmedabad,WR,Gujarat,24.1700,72.4300,1307.0,True,5
+VG,Viramgam Jn,Ahmedabad,WR,Gujarat,23.1200,72.0300,1237.0,True,4
+SUNR,Surendranagar Jn,Rajkot,WR,Gujarat,22.7200,71.6400,1303.0,True,5
+WKR,Wankaner Jn,Rajkot,WR,Gujarat,22.6100,70.9400,1377.0,True,4
+RJT,Rajkot Jn,Rajkot,WR,Gujarat,22.3000,70.8000,1419.0,True,5
+HAPA,Hapa,Rajkot,WR,Gujarat,22.4600,70.1300,1495.0,True,3
+JAM,Jamnagar,Rajkot,WR,Gujarat,22.4700,70.0700,1504.0,True,4
+DWK,Dwarka,Rajkot,WR,Gujarat,22.2400,68.9700,1641.0,True,3
+OKHA,Okha,Rajkot,WR,Gujarat,22.4700,69.0700,1670.0,True,3
+GIMB,Gandhidham Jn,Ahmedabad,WR,Gujarat,23.0800,70.1300,1475.0,True,4
+BHUJ,Bhuj,Ahmedabad,WR,Gujarat,23.2500,69.6700,1533.0,True,3
+GDA,Godhra Jn,Vadodara,WR,Gujarat,22.7750,73.6150,1149.0,True,5
+BVP,Bhavnagar Terminus,Bhavnagar,WR,Gujarat,21.7700,72.1500,1380.0,True,4
+BTD,Botad Jn,Bhavnagar,WR,Gujarat,22.1700,71.6700,1325.0,True,4
+VRL,Veraval Jn,Bhavnagar,WR,Gujarat,20.9000,70.3700,1605.0,True,3
+SMNH,Somnath,Bhavnagar,WR,Gujarat,20.8900,70.4000,1610.0,False,2
+PBR,Porbandar,Bhavnagar,WR,Gujarat,21.6400,69.6000,1630.0,True,3
+MDVB,Mundra Port,Ahmedabad,WR,Gujarat,22.8400,69.7100,1520.0,True,4
+PPSP,Pipavav Port,Bhavnagar,WR,Gujarat,20.9200,71.5100,1450.0,True,3
+DHJ,Dahej,Vadodara,WR,Gujarat,21.7100,72.5400,1050.0,True,2

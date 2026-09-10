@@ -215,6 +215,7 @@ class ApprovalActionRequest(BaseModel):
     comment: str
     modified_start_time: Optional[str] = None
     modified_duration_mins: Optional[int] = None
+    user_role: Optional[str] = "APPROVER"
 
 
 class SelectiveFusionRequest(BaseModel):
@@ -607,8 +608,17 @@ def list_approval_requests():
 def take_approval_action(req: ApprovalActionRequest):
     """
     Approver decision action: APPROVE, REJECT, or SEND_BACK.
+    Enforces RBAC: Strictly restricted to APPROVER and PLANNER roles.
     Enforces mandatory comments for rejection/modification and logs immutable audit trail.
     """
+    authorized_roles = {"APPROVER", "PLANNER"}
+    norm_role = (req.user_role or "").strip().upper()
+    if norm_role not in authorized_roles:
+        raise HTTPException(
+            status_code=403,
+            detail=f"Access Denied: Role '{req.user_role}' is not authorized to grant or modify block sanctions. Only Approver (Sr. DOM) and Planner accounts possess statutory sanction authority."
+        )
+
     if req.action in ("REJECT", "SEND_BACK") and not req.comment.strip():
         raise HTTPException(status_code=400, detail="A mandatory justification comment is required when rejecting or sending back a request.")
 
