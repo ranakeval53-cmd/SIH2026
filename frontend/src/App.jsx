@@ -7,10 +7,43 @@ import ConflictMatrix from './components/ConflictMatrix';
 import WhatIfSimulator from './components/WhatIfSimulator';
 import SanctionModal from './components/SanctionModal';
 import DataPipelineModal from './components/DataPipelineModal';
+import LoginPage from './components/LoginPage';
 
 const API_BASE = 'http://127.0.0.1:8000';
 
 export default function App() {
+  const [theme, setTheme] = useState(() => {
+    try {
+      const saved = localStorage.getItem('railopt_theme');
+      return saved === 'light' ? 'light' : 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.body.className = theme === 'light' ? 'theme-light' : 'theme-dark';
+    try {
+      localStorage.setItem('railopt_theme', theme);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [theme]);
+
+  const handleToggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
+
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('railopt_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
   const [activeTab, setActiveTab] = useState('dashboard');
   const [kpis, setKpis] = useState(null);
   const [tasks, setTasks] = useState([]);
@@ -23,6 +56,26 @@ export default function App() {
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const handleLogin = (user) => {
+    setCurrentUser(user);
+    try {
+      localStorage.setItem('railopt_user', JSON.stringify(user));
+    } catch (e) {
+      console.error(e);
+    }
+    showToast(`Welcome, ${user.name}! Connected to Northern Corridor Control.`);
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    try {
+      localStorage.removeItem('railopt_user');
+    } catch (e) {
+      console.error(e);
+    }
+    showToast('Logged out of RailOpt AI corridor session.');
   };
 
   // Fetch initial datasets
@@ -155,8 +208,39 @@ export default function App() {
     return null;
   };
 
+  // Render LoginPage if unauthenticated
+  if (!currentUser) {
+    return (
+      <>
+        {toastMessage && (
+          <div style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            background: 'linear-gradient(135deg, #0284c7 0%, #1e40af 100%)',
+            color: '#ffffff',
+            padding: '0.85rem 1.25rem',
+            borderRadius: '8px',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+            zIndex: 9999,
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            border: '1px solid rgba(255,255,255,0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            animation: 'fadeIn 0.3s ease'
+          }}>
+            <span>{toastMessage}</span>
+          </div>
+        )}
+        <LoginPage onLogin={handleLogin} />
+      </>
+    );
+  }
+
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)', color: 'var(--text-main)', transition: 'background-color 0.2s ease, color 0.2s ease' }}>
       
       {/* Toast Notification Banner */}
       {toastMessage && (
@@ -164,11 +248,11 @@ export default function App() {
           position: 'fixed',
           bottom: '24px',
           right: '24px',
-          background: 'linear-gradient(135deg, #0284c7 0%, #1e40af 100%)',
+          background: 'var(--color-primary)',
           color: '#ffffff',
           padding: '0.85rem 1.25rem',
           borderRadius: '8px',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+          boxShadow: 'var(--shadow-card)',
           zIndex: 9999,
           fontSize: '0.85rem',
           fontWeight: 600,
@@ -188,6 +272,10 @@ export default function App() {
         setActiveTab={setActiveTab} 
         kpis={kpis} 
         onRunPipeline={handleRunPipeline}
+        currentUser={currentUser}
+        onLogout={handleLogout}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
       />
 
       {/* Main Content View Switcher */}
@@ -305,11 +393,12 @@ export default function App() {
           block={selectedBlock} 
           onClose={() => setSelectedBlock(null)}
           onApprove={handleApproveBlock}
+          currentUser={currentUser}
         />
       )}
 
       {/* Footer */}
-      <footer style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '1.25rem 2rem', textAlign: 'center', fontSize: '0.75rem', color: '#64748b', background: '#070a13' }}>
+      <footer style={{ borderTop: '1px solid var(--border-subtle)', padding: '1.25rem 2rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-dim)', background: 'var(--bg-card)' }}>
         <p>
           <strong>RailOpt AI</strong> — Developed for Smart India Hackathon 2026 • Problem Statement ID: <strong>SIH26027</strong>
         </p>

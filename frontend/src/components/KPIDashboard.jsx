@@ -52,13 +52,13 @@ export default function KPIDashboard({ kpis, onNavigate, onTriggerOptimize, onTr
       {/* Hero Welcome & Quick Launch */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             Executive Corridor Command Center
             <span className="badge badge-success" style={{ fontSize: '0.75rem' }}>
               LIVE OPTIMIZED
             </span>
           </h1>
-          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
             Real-Time AI Multi-Department Maintenance Block Planning • Northern & North Central Railway
           </p>
         </div>
@@ -82,19 +82,19 @@ export default function KPIDashboard({ kpis, onNavigate, onTriggerOptimize, onTr
         <div className="glass-panel" style={{ padding: '1.25rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <p style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Block Utilization</p>
-              <h3 style={{ fontSize: '2rem', fontWeight: 800, color: '#38bdf8', marginTop: '0.25rem' }}>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Block Utilization</p>
+              <h3 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--color-primary)', marginTop: '0.25rem' }}>
                 {summary.block_utilization_pct}%
               </h3>
             </div>
             <div style={{ background: 'rgba(56, 189, 248, 0.15)', padding: '0.5rem', borderRadius: '10px' }}>
-              <TrendingUp size={22} color="#38bdf8" />
+              <TrendingUp size={22} color="var(--color-primary)" />
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.75rem', fontSize: '0.8rem', color: '#34d399', fontWeight: 600 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.75rem', fontSize: '0.8rem', color: 'var(--color-success)', fontWeight: 600 }}>
             <ArrowUpRight size={16} />
             <span>+25.4% improvement</span>
-            <span style={{ color: '#64748b', fontWeight: 400 }}>(vs 60% traditional)</span>
+            <span style={{ color: 'var(--text-dim)', fontWeight: 400 }}>(vs 60% traditional)</span>
           </div>
         </div>
 
@@ -102,19 +102,19 @@ export default function KPIDashboard({ kpis, onNavigate, onTriggerOptimize, onTr
         <div className="glass-panel" style={{ padding: '1.25rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <p style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Downtime Saved</p>
-              <h3 style={{ fontSize: '2rem', fontWeight: 800, color: '#fbbf24', marginTop: '0.25rem' }}>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Downtime Saved</p>
+              <h3 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--color-warning)', marginTop: '0.25rem' }}>
                 {summary.total_downtime_saved_hours} hrs
               </h3>
             </div>
             <div style={{ background: 'rgba(245, 158, 11, 0.15)', padding: '0.5rem', borderRadius: '10px' }}>
-              <Clock size={22} color="#fbbf24" />
+              <Clock size={22} color="var(--color-warning)" />
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.75rem', fontSize: '0.8rem', color: '#34d399', fontWeight: 600 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.75rem', fontSize: '0.8rem', color: 'var(--color-success)', fontWeight: 600 }}>
             <ArrowDownRight size={16} />
             <span>45% reduction in closures</span>
-            <span style={{ color: '#64748b', fontWeight: 400 }}>(daily corridor)</span>
+            <span style={{ color: 'var(--text-dim)', fontWeight: 400 }}>(daily corridor)</span>
           </div>
         </div>
 
@@ -122,16 +122,16 @@ export default function KPIDashboard({ kpis, onNavigate, onTriggerOptimize, onTr
         <div className="glass-panel" style={{ padding: '1.25rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <p style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Fused Mega-Blocks</p>
-              <h3 style={{ fontSize: '2rem', fontWeight: 800, color: '#f472b6', marginTop: '0.25rem' }}>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Fused Mega-Blocks</p>
+              <h3 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--color-fused)', marginTop: '0.25rem' }}>
                 {summary.fused_mega_blocks_count} Blocks
               </h3>
             </div>
             <div style={{ background: 'rgba(236, 72, 153, 0.15)', padding: '0.5rem', borderRadius: '10px' }}>
-              <Layers size={22} color="#f472b6" />
+              <Layers size={22} color="var(--color-fused)" />
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.75rem', fontSize: '0.8rem', color: '#c084fc', fontWeight: 600 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.75rem', fontSize: '0.8rem', color: 'var(--color-fused)', fontWeight: 600 }}>
             <Sparkles size={16} />
             <span>TMS + SMMS + TDMS unified</span>
           </div>
@@ -141,16 +141,16 @@ export default function KPIDashboard({ kpis, onNavigate, onTriggerOptimize, onTr
         <div className="glass-panel" style={{ padding: '1.25rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <p style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Annual Financial ROI</p>
-              <h3 style={{ fontSize: '2rem', fontWeight: 800, color: '#10b981', marginTop: '0.25rem' }}>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Annual Financial ROI</p>
+              <h3 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--color-success)', marginTop: '0.25rem' }}>
                 ₹14.8 Cr
               </h3>
             </div>
-            <div style={{ background: 'rgba(16, 185, 129, 0.15)', padding: '0.5rem', borderRadius: '10px' }}>
-              <IndianRupee size={22} color="#10b981" />
+            <div style={{ background: 'rgba(22, 163, 74, 0.15)', padding: '0.5rem', borderRadius: '10px' }}>
+              <IndianRupee size={22} color="var(--color-success)" />
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.75rem', fontSize: '0.8rem', color: '#38bdf8', fontWeight: 600 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.75rem', fontSize: '0.8rem', color: 'var(--color-primary)', fontWeight: 600 }}>
             <span>1,960 hrs train delay prevented</span>
           </div>
         </div>
@@ -160,25 +160,25 @@ export default function KPIDashboard({ kpis, onNavigate, onTriggerOptimize, onTr
       {/* Main Grid: Comparison Chart + Corridor Health Map */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(480px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
         
-        {/* Before vs After Simulated Impact (Matching Slide 5 of Presentation) */}
+        {/* Before vs After Simulated Impact */}
         <div className="glass-panel" style={{ padding: '1.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
             <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>
                 Before vs After Operational Impact (Simulated)
               </h3>
-              <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                 Performance Benchmark: Traditional Manual Dispatching vs RailOpt AI
               </p>
             </div>
             <div style={{ display: 'flex', gap: '1rem', fontSize: '0.75rem', fontWeight: 600 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#475569' }} />
-                <span style={{ color: '#94a3b8' }}>Traditional (Before)</span>
+                <div style={{ width: '12px', height: '12px', borderRadius: '3px', background: 'var(--text-dim)' }} />
+                <span style={{ color: 'var(--text-muted)' }}>Traditional (Before)</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#0284c7' }} />
-                <span style={{ color: '#38bdf8' }}>RailOpt AI (After)</span>
+                <div style={{ width: '12px', height: '12px', borderRadius: '3px', background: 'var(--color-primary)' }} />
+                <span style={{ color: 'var(--color-primary)' }}>RailOpt AI (After)</span>
               </div>
             </div>
           </div>
@@ -188,13 +188,13 @@ export default function KPIDashboard({ kpis, onNavigate, onTriggerOptimize, onTr
             {comparison.map((item, idx) => (
               <div key={idx}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '0.35rem' }}>
-                  <span style={{ fontWeight: 600, color: '#cbd5e1' }}>{item.metric}</span>
-                  <span style={{ color: '#38bdf8', fontWeight: 700 }}>
-                    {item.traditional}% ➔ <strong style={{ color: '#34d399' }}>{item.railopt_ai}%</strong>
+                  <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{item.metric}</span>
+                  <span style={{ color: 'var(--color-primary)', fontWeight: 700 }}>
+                    {item.traditional}% ➔ <strong style={{ color: 'var(--color-success)' }}>{item.railopt_ai}%</strong>
                   </span>
                 </div>
                 {/* Dual bar */}
-                <div style={{ position: 'relative', height: '18px', background: '#0a101d', borderRadius: '6px', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div style={{ position: 'relative', height: '18px', background: 'var(--timeline-track-bg)', borderRadius: '6px', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                   {/* Traditional baseline bar */}
                   <div style={{
                     position: 'absolute',
@@ -202,7 +202,7 @@ export default function KPIDashboard({ kpis, onNavigate, onTriggerOptimize, onTr
                     bottom: 0,
                     left: 0,
                     width: `${item.traditional}%`,
-                    background: '#334155',
+                    background: 'var(--border-subtle)',
                     borderRadius: '4px',
                     opacity: 0.8
                   }} />
@@ -213,7 +213,7 @@ export default function KPIDashboard({ kpis, onNavigate, onTriggerOptimize, onTr
                     bottom: '2px',
                     left: 0,
                     width: `${item.railopt_ai}%`,
-                    background: 'linear-gradient(90deg, #0284c7 0%, #38bdf8 100%)',
+                    background: 'linear-gradient(90deg, var(--color-primary) 0%, #38bdf8 100%)',
                     borderRadius: '4px',
                     boxShadow: '0 0 10px rgba(56, 189, 248, 0.4)'
                   }} />
@@ -227,10 +227,10 @@ export default function KPIDashboard({ kpis, onNavigate, onTriggerOptimize, onTr
         <div className="glass-panel" style={{ padding: '1.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
             <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>
                 NDLS - DDU Corridor Asset Health
               </h3>
-              <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                 783.0 KM High-Density Trunk Route (Track, S&T, and 25kV OHE)
               </p>
             </div>
@@ -241,7 +241,7 @@ export default function KPIDashboard({ kpis, onNavigate, onTriggerOptimize, onTr
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
             {corridorStations.map((st, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.5rem 0.75rem', background: 'rgba(15, 23, 42, 0.6)', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.04)' }}>
+              <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.5rem 0.75rem', background: 'var(--bg-card-subtle)', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <div style={{
                     width: '32px',
@@ -253,13 +253,13 @@ export default function KPIDashboard({ kpis, onNavigate, onTriggerOptimize, onTr
                     justifyContent: 'center',
                     fontWeight: 700,
                     fontSize: '0.75rem',
-                    color: st.health < 80 ? '#f87171' : '#38bdf8'
+                    color: st.health < 80 ? 'var(--color-critical)' : 'var(--color-primary)'
                   }}>
                     {st.code}
                   </div>
                   <div>
-                    <h5 style={{ fontSize: '0.85rem', fontWeight: 600, color: '#f1f5f9' }}>{st.name}</h5>
-                    <span style={{ fontSize: '0.7rem', color: '#64748b' }}>KM {st.km} • Delhi/Prayagraj Division</span>
+                    <h5 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>{st.name}</h5>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>KM {st.km} • Delhi/Prayagraj Division</span>
                   </div>
                 </div>
 
@@ -275,10 +275,10 @@ export default function KPIDashboard({ kpis, onNavigate, onTriggerOptimize, onTr
                     </span>
                   )}
                   <div style={{ textAlign: 'right' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: st.health > 85 ? '#34d399' : '#f87171' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: st.health > 85 ? 'var(--color-success)' : 'var(--color-critical)' }}>
                       {st.health}%
                     </span>
-                    <p style={{ fontSize: '0.65rem', color: '#64748b' }}>Asset Health</p>
+                    <p style={{ fontSize: '0.65rem', color: 'var(--text-dim)' }}>Asset Health</p>
                   </div>
                 </div>
               </div>

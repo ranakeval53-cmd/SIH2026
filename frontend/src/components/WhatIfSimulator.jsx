@@ -71,11 +71,11 @@ export default function WhatIfSimulator({ scenarios, onRunSimulation }) {
       {/* Header */}
       <div className="glass-panel" style={{ padding: '1.25rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Sliders size={20} color="#38bdf8" />
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Sliders size={20} color="var(--color-primary)" />
             What-If Operational Scenario Simulator
           </h2>
-          <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.15rem' }}>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
             Real-Time Dynamic Rescheduling for Rail Cracks, Train Delays, Machine Malfunctions & Possession Squeezes
           </p>
         </div>
@@ -103,8 +103,8 @@ export default function WhatIfSimulator({ scenarios, onRunSimulation }) {
               style={{
                 padding: '1.2rem',
                 cursor: 'pointer',
-                border: isSelected ? '2px solid #38bdf8' : '1px solid rgba(255,255,255,0.08)',
-                background: isSelected ? 'rgba(2, 132, 199, 0.15)' : 'rgba(15, 23, 42, 0.6)',
+                border: isSelected ? '2px solid var(--color-primary)' : '1px solid var(--border-subtle)',
+                background: isSelected ? 'var(--bg-card-subtle)' : 'var(--bg-card)',
                 transition: 'all 0.2s ease'
               }}
             >
@@ -113,14 +113,14 @@ export default function WhatIfSimulator({ scenarios, onRunSimulation }) {
                   {sc.category}
                 </span>
                 {isSelected && (
-                  <CheckCircle2 size={18} color="#38bdf8" />
+                  <CheckCircle2 size={18} color="var(--color-primary)" />
                 )}
               </div>
 
-              <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#f8fafc', marginBottom: '0.35rem' }}>
+              <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.35rem' }}>
                 {sc.title}
               </h4>
-              <p style={{ fontSize: '0.75rem', color: '#94a3b8', lineHeight: 1.4 }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
                 {sc.description}
               </p>
             </div>

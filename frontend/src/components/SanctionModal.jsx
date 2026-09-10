@@ -12,9 +12,15 @@ import {
   Sparkles
 } from 'lucide-react';
 
-export default function SanctionModal({ block, onClose, onApprove }) {
-  const [controllerName, setControllerName] = useState('Sri Rajesh Sharma, IRTS');
-  const [designation, setDesignation] = useState('Senior Divisional Operations Manager (Sr. DOM), Delhi Division');
+export default function SanctionModal({ block, onClose, onApprove, currentUser }) {
+  const [controllerName, setControllerName] = useState(
+    currentUser?.name || 'Sri Rajesh Sharma, IRTS'
+  );
+  const [designation, setDesignation] = useState(
+    currentUser 
+      ? `${currentUser.role}, ${currentUser.division}`
+      : 'Senior Divisional Operations Manager (Sr. DOM), Delhi Division'
+  );
   const [remarks, setRemarks] = useState('Sanctioned in accordance with Indian Railways G&SR Para 4.12. Speed restriction and OHE safety cut verified.');
   const [actionSuccess, setActionSuccess] = useState(false);
 

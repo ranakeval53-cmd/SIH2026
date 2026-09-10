@@ -1,40 +1,90 @@
 /* =========================================================================
    RailOpt AI — Master Design System & Command Center Stylesheet
    Indian Railways SIH 2026 (Problem Statement: SIH26027 | Team Techtonic)
+   Clean, Official, Trustworthy Theme Specification:
+   ☀️ Light: Bg #F5F8FC | Cards #FFFFFF | Primary #1769AA | Success #16A34A | Warning #F59E0B | Text #172033
+   🌙 Dark:  Bg #07111F | Cards #101C2D | Primary #38BDF8 | Success #22C55E | Warning #FBBF24 | Text #E8F0F8
    ========================================================================= */
 
 :root {
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Color Palette */
-  --bg-darkest: #060911;
-  --bg-base: #090e1a;
-  --bg-surface: #0f172a;
-  --bg-card: #141e36;
-  --bg-card-hover: #1a2744;
-  --bg-glass: rgba(20, 30, 54, 0.75);
+  /* 🌙 Dark Mode (Default) */
+  --bg-base: #07111F;
+  --bg-card: #101C2D;
+  --bg-card-subtle: #142338;
+  --bg-card-hover: #182b44;
+  --bg-glass: rgba(16, 28, 45, 0.82);
   
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-card: rgba(56, 189, 248, 0.18);
-  --border-highlight: rgba(56, 189, 248, 0.45);
+  --color-primary: #38BDF8;
+  --color-primary-hover: #0284c7;
+  --color-success: #22C55E;
+  --color-warning: #FBBF24;
+  --color-critical: #ef4444;
 
-  --text-main: #f1f5f9;
+  --text-main: #E8F0F8;
   --text-muted: #94a3b8;
   --text-dim: #64748b;
 
-  /* Department & Operational Colors */
-  --color-tms: #f59e0b;       /* Track Maintenance (Engineering) */
-  --color-smms: #a855f7;      /* Signalling & Telecom */
-  --color-tdms: #06b6d4;      /* Traction Distribution (OHE) */
-  --color-fused: #ec4899;     /* Fused Multi-Dept Block */
-  --color-success: #10b981;   /* Normal / Approved */
-  --color-critical: #ef4444;  /* Emergency / Conflict */
-  --color-premium: #3b82f6;   /* Vande Bharat / Rajdhani */
+  --border-subtle: rgba(232, 240, 248, 0.08);
+  --border-card: rgba(56, 189, 248, 0.2);
+  --border-highlight: rgba(56, 189, 248, 0.5);
 
-  --shadow-glow: 0 0 25px rgba(6, 182, 212, 0.15);
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.2);
   --shadow-fused: 0 0 20px rgba(236, 72, 153, 0.35);
-  --shadow-card: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+  --navbar-bg: rgba(7, 17, 31, 0.94);
+  --timeline-track-bg: #0b1523;
+  --input-bg: rgba(16, 28, 45, 0.85);
+  --input-border: rgba(232, 240, 248, 0.15);
+
+  /* Department & Operational Colors */
+  --color-tms: #FBBF24;       /* Track Maintenance (Engineering) */
+  --color-smms: #c084fc;      /* Signalling & Telecom */
+  --color-tdms: #38BDF8;      /* Traction Distribution (OHE) */
+  --color-fused: #ec4899;     /* Fused Multi-Dept Block */
+  --color-premium: #38bdf8;   /* Vande Bharat / Rajdhani */
+}
+
+/* ☀️ Light Mode Theme */
+[data-theme="light"], .theme-light {
+  --bg-base: #F5F8FC;
+  --bg-card: #FFFFFF;
+  --bg-card-subtle: #EDF3FA;
+  --bg-card-hover: #E3EDF7;
+  --bg-glass: rgba(255, 255, 255, 0.88);
+
+  --color-primary: #1769AA;
+  --color-primary-hover: #125386;
+  --color-success: #16A34A;
+  --color-warning: #F59E0B;
+  --color-critical: #dc2626;
+
+  --text-main: #172033;
+  --text-muted: #4b5e78;
+  --text-dim: #71829b;
+
+  --border-subtle: rgba(23, 32, 51, 0.1);
+  --border-card: rgba(23, 105, 170, 0.18);
+  --border-highlight: rgba(23, 105, 170, 0.45);
+
+  --shadow-card: 0 4px 20px rgba(23, 32, 51, 0.08);
+  --shadow-glow: 0 0 25px rgba(23, 105, 170, 0.15);
+  --shadow-fused: 0 0 20px rgba(219, 39, 119, 0.25);
+
+  --navbar-bg: rgba(245, 248, 252, 0.96);
+  --timeline-track-bg: #e5edf7;
+  --input-bg: #FFFFFF;
+  --input-border: rgba(23, 32, 51, 0.2);
+
+  /* Department Colors in Light */
+  --color-tms: #D97706;
+  --color-smms: #9333EA;
+  --color-tdms: #0284C7;
+  --color-fused: #DB2777;
+  --color-premium: #1769AA;
 }
 
 * {
@@ -45,11 +95,12 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--bg-darkest);
+  background-color: var(--bg-base);
   color: var(--text-main);
   line-height: 1.5;
   overflow-x: hidden;
   min-height: 100vh;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 code, pre, .font-mono {
@@ -62,19 +113,19 @@ code, pre, .font-mono {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-darkest);
+  background: var(--bg-base);
 }
 ::-webkit-scrollbar-thumb {
-  background: #253352;
+  background: var(--border-card);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3b82f6;
+  background: var(--color-primary);
 }
 
 /* Glassmorphism Card */
 .glass-panel {
-  background: var(--bg-glass);
+  background: var(--bg-card);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-subtle);
@@ -102,25 +153,25 @@ code, pre, .font-mono {
 
 .badge-tms {
   background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
+  color: var(--color-warning);
   border: 1px solid rgba(245, 158, 11, 0.4);
 }
 
 .badge-smms {
   background: rgba(168, 85, 247, 0.15);
-  color: #c084fc;
+  color: var(--color-smms);
   border: 1px solid rgba(168, 85, 247, 0.4);
 }
 
 .badge-tdms {
-  background: rgba(6, 182, 212, 0.15);
-  color: #38bdf8;
-  border: 1px solid rgba(6, 182, 212, 0.4);
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--color-primary);
+  border: 1px solid rgba(56, 189, 248, 0.4);
 }
 
 .badge-fused {
   background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(168, 85, 247, 0.25));
-  color: #f472b6;
+  color: var(--color-fused);
   border: 1px solid rgba(236, 72, 153, 0.6);
   box-shadow: 0 0 12px rgba(236, 72, 153, 0.3);
   animation: pulse-glow 2.5s infinite;
@@ -128,15 +179,15 @@ code, pre, .font-mono {
 
 .badge-critical {
   background: rgba(239, 68, 68, 0.2);
-  color: #fca5a5;
+  color: var(--color-critical);
   border: 1px solid rgba(239, 68, 68, 0.5);
   animation: blink-soft 1.8s infinite;
 }
 
 .badge-success {
-  background: rgba(16, 185, 129, 0.15);
-  color: #6ee7b7;
-  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: rgba(22, 163, 74, 0.15);
+  color: var(--color-success);
+  border: 1px solid rgba(22, 163, 74, 0.4);
 }
 
 /* Animations */
@@ -154,14 +205,19 @@ code, pre, .font-mono {
   50% { opacity: 0.65; }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Interactive Timeline / Gantt Styles */
 .timeline-track {
   position: relative;
-  background: #0d1424;
+  background: var(--timeline-track-bg);
   border-radius: 8px;
   overflow: hidden;
   height: 48px;
-  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border: 1px dashed var(--border-subtle);
 }
 
 .timeline-block {
@@ -180,36 +236,36 @@ code, pre, .font-mono {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .timeline-block:hover {
   transform: translateY(-2px) scale(1.02);
-  filter: brightness(1.2);
+  filter: brightness(1.15);
   z-index: 20;
 }
 
 /* Button styles */
 .btn-primary {
-  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+  background: var(--color-primary);
   color: #ffffff;
   padding: 0.55rem 1.15rem;
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.875rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 14px rgba(23, 105, 170, 0.3);
 }
 
 .btn-primary:hover {
-  filter: brightness(1.15);
+  filter: brightness(1.1);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+  box-shadow: 0 6px 20px rgba(23, 105, 170, 0.4);
 }
 
 .btn-fuse {
@@ -250,7 +306,7 @@ code, pre, .font-mono {
 }
 
 .btn-outline:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-card-subtle);
   border-color: var(--border-highlight);
 }
 

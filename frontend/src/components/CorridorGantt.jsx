@@ -57,11 +57,11 @@ export default function CorridorGantt({ scheduleData, onSelectBlock, onTriggerOp
       <div className="glass-panel" style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         
         <div>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Layers size={20} color="#38bdf8" />
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Layers size={20} color="var(--color-primary)" />
             Master Corridor Timetable & Block Schedule
           </h2>
-          <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.15rem' }}>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
             Multi-Department Possession Windows vs Passenger & Freight Timetable Paths (24-Hour Horizon)
           </p>
         </div>
@@ -70,7 +70,7 @@ export default function CorridorGantt({ scheduleData, onSelectBlock, onTriggerOp
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
           
           {/* Horizon Selector */}
-          <div style={{ display: 'flex', background: 'rgba(15, 23, 42, 0.8)', padding: '0.2rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <div style={{ display: 'flex', background: 'var(--bg-card-subtle)', padding: '0.2rem', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
             {['DAILY', 'WEEKLY', 'MONTHLY'].map(h => (
               <button
                 key={h}
@@ -80,8 +80,8 @@ export default function CorridorGantt({ scheduleData, onSelectBlock, onTriggerOp
                   borderRadius: '6px',
                   fontSize: '0.75rem',
                   fontWeight: horizon === h ? 700 : 500,
-                  color: horizon === h ? '#ffffff' : '#94a3b8',
-                  background: horizon === h ? '#0284c7' : 'transparent',
+                  color: horizon === h ? '#ffffff' : 'var(--text-muted)',
+                  background: horizon === h ? 'var(--color-primary)' : 'transparent',
                   border: 'none',
                   cursor: 'pointer',
                   transition: 'all 0.15s'
@@ -96,7 +96,7 @@ export default function CorridorGantt({ scheduleData, onSelectBlock, onTriggerOp
           <select 
             value={filterLine} 
             onChange={(e) => setFilterLine(e.target.value)}
-            style={{ background: '#0f172a', color: '#cbd5e1', border: '1px solid rgba(255,255,255,0.1)', padding: '0.4rem 0.75rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, outline: 'none' }}
+            style={{ background: 'var(--bg-card)', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', padding: '0.4rem 0.75rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, outline: 'none' }}
           >
             <option value="ALL">All Track Lines</option>
             <option value="UP">UP Line Only</option>
@@ -107,7 +107,7 @@ export default function CorridorGantt({ scheduleData, onSelectBlock, onTriggerOp
           <select 
             value={filterDept} 
             onChange={(e) => setFilterDept(e.target.value)}
-            style={{ background: '#0f172a', color: '#cbd5e1', border: '1px solid rgba(255,255,255,0.1)', padding: '0.4rem 0.75rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, outline: 'none' }}
+            style={{ background: 'var(--bg-card)', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', padding: '0.4rem 0.75rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, outline: 'none' }}
           >
             <option value="ALL">All Departments</option>
             <option value="FUSED">✨ Fused Mega-Blocks Only</option>
@@ -121,9 +121,9 @@ export default function CorridorGantt({ scheduleData, onSelectBlock, onTriggerOp
       </div>
 
       {/* Legend Ribbon */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', background: 'rgba(15, 23, 42, 0.4)', padding: '0.6rem 1rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.75rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', background: 'var(--bg-card)', padding: '0.6rem 1rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.75rem', border: '1px solid var(--border-subtle)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
-          <span style={{ fontWeight: 600, color: '#94a3b8' }}>LEGEND:</span>
+          <span style={{ fontWeight: 600, color: 'var(--text-muted)' }}>LEGEND:</span>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
             <div style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#ec4899', boxShadow: '0 0 6px #ec4899' }} />
@@ -211,11 +211,11 @@ export default function CorridorGantt({ scheduleData, onSelectBlock, onTriggerOp
                       <span className={`badge ${sec.line === 'UP' ? 'badge-tdms' : 'badge-tms'}`} style={{ fontSize: '0.65rem' }}>
                         {sec.line}
                       </span>
-                      <h5 style={{ fontSize: '0.78rem', fontWeight: 700, color: '#f1f5f9', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      <h5 style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {sec.name.split('(')[0]}
                       </h5>
                     </div>
-                    <span style={{ fontSize: '0.68rem', color: '#64748b' }}>KM {sec.km}</span>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-dim)' }}>KM {sec.km}</span>
                   </div>
 
                   {/* Right Timeline Canvas */}
