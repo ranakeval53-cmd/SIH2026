@@ -1,16 +1,59 @@
-# React + Vite
+# 🚆 TrackShield AI — Frontend Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+This directory contains the enterprise single-page application (SPA) for **TrackShield AI**, built with **React 19**, **Vite 8.2**, **Lucide Icons**, and a custom **Indian Railways Vanilla CSS Design System**.
 
-Currently, two official plugins are available:
+For full system architecture, optimization models, AI pipeline, and API documentation, see the [Main Project README](../README.md).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🌟 Key Frontend Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. **Dual Operating Modes:**
+   - **Approver Command Center:** For Sr. DOM to review, sanction, revoke, and inspect multi-department concurrence.
+   - **Operations & Live Gantt View:** Interactive timetable visualization across UP/DN lines with customizable time-window sliders (Past, Live, Future).
+2. **Indian Railways Electronic Sanction Memo (Form T/409):**
+   - Official bilingual letterhead, Section Controller endorsements, caution orders, and one-click print/PDF export.
+3. **Advanced Visual Analytics:**
+   - Comparative Grouped Bar Graph (Traditional Manual vs TrackShield AI).
+   - Precision SVG Donut / Pie Chart with Department & Block Type toggles.
+4. **Role-Based Access Control (RBAC):**
+   - Quick login presets for Sr. DOM, Chief Planner, Civil P-Way, Electrical TRD, Signaling S&T, and Section Controller.
+   - Enforces statutory sanction authority for Approver/Planner and provides transparent view-only concurrence for technical departments.
+5. **Theme Engine:**
+   - Full light and dark mode support with instant toggle in the navbar.
+   - High-contrast typography and WCAG AA accessible color palettes.
 
-## Expanding the Oxlint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## 🛠️ Development & Build Scripts
+
+From the `frontend/` directory:
+
+```bash
+# Install dependencies
+npm install
+
+# Start Vite local development server (port 5173)
+npm run dev
+
+# Build production bundle
+npm run build
+
+# Preview production build locally
+npm run preview
+```
+
+---
+
+## 📁 Component Directory
+
+- `src/App.jsx`: Global state, route handling, role switching, and sync listeners.
+- `src/components/Navbar.jsx`: Brand header, theme toggle, and role indicator.
+- `src/components/ApproverDashboard.jsx`: Sr. DOM sanction queue, review drawer, rejection protocol, and concurrence checklists.
+- `src/components/MasterGantt.jsx`: Interactive corridor timetable with time-window sliders.
+- `src/components/KPIDashboard.jsx`: Grouped bar graph and SVG donut pie analytics.
+- `src/components/SanctionModal.jsx`: Electronic Form T/409 printable sanction memo modal.
+- `src/components/OperationsDashboard.jsx`: Live corridor feed and active block cards.
+- `src/components/DataFeeds.jsx`: Real-time sensor and CSV feed monitoring.
+- `src/components/LoginModal.jsx`: Evaluator quick-login presets for RBAC testing.
+- `src/index.css`: Indian Railways CSS custom properties, tokens, and responsive utility classes.
