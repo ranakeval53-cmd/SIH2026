@@ -271,6 +271,61 @@ def clean_smms_data(raw_path: Path) -> List[Dict[str, Any]]:
 
 
 # -------------------------------------------------------------------------
+# MODULE 4B: TDMS Preprocessing (Traction Distribution)
+# -------------------------------------------------------------------------
+
+def clean_tdms_data(raw_path: Path) -> List[Dict[str, Any]]:
+    """
+    Processes tdms_jobs_real.csv:
+    - Standardizes column names
+    - Strips whitespace
+    - Deduplicates records
+    - Safely converts numeric and boolean types
+    - Preserves required_power_cut_substation, requires_power_block, machines, gangs
+    - Injects department = 'TDMS'
+    """
+    records, headers = read_csv_records(raw_path)
+    records, headers = standardize_records_columns(records, headers)
+
+    seen = set()
+    cleaned = []
+    for r in records:
+        row_key = tuple(sorted((k, str(v).strip()) for k, v in r.items()))
+        if row_key in seen:
+            continue
+        seen.add(row_key)
+
+        task = {
+            "task_id": r.get("task_id", "").strip(),
+            "department": "TDMS",
+            "task_name": r.get("task_name", "").strip(),
+            "task_category": r.get("task_category", "").strip().upper(),
+            "section_id": r.get("section_id", "").strip(),
+            "track_line": r.get("track_line", "").strip().upper(),
+            "start_km": parse_float(r.get("start_km")),
+            "end_km": parse_float(r.get("end_km")),
+            "station_code": r.get("station_code", "").strip().upper(),
+            "required_duration_mins": parse_int(r.get("required_duration_mins")),
+            "safety_criticality": parse_float(r.get("safety_criticality")),
+            "asset_degradation_score": parse_float(r.get("asset_degradation_score")),
+            "urgency_days_overdue": parse_int(r.get("urgency_days_overdue")),
+            "gmt_accumulated": parse_float(r.get("gmt_accumulated")),
+            "speed_restriction_if_deferred_kmh": parse_float(r.get("speed_restriction_if_deferred_kmh")),
+            "requires_traffic_block": parse_bool(r.get("requires_traffic_block")),
+            "requires_power_block": parse_bool(r.get("requires_power_block")),
+            "requires_st_disconnection": parse_bool(r.get("requires_st_disconnection")),
+            "required_machines": r.get("required_machines", "").strip(),
+            "required_gangs": r.get("required_gangs", "").strip(),
+            "required_power_cut_substation": r.get("required_power_cut_substation", "").strip(),
+            "horizon": r.get("horizon", "").strip().upper(),
+            "status": r.get("status", "").strip().upper()
+        }
+        cleaned.append(task)
+
+    return cleaned
+
+
+# -------------------------------------------------------------------------
 # MODULE 6: Station Master Processing
 # -------------------------------------------------------------------------
 

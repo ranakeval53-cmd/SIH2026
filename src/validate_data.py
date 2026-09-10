@@ -44,17 +44,18 @@ class DataValidator:
             "context": context or {}
         })
 
-    def validate_maintenance_tasks(self, tasks: List[Dict[str, Any]], dataset_label: str = "maintenance_tasks"):
+    def validate_maintenance_tasks(self, tasks: List[Dict[str, Any]], dataset_label: str = "maintenance_tasks", expected_count: Optional[int] = None):
         """Validates maintenance tasks dataset."""
         cat = f"Maintenance ({dataset_label})"
 
         # 1. Row count check
+        target_count = expected_count if expected_count is not None else 17
         self.record_check(
             category=cat,
             test_name="task_count",
-            passed=len(tasks) == 12,
-            details=f"Expected 12 maintenance tasks, found {len(tasks)}",
-            context={"count": len(tasks)}
+            passed=len(tasks) == target_count,
+            details=f"Expected {target_count} maintenance tasks, found {len(tasks)}",
+            context={"count": len(tasks), "expected": target_count}
         )
 
         # 2. Task ID uniqueness
@@ -285,7 +286,7 @@ class DataValidator:
         self.record_check(
             category=cat,
             test_name="concatenation_row_preservation",
-            passed=raw_tasks_count == unified_tasks_count == 12,
+            passed=(raw_tasks_count == unified_tasks_count and raw_tasks_count > 0),
             details=f"Total raw maintenance tasks ({raw_tasks_count}) must equal unified maintenance tasks ({unified_tasks_count})",
             context={"raw_total": raw_tasks_count, "unified_total": unified_tasks_count}
         )
@@ -294,7 +295,7 @@ class DataValidator:
         self.record_check(
             category=cat,
             test_name="station_enrichment_no_multiplication",
-            passed=unified_tasks_count == enriched_tasks_count == 12,
+            passed=(unified_tasks_count == enriched_tasks_count and enriched_tasks_count > 0),
             details=f"Rows before enrichment ({unified_tasks_count}) must equal rows after enrichment ({enriched_tasks_count})",
             context={"rows_before": unified_tasks_count, "rows_after": enriched_tasks_count}
         )
@@ -316,15 +317,17 @@ class DataValidator:
         trains, _ = read_csv_records(trains_file)
         schedules, _ = read_csv_records(schedules_file)
 
-        # Count raw tasks (TMS + SMMS)
+        # Count raw tasks (TMS + SMMS + TDMS)
         raw_tms, _ = read_csv_records(self.raw_dir / "tms_defects_real.csv")
         raw_smms, _ = read_csv_records(self.raw_dir / "smms_faults_real.csv")
-        raw_tasks_count = len(raw_tms) + len(raw_smms)
+        tdms_path = self.raw_dir / "tdms_jobs_real.csv"
+        raw_tdms, _ = read_csv_records(tdms_path) if tdms_path.exists() else ([], [])
+        raw_tasks_count = len(raw_tms) + len(raw_smms) + len(raw_tdms)
 
         # Run validation methods
-        self.validate_maintenance_tasks(tasks, "maintenance_tasks")
-        self.validate_maintenance_tasks(enriched, "maintenance_tasks_enriched")
-        self.validate_maintenance_tasks(features, "task_features")
+        self.validate_maintenance_tasks(tasks, "maintenance_tasks", raw_tasks_count)
+        self.validate_maintenance_tasks(enriched, "maintenance_tasks_enriched", raw_tasks_count)
+        self.validate_maintenance_tasks(features, "task_features", raw_tasks_count)
         self.validate_stations(stations)
         self.validate_trains(trains)
         self.validate_schedules(schedules, trains)

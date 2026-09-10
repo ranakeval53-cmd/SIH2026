@@ -39,6 +39,7 @@ UNIFIED_TASK_COLUMNS = [
     "requires_st_disconnection",
     "required_machines",
     "required_gangs",
+    "required_power_cut_substation",
     "horizon",
     "status"
 ]
@@ -57,23 +58,22 @@ ENRICHED_TASK_COLUMNS = UNIFIED_TASK_COLUMNS + [
 
 
 # -------------------------------------------------------------------------
-# MODULE 5: TMS + SMMS Integration (Vertical Concatenation)
+# MODULE 5: TMS + SMMS + TDMS Integration (Vertical Concatenation)
 # -------------------------------------------------------------------------
 
 def integrate_maintenance_tasks(
     tms_records: List[Dict[str, Any]],
     smms_records: List[Dict[str, Any]],
+    tdms_records: Optional[List[Dict[str, Any]]] = None,
     output_path: Optional[Path] = None
 ) -> List[Dict[str, Any]]:
     """
-    Combines TMS and SMMS maintenance tasks into a single unified dataset.
-    Preserves all department-specific attributes:
-    - TMS-specific columns (speed_restriction_if_deferred_kmh, requires_power_block, required_machines) -> preserved for TMS, None for SMMS.
-    - SMMS-specific columns (requires_st_disconnection) -> preserved for SMMS, None for TMS.
-    
-    Equivalent to pd.concat([tms_df, smms_df], ignore_index=True).
+    Combines TMS, SMMS, and TDMS maintenance tasks into a single unified dataset.
+    Preserves all department-specific attributes across Engineering, S&T, and Traction Distribution.
+    Equivalent to pd.concat([tms_df, smms_df, tdms_df], ignore_index=True).
     """
     unified_records = []
+    tdms_list = tdms_records or []
 
     # Process TMS tasks
     for r in tms_records:
@@ -87,7 +87,13 @@ def integrate_maintenance_tasks(
         row["department"] = "SMMS"
         unified_records.append(row)
 
-    expected_count = len(tms_records) + len(smms_records)
+    # Process TDMS tasks
+    for r in tdms_list:
+        row = {col: r.get(col, None) for col in UNIFIED_TASK_COLUMNS}
+        row["department"] = "TDMS"
+        unified_records.append(row)
+
+    expected_count = len(tms_records) + len(smms_records) + len(tdms_list)
     if len(unified_records) != expected_count:
         raise ValueError(
             f"Integration row count mismatch: expected {expected_count}, got {len(unified_records)}"

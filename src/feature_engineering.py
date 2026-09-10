@@ -46,6 +46,9 @@ TASK_FEATURE_COLUMNS = [
     "requires_traffic_block",
     "requires_power_block",
     "requires_st_disconnection",
+    "required_machines",
+    "required_gangs",
+    "required_power_cut_substation",
 
     # Station Operational Infrastructure
     "km_from_origin",
@@ -104,6 +107,9 @@ def prepare_task_features(
             "requires_traffic_block": t.get("requires_traffic_block"),
             "requires_power_block": t.get("requires_power_block"),
             "requires_st_disconnection": t.get("requires_st_disconnection"),
+            "required_machines": t.get("required_machines"),
+            "required_gangs": t.get("required_gangs"),
+            "required_power_cut_substation": t.get("required_power_cut_substation"),
 
             # Infrastructure
             "km_from_origin": t.get("km_from_origin"),

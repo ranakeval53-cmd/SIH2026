@@ -24,6 +24,7 @@ from src.inspect_data import run_data_inspection
 from src.preprocessing import (
     clean_tms_data,
     clean_smms_data,
+    clean_tdms_data,
     clean_stations_data,
     clean_trains_data,
     clean_schedules_data,
@@ -85,13 +86,22 @@ def main():
         print(f"      Cleaned {len(smms_clean)} SMMS records.")
         print()
 
+        # [3B/7] Cleaning TDMS data (Traction Distribution)...
+        print("[3B/7] Cleaning TDMS data...")
+        current_dataset = "tdms_jobs_real.csv"
+        current_column = "various"
+        tdms_raw = raw_dir / "tdms_jobs_real.csv"
+        tdms_clean = clean_tdms_data(tdms_raw) if tdms_raw.exists() else []
+        print(f"      Cleaned {len(tdms_clean)} TDMS records.")
+        print()
+
         # [4/7] Integrating maintenance datasets...
         print("[4/7] Integrating maintenance datasets...")
         current_dataset = "maintenance_tasks.csv"
         current_column = "task_id, department"
         tasks_path = proc_dir / "maintenance_tasks.csv"
-        unified_tasks = integrate_maintenance_tasks(tms_clean, smms_clean, tasks_path)
-        print(f"      Unified {len(unified_tasks)} maintenance tasks (TMS: {len(tms_clean)}, SMMS: {len(smms_clean)}).")
+        unified_tasks = integrate_maintenance_tasks(tms_clean, smms_clean, tdms_clean, tasks_path)
+        print(f"      Unified {len(unified_tasks)} maintenance tasks (TMS: {len(tms_clean)}, SMMS: {len(smms_clean)}, TDMS: {len(tdms_clean)}).")
         print()
 
         # [5/7] Processing station/train/schedule data...

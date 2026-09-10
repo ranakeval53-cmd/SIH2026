@@ -9,16 +9,17 @@
       "category": "Maintenance (maintenance_tasks)",
       "test_name": "task_count",
       "passed": true,
-      "details": "Expected 12 maintenance tasks, found 12",
+      "details": "Expected 17 maintenance tasks, found 17",
       "context": {
-        "count": 12
+        "count": 17,
+        "expected": 17
       }
     },
     {
       "category": "Maintenance (maintenance_tasks)",
       "test_name": "task_id_uniqueness",
       "passed": true,
-      "details": "Task IDs must be unique and non-empty. Unique: 12, Total: 12",
+      "details": "Task IDs must be unique and non-empty. Unique: 17, Total: 17",
       "context": {
         "duplicate_count": 0
       }
@@ -63,16 +64,17 @@
       "category": "Maintenance (maintenance_tasks_enriched)",
       "test_name": "task_count",
       "passed": true,
-      "details": "Expected 12 maintenance tasks, found 12",
+      "details": "Expected 17 maintenance tasks, found 17",
       "context": {
-        "count": 12
+        "count": 17,
+        "expected": 17
       }
     },
     {
       "category": "Maintenance (maintenance_tasks_enriched)",
       "test_name": "task_id_uniqueness",
       "passed": true,
-      "details": "Task IDs must be unique and non-empty. Unique: 12, Total: 12",
+      "details": "Task IDs must be unique and non-empty. Unique: 17, Total: 17",
       "context": {
         "duplicate_count": 0
       }
@@ -117,16 +119,17 @@
       "category": "Maintenance (task_features)",
       "test_name": "task_count",
       "passed": true,
-      "details": "Expected 12 maintenance tasks, found 12",
+      "details": "Expected 17 maintenance tasks, found 17",
       "context": {
-        "count": 12
+        "count": 17,
+        "expected": 17
       }
     },
     {
       "category": "Maintenance (task_features)",
       "test_name": "task_id_uniqueness",
       "passed": true,
-      "details": "Task IDs must be unique and non-empty. Unique: 12, Total: 12",
+      "details": "Task IDs must be unique and non-empty. Unique: 17, Total: 17",
       "context": {
         "duplicate_count": 0
       }
@@ -262,20 +265,20 @@
       "category": "Integration & Enrichment",
       "test_name": "concatenation_row_preservation",
       "passed": true,
-      "details": "Total raw maintenance tasks (12) must equal unified maintenance tasks (12)",
+      "details": "Total raw maintenance tasks (17) must equal unified maintenance tasks (17)",
       "context": {
-        "raw_total": 12,
-        "unified_total": 12
+        "raw_total": 17,
+        "unified_total": 17
       }
     },
     {
       "category": "Integration & Enrichment",
       "test_name": "station_enrichment_no_multiplication",
       "passed": true,
-      "details": "Rows before enrichment (12) must equal rows after enrichment (12)",
+      "details": "Rows before enrichment (17) must equal rows after enrichment (17)",
       "context": {
-        "rows_before": 12,
-        "rows_after": 12
+        "rows_before": 17,
+        "rows_after": 17
       }
     }
   ]
