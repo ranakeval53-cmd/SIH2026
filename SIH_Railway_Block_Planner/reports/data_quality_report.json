@@ -1,0 +1,1324 @@
+{
+  "title": "SIH 26027 Data Quality & Inspection Report",
+  "generated_by": "src/inspect_data.py",
+  "datasets": {
+    "smms_faults_real.csv": {
+      "dataset_name": "smms_faults_real.csv",
+      "file_size_bytes": 1137,
+      "rows": 5,
+      "columns": 18,
+      "column_names": [
+        "task_id",
+        "task_name",
+        "task_category",
+        "section_id",
+        "track_line",
+        "start_km",
+        "end_km",
+        "station_code",
+        "required_duration_mins",
+        "safety_criticality",
+        "asset_degradation_score",
+        "urgency_days_overdue",
+        "gmt_accumulated",
+        "requires_traffic_block",
+        "requires_st_disconnection",
+        "required_gangs",
+        "horizon",
+        "status"
+      ],
+      "duplicate_rows": 0,
+      "candidate_primary_keys": [
+        "task_id",
+        "task_name",
+        "section_id",
+        "start_km",
+        "end_km",
+        "station_code",
+        "safety_criticality",
+        "asset_degradation_score",
+        "urgency_days_overdue",
+        "gmt_accumulated"
+      ],
+      "columns_detail": {
+        "task_id": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "SMMS_KAG_001",
+            "SMMS_KAG_005",
+            "SMMS_KAG_003"
+          ]
+        },
+        "task_name": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "Electronic Interlocking Executive Diagnostic",
+            "DC Track Circuit Relay Overhaul & Tuning",
+            "Point Machine 104A/B POH & Disconnection"
+          ]
+        },
+        "task_category": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 4,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "POINT_MACHINE_OVERHAUL",
+            "ELECTRONIC_INTERLOCKING_POH",
+            "TRACK_CIRCUIT_CALIBRATION"
+          ]
+        },
+        "section_id": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "SEC_DKDE_WAIR_DN",
+            "SEC_ALJN_HRS_DN",
+            "SEC_KRJ_SOM_DN"
+          ]
+        },
+        "track_line": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 2,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "DN",
+            "UP"
+          ]
+        },
+        "start_km": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": 25.8,
+          "max_value": 131.2,
+          "sample_values": [
+            "94.0",
+            "131.2",
+            "25.8"
+          ]
+        },
+        "end_km": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": 26.4,
+          "max_value": 132.0,
+          "sample_values": [
+            "62.0",
+            "43.0",
+            "94.8"
+          ]
+        },
+        "station_code": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "KRJ",
+            "DKDE",
+            "GZB"
+          ]
+        },
+        "required_duration_mins": {
+          "inferred_type": "integer",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 4,
+          "min_value": 90.0,
+          "max_value": 180.0,
+          "sample_values": [
+            "180",
+            "150",
+            "90"
+          ]
+        },
+        "safety_criticality": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": 7.8,
+          "max_value": 9.2,
+          "sample_values": [
+            "8.9",
+            "9.2",
+            "7.8"
+          ]
+        },
+        "asset_degradation_score": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": 7.3,
+          "max_value": 8.2,
+          "sample_values": [
+            "8.0",
+            "7.3",
+            "8.2"
+          ]
+        },
+        "urgency_days_overdue": {
+          "inferred_type": "integer",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": 5.0,
+          "max_value": 14.0,
+          "sample_values": [
+            "5",
+            "11",
+            "14"
+          ]
+        },
+        "gmt_accumulated": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": 55.0,
+          "max_value": 78.1,
+          "sample_values": [
+            "55.0",
+            "78.1",
+            "68.0"
+          ]
+        },
+        "requires_traffic_block": {
+          "inferred_type": "boolean",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 1,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "True"
+          ]
+        },
+        "requires_st_disconnection": {
+          "inferred_type": "boolean",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 1,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "True"
+          ]
+        },
+        "required_gangs": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 4,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "SNT_TECH_GANG_01",
+            "EI_SPECIALIST_TEAM",
+            "SNT_MAINT_GANG_01"
+          ]
+        },
+        "horizon": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 3,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "WEEKLY",
+            "MONTHLY",
+            "DAILY"
+          ]
+        },
+        "status": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 1,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "PENDING"
+          ]
+        }
+      }
+    },
+    "tms_defects_real.csv": {
+      "dataset_name": "tms_defects_real.csv",
+      "file_size_bytes": 1572,
+      "rows": 7,
+      "columns": 20,
+      "column_names": [
+        "task_id",
+        "task_name",
+        "task_category",
+        "section_id",
+        "track_line",
+        "start_km",
+        "end_km",
+        "station_code",
+        "required_duration_mins",
+        "safety_criticality",
+        "asset_degradation_score",
+        "urgency_days_overdue",
+        "gmt_accumulated",
+        "speed_restriction_if_deferred_kmh",
+        "requires_traffic_block",
+        "requires_power_block",
+        "required_machines",
+        "required_gangs",
+        "horizon",
+        "status"
+      ],
+      "duplicate_rows": 0,
+      "candidate_primary_keys": [
+        "task_id",
+        "task_name",
+        "end_km",
+        "safety_criticality",
+        "asset_degradation_score",
+        "urgency_days_overdue"
+      ],
+      "columns_detail": {
+        "task_id": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 7,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "TMS_KAG_004",
+            "TMS_KAG_003",
+            "TMS_KAG_007"
+          ]
+        },
+        "task_name": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 7,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "Rail Grinding RGM Profile Restoration",
+            "BCM Deep Screening of Track Bed",
+            "Emergency Weld Defect OBS Clamp Removal"
+          ]
+        },
+        "task_category": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 6,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "CWR_DESTRESSING",
+            "USFD_IMR_RAIL_FLAW",
+            "POINTS_CROSSING_TAMPING"
+          ]
+        },
+        "section_id": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 6,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "SEC_SOM_ALJN_UP",
+            "SEC_DKDE_WAIR_DN",
+            "SEC_ALJN_HRS_DN"
+          ]
+        },
+        "track_line": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 2,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "DN",
+            "UP"
+          ]
+        },
+        "start_km": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 6,
+          "min_value": 26.0,
+          "max_value": 135.0,
+          "sample_values": [
+            "94.0",
+            "42.0",
+            "118.5"
+          ]
+        },
+        "end_km": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 7,
+          "min_value": 26.5,
+          "max_value": 142.0,
+          "sample_values": [
+            "64.0",
+            "32.0",
+            "43.2"
+          ]
+        },
+        "station_code": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 6,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "KRJ",
+            "DKDE",
+            "GZB"
+          ]
+        },
+        "required_duration_mins": {
+          "inferred_type": "integer",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 6,
+          "min_value": 90.0,
+          "max_value": 300.0,
+          "sample_values": [
+            "300",
+            "90",
+            "180"
+          ]
+        },
+        "safety_criticality": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 7,
+          "min_value": 7.1,
+          "max_value": 9.9,
+          "sample_values": [
+            "8.4",
+            "9.7",
+            "9.9"
+          ]
+        },
+        "asset_degradation_score": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 7,
+          "min_value": 7.5,
+          "max_value": 9.5,
+          "sample_values": [
+            "8.4",
+            "7.5",
+            "9.2"
+          ]
+        },
+        "urgency_days_overdue": {
+          "inferred_type": "integer",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 7,
+          "min_value": 2.0,
+          "max_value": 18.0,
+          "sample_values": [
+            "9",
+            "12",
+            "18"
+          ]
+        },
+        "gmt_accumulated": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 6,
+          "min_value": 55.0,
+          "max_value": 82.0,
+          "sample_values": [
+            "55.0",
+            "82.0",
+            "78.1"
+          ]
+        },
+        "speed_restriction_if_deferred_kmh": {
+          "inferred_type": "integer",
+          "missing_count": 1,
+          "missing_percentage": 14.29,
+          "unique_count": 5,
+          "min_value": 20.0,
+          "max_value": 50.0,
+          "sample_values": [
+            "20",
+            "45",
+            "30"
+          ]
+        },
+        "requires_traffic_block": {
+          "inferred_type": "boolean",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 1,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "True"
+          ]
+        },
+        "requires_power_block": {
+          "inferred_type": "boolean",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 2,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "True",
+            "False"
+          ]
+        },
+        "required_machines": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 6,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "RAIL_TENSOR_01",
+            "RGM_GRINDER_01",
+            "WELD_GENSET_01"
+          ]
+        },
+        "required_gangs": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 6,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "RGM_CREW",
+            "BCM_HEAVY_CREW",
+            "PWAY_GANG_01"
+          ]
+        },
+        "horizon": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 3,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "WEEKLY",
+            "MONTHLY",
+            "DAILY"
+          ]
+        },
+        "status": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 1,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "PENDING"
+          ]
+        }
+      }
+    },
+    "schedules.csv": {
+      "dataset_name": "schedules.csv",
+      "file_size_bytes": 1139,
+      "rows": 32,
+      "columns": 7,
+      "column_names": [
+        "train_no",
+        "station_code",
+        "arrival_time",
+        "departure_time",
+        "halt_mins",
+        "distance_km",
+        "day_count"
+      ],
+      "duplicate_rows": 0,
+      "candidate_primary_keys": [],
+      "columns_detail": {
+        "train_no": {
+          "inferred_type": "integer",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 6,
+          "min_value": 12002.0,
+          "max_value": 64101.0,
+          "sample_values": [
+            "12418",
+            "12302",
+            "12002"
+          ]
+        },
+        "station_code": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 18,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "WAIR",
+            "AJR",
+            "MIU"
+          ]
+        },
+        "arrival_time": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 27,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "08:41",
+            "18:30",
+            "07:44"
+          ]
+        },
+        "departure_time": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 28,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "04:52",
+            "06:15",
+            "00:05"
+          ]
+        },
+        "halt_mins": {
+          "inferred_type": "integer",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": 0.0,
+          "max_value": 10.0,
+          "sample_values": [
+            "0",
+            "5",
+            "2"
+          ]
+        },
+        "distance_km": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 20,
+          "min_value": 0.0,
+          "max_value": 1445.0,
+          "sample_values": [
+            "436.0",
+            "204.0",
+            "630.0"
+          ]
+        },
+        "day_count": {
+          "inferred_type": "integer",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 2,
+          "min_value": 1.0,
+          "max_value": 2.0,
+          "sample_values": [
+            "1",
+            "2"
+          ]
+        }
+      }
+    },
+    "stations.csv": {
+      "dataset_name": "stations.csv",
+      "file_size_bytes": 1489,
+      "rows": 20,
+      "columns": 10,
+      "column_names": [
+        "station_code",
+        "station_name",
+        "division",
+        "zone",
+        "state",
+        "latitude",
+        "longitude",
+        "km_from_origin",
+        "has_yard",
+        "platforms"
+      ],
+      "duplicate_rows": 0,
+      "candidate_primary_keys": [
+        "station_code",
+        "station_name",
+        "latitude",
+        "longitude",
+        "km_from_origin"
+      ],
+      "columns_detail": {
+        "station_code": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 20,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "AJR",
+            "HRS",
+            "FTP"
+          ]
+        },
+        "station_name": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 20,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "Chola",
+            "Anand Vihar Terminal",
+            "Pt Deen Dayal Upadhyaya Jn"
+          ]
+        },
+        "division": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 3,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "Pt Deen Dayal Upadhyaya",
+            "Delhi",
+            "Prayagraj"
+          ]
+        },
+        "zone": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 3,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "NCR",
+            "NR",
+            "ECR"
+          ]
+        },
+        "state": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 2,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "Delhi",
+            "Uttar Pradesh"
+          ]
+        },
+        "latitude": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 20,
+          "min_value": 25.279,
+          "max_value": 28.673,
+          "sample_values": [
+            "25.4358",
+            "27.8974",
+            "26.7760"
+          ]
+        },
+        "longitude": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 20,
+          "min_value": 77.209,
+          "max_value": 83.118,
+          "sample_values": [
+            "78.0880",
+            "77.3150",
+            "77.9820"
+          ]
+        },
+        "km_from_origin": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 20,
+          "min_value": 0.0,
+          "max_value": 783.0,
+          "sample_values": [
+            "436.0",
+            "204.0",
+            "630.0"
+          ]
+        },
+        "has_yard": {
+          "inferred_type": "boolean",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 2,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "True",
+            "False"
+          ]
+        },
+        "platforms": {
+          "inferred_type": "integer",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 9,
+          "min_value": 2.0,
+          "max_value": 16.0,
+          "sample_values": [
+            "4",
+            "16",
+            "5"
+          ]
+        }
+      }
+    },
+    "trains.csv": {
+      "dataset_name": "trains.csv",
+      "file_size_bytes": 2134,
+      "rows": 26,
+      "columns": 11,
+      "column_names": [
+        "train_no",
+        "train_name",
+        "train_type",
+        "direction",
+        "origin",
+        "destination",
+        "departure_time",
+        "arrival_time",
+        "speed_kmh",
+        "priority_rank",
+        "is_freight"
+      ],
+      "duplicate_rows": 0,
+      "candidate_primary_keys": [
+        "train_no"
+      ],
+      "columns_detail": {
+        "train_no": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 26,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "G-POL-103",
+            "G-CONT-102",
+            "12398"
+          ]
+        },
+        "train_name": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 16,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "Freight Coal NCL Rake",
+            "Purushottam Express",
+            "Aligarh-Ghaziabad EMU Local"
+          ]
+        },
+        "train_type": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "FREIGHT_CONTAINER",
+            "PREMIUM_EXP",
+            "PASSENGER"
+          ]
+        },
+        "direction": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 2,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "DN",
+            "UP"
+          ]
+        },
+        "origin": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 12,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "GAYA",
+            "TDL",
+            "NDLS"
+          ]
+        },
+        "destination": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 14,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "GAYA",
+            "NDLS",
+            "BSB"
+          ]
+        },
+        "departure_time": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 24,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "18:15",
+            "11:30",
+            "06:15"
+          ]
+        },
+        "arrival_time": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 22,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "11:30",
+            "10:30",
+            "10:00"
+          ]
+        },
+        "speed_kmh": {
+          "inferred_type": "integer",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 7,
+          "min_value": 50.0,
+          "max_value": 130.0,
+          "sample_values": [
+            "130",
+            "110",
+            "55"
+          ]
+        },
+        "priority_rank": {
+          "inferred_type": "integer",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 7,
+          "min_value": 1.0,
+          "max_value": 9.0,
+          "sample_values": [
+            "9",
+            "5",
+            "2"
+          ]
+        },
+        "is_freight": {
+          "inferred_type": "boolean",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 2,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "True",
+            "False"
+          ]
+        }
+      }
+    },
+    "tdms_jobs_real.csv (auxiliary)": {
+      "dataset_name": "tdms_jobs_real.csv",
+      "file_size_bytes": 1291,
+      "rows": 5,
+      "columns": 20,
+      "column_names": [
+        "task_id",
+        "task_name",
+        "task_category",
+        "section_id",
+        "track_line",
+        "start_km",
+        "end_km",
+        "station_code",
+        "required_duration_mins",
+        "safety_criticality",
+        "asset_degradation_score",
+        "urgency_days_overdue",
+        "gmt_accumulated",
+        "requires_traffic_block",
+        "requires_power_block",
+        "required_machines",
+        "required_gangs",
+        "required_power_cut_substation",
+        "horizon",
+        "status"
+      ],
+      "duplicate_rows": 0,
+      "candidate_primary_keys": [
+        "task_id",
+        "task_name",
+        "task_category",
+        "section_id",
+        "start_km",
+        "end_km",
+        "station_code",
+        "safety_criticality",
+        "asset_degradation_score",
+        "urgency_days_overdue",
+        "gmt_accumulated",
+        "required_gangs"
+      ],
+      "columns_detail": {
+        "task_id": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "TDMS_KAG_004",
+            "TDMS_KAG_001",
+            "TDMS_KAG_002"
+          ]
+        },
+        "task_name": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "Hazardous Tree Branch Trimming (25kV Feeder)",
+            "25kV Vacuum Circuit Breaker Substation POH",
+            "OHE Cantilever Tuning & AOH by Tower Wagon"
+          ]
+        },
+        "task_category": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "SUBSTATION_CB_OVERHAUL",
+            "CONTACT_WIRE_RENEWAL",
+            "NEUTRAL_SECTION_MAINT"
+          ]
+        },
+        "section_id": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "SEC_DKDE_WAIR_DN",
+            "SEC_ALJN_HRS_DN",
+            "SEC_KRJ_SOM_DN"
+          ]
+        },
+        "track_line": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 2,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "DN",
+            "UP"
+          ]
+        },
+        "start_km": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": 26.0,
+          "max_value": 131.0,
+          "sample_values": [
+            "42.5",
+            "93.5",
+            "131.0"
+          ]
+        },
+        "end_km": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": 30.0,
+          "max_value": 131.5,
+          "sample_values": [
+            "95.0",
+            "131.5",
+            "43.5"
+          ]
+        },
+        "station_code": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "KRJ",
+            "DKDE",
+            "GZB"
+          ]
+        },
+        "required_duration_mins": {
+          "inferred_type": "integer",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 3,
+          "min_value": 120.0,
+          "max_value": 180.0,
+          "sample_values": [
+            "180",
+            "150",
+            "120"
+          ]
+        },
+        "safety_criticality": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": 7.5,
+          "max_value": 9.4,
+          "sample_values": [
+            "8.7",
+            "7.5",
+            "8.9"
+          ]
+        },
+        "asset_degradation_score": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": 6.9,
+          "max_value": 9.1,
+          "sample_values": [
+            "8.0",
+            "8.4",
+            "6.9"
+          ]
+        },
+        "urgency_days_overdue": {
+          "inferred_type": "integer",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": 4.0,
+          "max_value": 19.0,
+          "sample_values": [
+            "5",
+            "11",
+            "8"
+          ]
+        },
+        "gmt_accumulated": {
+          "inferred_type": "float",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": 55.0,
+          "max_value": 78.1,
+          "sample_values": [
+            "55.0",
+            "78.1",
+            "68.0"
+          ]
+        },
+        "requires_traffic_block": {
+          "inferred_type": "boolean",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 1,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "True"
+          ]
+        },
+        "requires_power_block": {
+          "inferred_type": "boolean",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 1,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "True"
+          ]
+        },
+        "required_machines": {
+          "inferred_type": "string",
+          "missing_count": 2,
+          "missing_percentage": 40.0,
+          "unique_count": 2,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "TOWER_WAGON_TRD_02",
+            "TOWER_WAGON_TRD_01"
+          ]
+        },
+        "required_gangs": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 5,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "PSI_SPECIALIST_TEAM",
+            "TRD_HEAVY_CREW",
+            "TRD_OHE_CREW_02"
+          ]
+        },
+        "required_power_cut_substation": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 4,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "TSS_KRJ_25KV",
+            "TSS_ALJN_25KV",
+            "TSS_DER_25KV"
+          ]
+        },
+        "horizon": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 2,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "MONTHLY",
+            "DAILY"
+          ]
+        },
+        "status": {
+          "inferred_type": "string",
+          "missing_count": 0,
+          "missing_percentage": 0.0,
+          "unique_count": 1,
+          "min_value": null,
+          "max_value": null,
+          "sample_values": [
+            "PENDING"
+          ]
+        }
+      }
+    }
+  },
+  "relational_integrity": {
+    "tms.station_code -> stations.station_code": {
+      "valid": true,
+      "total_distinct_keys": 6,
+      "matched_keys": 6,
+      "unmatched_keys": []
+    },
+    "smms.station_code -> stations.station_code": {
+      "valid": true,
+      "total_distinct_keys": 5,
+      "matched_keys": 5,
+      "unmatched_keys": []
+    },
+    "schedules.station_code -> stations.station_code": {
+      "valid": false,
+      "total_distinct_keys": 18,
+      "matched_keys": 16,
+      "unmatched_keys": [
+        "BSB",
+        "HWH"
+      ],
+      "note": "Unmatched stations (e.g. BSB, HWH) represent route terminuses outside the local NDLS-DDU master corridor."
+    },
+    "schedules.train_no -> trains.train_no": {
+      "valid": true,
+      "total_distinct_keys": 6,
+      "matched_keys": 6,
+      "unmatched_keys": []
+    }
+  }
+}

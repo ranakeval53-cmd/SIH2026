@@ -1,0 +1,55 @@
+dataset,column,data_type,description,source,nullable,transformation
+maintenance_tasks,task_id,string,Unique maintenance task identifier,tms_defects_real.csv / smms_faults_real.csv,false,Whitespace trimmed
+maintenance_tasks,department,string,"Railway maintenance department responsible for asset (TMS=Track/P-Way, SMMS=Signal & Telecom)",Derived during integration,false,Added during integration pipeline (TMS or SMMS)
+maintenance_tasks,task_name,string,Human-readable description of maintenance work or fault,tms_defects_real.csv / smms_faults_real.csv,false,Whitespace trimmed
+maintenance_tasks,task_category,string,Standardized category code of maintenance task,tms_defects_real.csv / smms_faults_real.csv,false,Uppercase standardized
+maintenance_tasks,section_id,string,Corridor track section identifier between bounding stations,tms_defects_real.csv / smms_faults_real.csv,false,Whitespace trimmed
+maintenance_tasks,track_line,string,Directional railway line (UP or DN),tms_defects_real.csv / smms_faults_real.csv,false,Uppercase standardized
+maintenance_tasks,start_km,float,Start kilometer post of the maintenance section,tms_defects_real.csv / smms_faults_real.csv,false,Converted to float
+maintenance_tasks,end_km,float,End kilometer post of the maintenance section,tms_defects_real.csv / smms_faults_real.csv,false,Converted to float
+maintenance_tasks,station_code,string,Alpha code of the governing railway station (foreign key to stations_clean),tms_defects_real.csv / smms_faults_real.csv,false,Uppercase standardized
+maintenance_tasks,required_duration_mins,integer,Required duration for maintenance block in minutes,tms_defects_real.csv / smms_faults_real.csv,false,Converted to integer
+maintenance_tasks,safety_criticality,float,Safety criticality score on 0 to 10 scale (higher indicates greater safety risk if deferred),tms_defects_real.csv / smms_faults_real.csv,false,Converted to float
+maintenance_tasks,asset_degradation_score,float,Asset physical degradation score on 0 to 10 scale,tms_defects_real.csv / smms_faults_real.csv,false,Converted to float
+maintenance_tasks,urgency_days_overdue,integer,Number of days elapsed past maintenance inspection/servicing due date,tms_defects_real.csv / smms_faults_real.csv,false,Converted to integer
+maintenance_tasks,gmt_accumulated,float,Gross Million Tonnes of rail traffic carried by asset section,tms_defects_real.csv / smms_faults_real.csv,false,Converted to float
+maintenance_tasks,speed_restriction_if_deferred_kmh,float,Imposed speed restriction in km/h if maintenance block is deferred (TMS only),tms_defects_real.csv,true,Parsed as float; 'None' or non-TMS set to null (NaN)
+maintenance_tasks,requires_traffic_block,boolean,Indicates whether train traffic must be halted during work,tms_defects_real.csv / smms_faults_real.csv,false,Standardized to boolean
+maintenance_tasks,requires_power_block,boolean,Indicates whether OHE electrical traction power shutdown is required,tms_defects_real.csv,true,Standardized to boolean; null for SMMS
+maintenance_tasks,requires_st_disconnection,boolean,Indicates whether signaling & telecom disconnection memo is required,smms_faults_real.csv,true,Standardized to boolean; null for TMS
+maintenance_tasks,required_machines,string,"Track maintenance machine identifier required (e.g. CSM tamping, BCM screening)",tms_defects_real.csv,true,Whitespace trimmed; null for SMMS
+maintenance_tasks,required_gangs,string,Maintenance crew or gang team designated for the task,tms_defects_real.csv / smms_faults_real.csv,false,Whitespace trimmed
+maintenance_tasks,horizon,string,"Planning scheduling horizon (DAILY, WEEKLY, MONTHLY)",tms_defects_real.csv / smms_faults_real.csv,false,Uppercase standardized
+maintenance_tasks,status,string,Operational lifecycle status of maintenance task,tms_defects_real.csv / smms_faults_real.csv,false,Uppercase standardized
+stations_clean,station_code,string,Standard Indian Railways alpha code for station,stations.csv,false,"Uppercase standardized, uniqueness validated"
+stations_clean,station_name,string,Full formal name of railway station,stations.csv,false,Whitespace trimmed
+stations_clean,division,string,Railway operational administrative division,stations.csv,false,Whitespace trimmed
+stations_clean,zone,string,"Zonal railway headquarters abbreviation (e.g. NR, NCR, ECR)",stations.csv,false,Whitespace trimmed
+stations_clean,state,string,State or Union Territory location of station,stations.csv,false,Whitespace trimmed
+stations_clean,latitude,float,Geographic latitude of station in decimal degrees,stations.csv,false,"Converted to float, validated within bounds"
+stations_clean,longitude,float,Geographic longitude of station in decimal degrees,stations.csv,false,"Converted to float, validated within bounds"
+stations_clean,km_from_origin,float,Cumulative distance along corridor from origin (NDLS = 0.0 km),stations.csv,false,Converted to float
+stations_clean,has_yard,boolean,Indicates whether the station has marshalling/stabling yard facilities,stations.csv,false,Standardized to boolean
+stations_clean,platforms,integer,Total number of passenger platforms available at station,stations.csv,false,Converted to integer
+trains_clean,train_no,string,Train identifier or 5-digit train number (string to preserve freight IDs),trains.csv,false,"Whitespace trimmed, uniqueness validated"
+trains_clean,train_name,string,Official train service name or freight service description,trains.csv,false,Whitespace trimmed
+trains_clean,train_type,string,"Train service tier (PREMIUM_EXP, MAIL_EXPRESS, PASSENGER, FREIGHT_BULK, FREIGHT_CONTAINER)",trains.csv,false,Uppercase standardized
+trains_clean,direction,string,Movement direction of train (UP or DN),trains.csv,false,Uppercase standardized
+trains_clean,origin,string,Origin station code,trains.csv,false,Uppercase standardized
+trains_clean,destination,string,Destination station code,trains.csv,false,Uppercase standardized
+trains_clean,departure_time,string,Scheduled departure time from origin station (HH:MM),trains.csv,false,Whitespace trimmed
+trains_clean,arrival_time,string,Scheduled arrival time at destination station (HH:MM),trains.csv,false,Whitespace trimmed
+trains_clean,speed_kmh,float,Maximum permissible operational speed in km/h,trains.csv,false,Converted to float
+trains_clean,priority_rank,integer,"Operational train priority rank (1 = highest priority, e.g. Vande Bharat / Rajdhani)",trains.csv,false,Converted to integer
+trains_clean,is_freight,boolean,Indicates whether the train is a goods/freight train,trains.csv,false,Standardized to boolean
+schedules_clean,train_no,string,Train number matching trains_clean,schedules.csv,false,Whitespace trimmed
+schedules_clean,station_code,string,Station code along the train route,schedules.csv,false,Uppercase standardized
+schedules_clean,arrival_time,string,Scheduled arrival time string (HH:MM or 'Source'),schedules.csv,false,Preserved original string format
+schedules_clean,departure_time,string,Scheduled departure time string (HH:MM or 'Destination'),schedules.csv,false,Preserved original string format
+schedules_clean,arrival_minutes,integer,Standardized arrival time in minutes from midnight (0 to 1439),Derived from arrival_time,true,Converted HH:MM to (HH*60)+MM; 'Source' safely converted to null
+schedules_clean,departure_minutes,integer,Standardized departure time in minutes from midnight (0 to 1439),Derived from departure_time,true,Converted HH:MM to (HH*60)+MM; 'Destination' safely converted to null
+schedules_clean,halt_mins,integer,Scheduled stoppage duration at station in minutes,schedules.csv,false,Converted to integer
+schedules_clean,distance_km,float,Cumulative route distance in km from train origin,schedules.csv,false,Converted to float
+schedules_clean,day_count,integer,"Journey day index (1 for day 1, 2 for day 2, etc.)",schedules.csv,false,Converted to integer
+task_features,work_length_km,float,Physical span of track maintenance block in km (end_km - start_km),Derived from start_km and end_km,false,"Calculated as round(end_km - start_km, 2)"
+task_features,has_speed_restriction,boolean,Indicator whether deferral causes an active temporary speed restriction (TSR),Derived from speed_restriction_if_deferred_kmh,false,"Boolean flag: True if speed_restriction_if_deferred_kmh > 0, else False"

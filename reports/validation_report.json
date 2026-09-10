@@ -1,0 +1,282 @@
+{
+  "title": "SIH 26027 Data Pipeline Validation Report",
+  "overall_status": "PASS",
+  "total_checks": 30,
+  "passed_checks": 30,
+  "failed_checks": 0,
+  "checks": [
+    {
+      "category": "Maintenance (maintenance_tasks)",
+      "test_name": "task_count",
+      "passed": true,
+      "details": "Expected 12 maintenance tasks, found 12",
+      "context": {
+        "count": 12
+      }
+    },
+    {
+      "category": "Maintenance (maintenance_tasks)",
+      "test_name": "task_id_uniqueness",
+      "passed": true,
+      "details": "Task IDs must be unique and non-empty. Unique: 12, Total: 12",
+      "context": {
+        "duplicate_count": 0
+      }
+    },
+    {
+      "category": "Maintenance (maintenance_tasks)",
+      "test_name": "required_identifiers_present",
+      "passed": true,
+      "details": "All tasks must have task_id, department, station_code, and section_id",
+      "context": {
+        "records_missing_identifiers": 0
+      }
+    },
+    {
+      "category": "Maintenance (maintenance_tasks)",
+      "test_name": "positive_required_durations",
+      "passed": true,
+      "details": "All required durations must be strictly positive",
+      "context": {
+        "invalid_durations": []
+      }
+    },
+    {
+      "category": "Maintenance (maintenance_tasks)",
+      "test_name": "valid_criticality_scores",
+      "passed": true,
+      "details": "Safety criticality and asset degradation scores must be in range [0.0, 10.0]",
+      "context": {
+        "invalid_scores": []
+      }
+    },
+    {
+      "category": "Maintenance (maintenance_tasks)",
+      "test_name": "valid_track_line_categories",
+      "passed": true,
+      "details": "Track lines must be one of UP, DN, BOTH, or SINGLE",
+      "context": {
+        "invalid_track_lines": []
+      }
+    },
+    {
+      "category": "Maintenance (maintenance_tasks_enriched)",
+      "test_name": "task_count",
+      "passed": true,
+      "details": "Expected 12 maintenance tasks, found 12",
+      "context": {
+        "count": 12
+      }
+    },
+    {
+      "category": "Maintenance (maintenance_tasks_enriched)",
+      "test_name": "task_id_uniqueness",
+      "passed": true,
+      "details": "Task IDs must be unique and non-empty. Unique: 12, Total: 12",
+      "context": {
+        "duplicate_count": 0
+      }
+    },
+    {
+      "category": "Maintenance (maintenance_tasks_enriched)",
+      "test_name": "required_identifiers_present",
+      "passed": true,
+      "details": "All tasks must have task_id, department, station_code, and section_id",
+      "context": {
+        "records_missing_identifiers": 0
+      }
+    },
+    {
+      "category": "Maintenance (maintenance_tasks_enriched)",
+      "test_name": "positive_required_durations",
+      "passed": true,
+      "details": "All required durations must be strictly positive",
+      "context": {
+        "invalid_durations": []
+      }
+    },
+    {
+      "category": "Maintenance (maintenance_tasks_enriched)",
+      "test_name": "valid_criticality_scores",
+      "passed": true,
+      "details": "Safety criticality and asset degradation scores must be in range [0.0, 10.0]",
+      "context": {
+        "invalid_scores": []
+      }
+    },
+    {
+      "category": "Maintenance (maintenance_tasks_enriched)",
+      "test_name": "valid_track_line_categories",
+      "passed": true,
+      "details": "Track lines must be one of UP, DN, BOTH, or SINGLE",
+      "context": {
+        "invalid_track_lines": []
+      }
+    },
+    {
+      "category": "Maintenance (task_features)",
+      "test_name": "task_count",
+      "passed": true,
+      "details": "Expected 12 maintenance tasks, found 12",
+      "context": {
+        "count": 12
+      }
+    },
+    {
+      "category": "Maintenance (task_features)",
+      "test_name": "task_id_uniqueness",
+      "passed": true,
+      "details": "Task IDs must be unique and non-empty. Unique: 12, Total: 12",
+      "context": {
+        "duplicate_count": 0
+      }
+    },
+    {
+      "category": "Maintenance (task_features)",
+      "test_name": "required_identifiers_present",
+      "passed": true,
+      "details": "All tasks must have task_id, department, station_code, and section_id",
+      "context": {
+        "records_missing_identifiers": 0
+      }
+    },
+    {
+      "category": "Maintenance (task_features)",
+      "test_name": "positive_required_durations",
+      "passed": true,
+      "details": "All required durations must be strictly positive",
+      "context": {
+        "invalid_durations": []
+      }
+    },
+    {
+      "category": "Maintenance (task_features)",
+      "test_name": "valid_criticality_scores",
+      "passed": true,
+      "details": "Safety criticality and asset degradation scores must be in range [0.0, 10.0]",
+      "context": {
+        "invalid_scores": []
+      }
+    },
+    {
+      "category": "Maintenance (task_features)",
+      "test_name": "valid_track_line_categories",
+      "passed": true,
+      "details": "Track lines must be one of UP, DN, BOTH, or SINGLE",
+      "context": {
+        "invalid_track_lines": []
+      }
+    },
+    {
+      "category": "Stations (stations_clean)",
+      "test_name": "station_code_uniqueness",
+      "passed": true,
+      "details": "Station codes must be unique. Total: 20, Unique: 20",
+      "context": {
+        "total_stations": 20
+      }
+    },
+    {
+      "category": "Stations (stations_clean)",
+      "test_name": "valid_geographic_coordinates",
+      "passed": true,
+      "details": "Station coordinates must fall within valid geographic bounds for Indian Railways",
+      "context": {
+        "invalid_coordinates": []
+      }
+    },
+    {
+      "category": "Stations (stations_clean)",
+      "test_name": "positive_platform_counts",
+      "passed": true,
+      "details": "Station platforms must be integers >= 1",
+      "context": {
+        "invalid_platforms": []
+      }
+    },
+    {
+      "category": "Trains (trains_clean)",
+      "test_name": "train_no_uniqueness",
+      "passed": true,
+      "details": "Train identifiers must be unique. Total: 26, Unique: 26",
+      "context": {
+        "total_trains": 26
+      }
+    },
+    {
+      "category": "Trains (trains_clean)",
+      "test_name": "valid_train_directions",
+      "passed": true,
+      "details": "Train direction must be either 'UP' or 'DN'",
+      "context": {
+        "invalid_directions": []
+      }
+    },
+    {
+      "category": "Trains (trains_clean)",
+      "test_name": "positive_train_speeds",
+      "passed": true,
+      "details": "Train speeds must be positive numeric values in km/h",
+      "context": {
+        "invalid_speeds": []
+      }
+    },
+    {
+      "category": "Schedules (schedules_clean)",
+      "test_name": "schedule_trains_exist_in_master",
+      "passed": true,
+      "details": "All scheduled train numbers must exist in Train Master",
+      "context": {
+        "unmatched_trains": []
+      }
+    },
+    {
+      "category": "Schedules (schedules_clean)",
+      "test_name": "non_negative_halt_duration",
+      "passed": true,
+      "details": "Halt durations must be non-negative (>= 0 mins)",
+      "context": {
+        "invalid_halts": []
+      }
+    },
+    {
+      "category": "Schedules (schedules_clean)",
+      "test_name": "valid_day_counts",
+      "passed": true,
+      "details": "Day count must be >= 1",
+      "context": {
+        "invalid_days": []
+      }
+    },
+    {
+      "category": "Schedules (schedules_clean)",
+      "test_name": "valid_time_minutes_range",
+      "passed": true,
+      "details": "Arrival and departure minutes must be in range [0, 1439] (minutes in day)",
+      "context": {
+        "invalid_arrival_minutes": [],
+        "invalid_departure_minutes": []
+      }
+    },
+    {
+      "category": "Integration & Enrichment",
+      "test_name": "concatenation_row_preservation",
+      "passed": true,
+      "details": "Total raw maintenance tasks (12) must equal unified maintenance tasks (12)",
+      "context": {
+        "raw_total": 12,
+        "unified_total": 12
+      }
+    },
+    {
+      "category": "Integration & Enrichment",
+      "test_name": "station_enrichment_no_multiplication",
+      "passed": true,
+      "details": "Rows before enrichment (12) must equal rows after enrichment (12)",
+      "context": {
+        "rows_before": 12,
+        "rows_after": 12
+      }
+    }
+  ]
+}
