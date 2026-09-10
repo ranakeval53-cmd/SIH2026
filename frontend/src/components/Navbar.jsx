@@ -60,7 +60,6 @@ export default function Navbar({
   const approverNavItems = [
     { id: 'approver-dashboard', label: 'Command Center', icon: Shield },
     { id: 'pending-requests', label: 'Pending Requests', icon: FileCheck2 },
-    { id: 'sanctions', label: 'Sanction Memos', icon: FileText },
     { id: 'approver-analytics', label: 'Approval Analytics', icon: BarChart3 },
     { id: 'approval-history', label: 'Audit History', icon: Clock }
   ];

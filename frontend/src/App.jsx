@@ -83,6 +83,16 @@ export default function App() {
     setTimeout(() => setToastMessage(null), 4500);
   };
 
+  const handleOpenMemo = (reqOrId) => {
+    if (!reqOrId) return;
+    if (typeof reqOrId === 'object') {
+      setSelectedBlock(reqOrId);
+    } else {
+      const found = scheduleData?.blocks?.find(b => b.id === reqOrId || b.block_id === reqOrId);
+      setSelectedBlock(found || { id: reqOrId });
+    }
+  };
+
   const handleLogin = (user) => {
     setCurrentUser(user);
     const newMode = user.systemRole === 'APPROVER' ? 'APPROVER' : 'OPERATIONS';
@@ -305,7 +315,7 @@ export default function App() {
               <ApproverDashboard 
                 currentUser={currentUser}
                 onApproveBlock={(b) => setSelectedBlock(b)}
-                onViewMemo={(bId) => setSelectedBlock({ id: bId })}
+                onViewMemo={handleOpenMemo}
                 scheduleData={scheduleData}
               />
             )}
@@ -314,20 +324,9 @@ export default function App() {
               <ApproverDashboard 
                 currentUser={currentUser}
                 onApproveBlock={(b) => setSelectedBlock(b)}
-                onViewMemo={(bId) => setSelectedBlock({ id: bId })}
+                onViewMemo={handleOpenMemo}
                 scheduleData={scheduleData}
               />
-            )}
-
-            {activeTab === 'sanctions' && (
-              <div style={{ padding: '1.5rem', maxWidth: '1440px', margin: '0 auto' }}>
-                <ApproverDashboard 
-                  currentUser={currentUser}
-                  onApproveBlock={(b) => setSelectedBlock(b)}
-                  onViewMemo={(bId) => setSelectedBlock({ id: bId })}
-                  scheduleData={scheduleData}
-                />
-              </div>
             )}
 
             {activeTab === 'approver-analytics' && (
@@ -349,7 +348,7 @@ export default function App() {
                 <ApproverDashboard 
                   currentUser={currentUser}
                   onApproveBlock={(b) => setSelectedBlock(b)}
-                  onViewMemo={(bId) => setSelectedBlock({ id: bId })}
+                  onViewMemo={handleOpenMemo}
                   scheduleData={scheduleData}
                 />
               </div>

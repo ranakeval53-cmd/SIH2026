@@ -845,7 +845,7 @@ export default function ApproverDashboard({
             {/* Decision Action Buttons */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem' }}>
               <button
-                onClick={() => onViewMemo(selectedRequest.request_id)}
+                onClick={() => onViewMemo(selectedRequest)}
                 className="btn-outline"
                 style={{ fontSize: '0.78rem', gap: '0.35rem' }}
               >
