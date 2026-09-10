@@ -1,0 +1,22 @@
+{
+  "name": "railopt-ai-sih2026",
+  "version": "1.0.0",
+  "description": "RailOpt AI — AI-Powered Automatic Block Planning to Maximize Asset Availability for Train Operations on Indian Railways (SIH26027)",
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "build": "npm --prefix frontend run build",
+    "dev": "npm --prefix frontend run dev",
+    "start": "npm --prefix frontend run dev",
+    "preview": "npm --prefix frontend run preview",
+    "test": "pytest",
+    "install:all": "npm --prefix frontend install",
+    "run:backend": "python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000",
+    "run:ai": "python -m backend.app.services.run_ai",
+    "pipeline": "python src/data_pipeline.py"
+  },
+  "author": "Team Techtonic (Smart India Hackathon 2026)",
+  "license": "MIT"
+}
