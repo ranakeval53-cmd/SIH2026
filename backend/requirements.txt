@@ -1,0 +1,23 @@
+# Dependencies for the AI & Intelligence Layer (backend/app/services, backend/app/utils).
+# The root-level requirements.txt (pandas, numpy) belongs to the Data Integration
+# module and is left untouched; this file is additive for the AI layer.
+
+pandas>=2.2.0
+numpy>=2.0.0
+ortools>=9.9
+
+# Recommendation + Visualization + Planner Dashboard API layer
+# (backend/app/api/). Frontend is static HTML/CSS/JS served by FastAPI
+# itself - no Node/npm build step required. See DASHBOARD.md.
+fastapi>=0.110
+uvicorn>=0.29
+
+# Test runner (dev-only, not needed to execute run_ai.py itself).
+pytest>=8.0
+httpx>=0.27  # used by tests/test_api.py via FastAPI's TestClient
+
+# NOTE: python-dateutil was evaluated (it was on the suggested dependency list)
+# but is NOT required: every time field in data/processed/ is already a clean
+# 'HH:MM' string produced by the Data Integration module, so the built-in
+# str.split(':') parsing in backend/app/utils/time_utils.py is sufficient and
+# adding dateutil would be an unused dependency. See AI_LAYER.md.

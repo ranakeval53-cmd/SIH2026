@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Techtonic Planner Dashboard - PS 26027</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-title"><span class="brand-mark"></span>Techtonic Planner</div>
+        <div class="brand-sub">PS 26027 &middot; AI-Powered Automatic Block Planning</div>
+      </div>
+      <nav class="nav">
+        <div class="nav-item active" data-view="dashboard"><span class="nav-icon">&#9635;</span>Dashboard</div>
+        <div class="nav-item" data-view="planner"><span class="nav-icon">&#128197;</span>Planner / Block Plan</div>
+        <div class="nav-item" data-view="recommendations"><span class="nav-icon">&#9733;</span>Recommendations</div>
+        <div class="nav-item" data-view="tasks"><span class="nav-icon">&#9776;</span>Tasks</div>
+        <div class="nav-item" data-view="conflicts"><span class="nav-icon">&#9888;</span>Conflicts &amp; Alerts</div>
+        <div class="nav-item" data-view="analytics"><span class="nav-icon">&#128202;</span>Analytics</div>
+        <div class="nav-item" data-view="reports"><span class="nav-icon">&#128196;</span>Reports</div>
+      </nav>
+      <div class="sidebar-footer">Team Techtonic &middot; Smart India Hackathon 2026</div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div>
+          <div class="topbar-title">Railway Maintenance Block Planner</div>
+          <div class="topbar-sub" id="last-updated">Loading plan...</div>
+        </div>
+        <div class="topbar-spacer"></div>
+        <div class="status-pill" id="opt-status-pill">Optimizer: -</div>
+        <div class="status-pill" id="val-status-pill">Validation: -</div>
+        <button class="btn sm" id="recompute-btn">&#8635; Recompute Plan</button>
+        <button class="icon-btn" id="alert-bell" title="Conflicts &amp; Alerts">
+          &#128276;
+          <span class="dot-count" id="alert-dot-count" style="display:none;">0</span>
+        </button>
+      </header>
+
+      <main class="content">
+        <section id="view-dashboard" class="view active">
+          <div class="view-header">
+            <div><h1>Dashboard</h1><p>Live operational overview of the AI-generated maintenance block plan.</p></div>
+          </div>
+          <div id="dashboard-root"></div>
+        </section>
+
+        <section id="view-planner" class="view">
+          <div class="view-header">
+            <div><h1>Planner &middot; Block Plan</h1><p>Timeline and table view of every proposed maintenance block. Click a block to review, approve, edit, or reject it.</p></div>
+          </div>
+          <div id="planner-timeline-root" style="margin-bottom:16px;"></div>
+          <div class="card">
+            <div class="panel-title-row"><h2>Block Details</h2></div>
+            <div id="planner-table-root"></div>
+          </div>
+        </section>
+
+        <section id="view-recommendations" class="view">
+          <div class="view-header">
+            <div><h1>AI Recommendations</h1><p>Ranked by recommendation score (priority, conflict risk, availability benefit). Human review is required for every block.</p></div>
+          </div>
+          <div class="filters" id="rec-filters"></div>
+          <div id="recommendations-root"></div>
+        </section>
+
+        <section id="view-tasks" class="view">
+          <div class="view-header">
+            <div><h1>Task Queue</h1><p>Every maintenance task, its AI priority, and its current scheduling status.</p></div>
+          </div>
+          <div class="filters" id="task-filters"></div>
+          <div id="tasks-root"></div>
+        </section>
+
+        <section id="view-conflicts" class="view">
+          <div class="view-header">
+            <div><h1>Conflicts &amp; Alerts</h1><p>Active conflicts detected by the Conflict Engine, plus the live alert center.</p></div>
+          </div>
+          <div class="grid cols-2">
+            <div class="card">
+              <div class="panel-title-row"><h2>Active Conflicts</h2></div>
+              <div id="conflicts-root"></div>
+            </div>
+            <div class="card">
+              <div class="panel-title-row"><h2>Alert Center</h2></div>
+              <div id="alerts-root"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-analytics" class="view">
+          <div class="view-header">
+            <div><h1>Analytics</h1><p>Department load, priority mix, block status, availability impact, and conflict trends.</p></div>
+          </div>
+          <div id="analytics-root"></div>
+        </section>
+
+        <section id="view-reports" class="view">
+          <div class="view-header">
+            <div><h1>Reports</h1><p>Exportable block plan, maintenance summary, and planner decision log.</p></div>
+          </div>
+          <div id="reports-root"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div id="modal-root"></div>
+  <div id="toast-root"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

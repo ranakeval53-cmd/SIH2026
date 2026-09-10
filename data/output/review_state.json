@@ -1,0 +1,118 @@
+{
+  "review_state": {
+    "BLK_0003": {
+      "status": "APPROVED",
+      "audit": [
+        {
+          "action": "APPROVE",
+          "timestamp": "2026-09-10T09:04:10.993942+00:00",
+          "note": ""
+        }
+      ],
+      "edited_sub_windows": null,
+      "edited_task_ids": null
+    },
+    "BLK_0007": {
+      "status": "REJECTED",
+      "audit": [
+        {
+          "action": "REJECT",
+          "timestamp": "2026-09-10T09:05:13.714802+00:00",
+          "reason": "Train schedule conflict not acceptable",
+          "note": ""
+        }
+      ],
+      "edited_sub_windows": null,
+      "edited_task_ids": null,
+      "rejection_reason": "Train schedule conflict not acceptable"
+    }
+  },
+  "alert_log": [
+    {
+      "alert_id": "EVT_0_1789031050993",
+      "type": "SCHEDULE_CHANGE",
+      "severity": "LOW",
+      "message": "Block BLK_0003 approved by planner.",
+      "related_id": "BLK_0003",
+      "timestamp": "2026-09-10T09:04:10.993974+00:00",
+      "read": false,
+      "acknowledged": false
+    },
+    {
+      "alert_id": "EVT_1_1789031113714",
+      "type": "SCHEDULE_CHANGE",
+      "severity": "HIGH",
+      "message": "Block BLK_0007 rejected by planner: Train schedule conflict not acceptable",
+      "related_id": "BLK_0007",
+      "timestamp": "2026-09-10T09:05:13.714849+00:00",
+      "read": false,
+      "acknowledged": false
+    }
+  ],
+  "alert_flags": {
+    "CRIT_BLK_0003": {
+      "read": true,
+      "acknowledged": true
+    },
+    "APPROVAL_BLK_0003": {
+      "read": false,
+      "acknowledged": false
+    },
+    "CRIT_BLK_0007": {
+      "read": false,
+      "acknowledged": false
+    },
+    "APPROVAL_BLK_0007": {
+      "read": false,
+      "acknowledged": false
+    },
+    "APPROVAL_BLK_0004": {
+      "read": false,
+      "acknowledged": false
+    },
+    "APPROVAL_BLK_0008": {
+      "read": false,
+      "acknowledged": false
+    },
+    "APPROVAL_BLK_0002": {
+      "read": false,
+      "acknowledged": false
+    },
+    "TRAIN_BLK_0009_G-CEM-104": {
+      "read": false,
+      "acknowledged": false
+    },
+    "UNSAFE_BLK_0009": {
+      "read": false,
+      "acknowledged": false
+    },
+    "APPROVAL_BLK_0009": {
+      "read": false,
+      "acknowledged": false
+    },
+    "APPROVAL_BLK_0001": {
+      "read": false,
+      "acknowledged": false
+    },
+    "APPROVAL_BLK_0005": {
+      "read": false,
+      "acknowledged": false
+    },
+    "APPROVAL_BLK_0006": {
+      "read": false,
+      "acknowledged": false
+    },
+    "AVAILABILITY_RISK": {
+      "read": false,
+      "acknowledged": false
+    },
+    "OVERDUE_TMS_KAG_001": {
+      "read": false,
+      "acknowledged": false
+    },
+    "OVERDUE_TMS_KAG_006": {
+      "read": false,
+      "acknowledged": false
+    }
+  }
+}

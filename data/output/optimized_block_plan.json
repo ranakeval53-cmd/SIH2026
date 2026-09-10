@@ -1,0 +1,949 @@
+{
+  "status": "APPROVED",
+  "blocks": [
+    {
+      "block_id": "BLK_0001",
+      "start_time": "D1 00:00",
+      "end_time": "D1 01:30",
+      "duration_minutes": 90,
+      "fused": false,
+      "fusion_reason": null,
+      "tasks": [
+        {
+          "task_id": "SMMS_KAG_004",
+          "task_name": "AFTC Glued Insulated Joint Maintenance",
+          "department": "SMMS",
+          "section_id": "SEC_KRJ_SOM_DN",
+          "track_line": "DN",
+          "station_code": "KRJ",
+          "start_km": 94.0,
+          "end_km": 94.8,
+          "start_time": "D1 00:00",
+          "end_time": "D1 01:30",
+          "priority_score": 83.36,
+          "priority_class": "HIGH"
+        }
+      ],
+      "departments": [
+        "SMMS"
+      ],
+      "sections": [
+        "SEC_KRJ_SOM_DN"
+      ],
+      "track_lines": [
+        "DN"
+      ],
+      "stations": [
+        "KRJ"
+      ],
+      "priority_score": 83.36,
+      "conflicts": [],
+      "status": "SCHEDULED"
+    },
+    {
+      "block_id": "BLK_0002",
+      "start_time": "D1 00:00",
+      "end_time": "D1 03:00",
+      "duration_minutes": 180,
+      "fused": false,
+      "fusion_reason": null,
+      "tasks": [
+        {
+          "task_id": "SMMS_KAG_005",
+          "task_name": "Electronic Interlocking Executive Diagnostic",
+          "department": "SMMS",
+          "section_id": "SEC_ALJN_HRS_DN",
+          "track_line": "DN",
+          "station_code": "ALJN",
+          "start_km": 131.2,
+          "end_km": 132.0,
+          "start_time": "D1 00:00",
+          "end_time": "D1 03:00",
+          "priority_score": 76.45,
+          "priority_class": "HIGH"
+        }
+      ],
+      "departments": [
+        "SMMS"
+      ],
+      "sections": [
+        "SEC_ALJN_HRS_DN"
+      ],
+      "track_lines": [
+        "DN"
+      ],
+      "stations": [
+        "ALJN"
+      ],
+      "priority_score": 76.45,
+      "conflicts": [],
+      "status": "SCHEDULED"
+    },
+    {
+      "block_id": "BLK_0003",
+      "start_time": "D1 00:00",
+      "end_time": "D1 06:00",
+      "duration_minutes": 360,
+      "fused": true,
+      "fusion_reason": "TMS_KAG_002 and SMMS_KAG_001 share a track km overlap - fusing them into one sequential block (TMS_KAG_002 then SMMS_KAG_001, 360 min total) avoids requesting two separate traffic blocks.",
+      "tasks": [
+        {
+          "task_id": "TMS_KAG_002",
+          "task_name": "CSM Track Tamping & Alignment KM 26.0-32.0",
+          "department": "TMS",
+          "section_id": "SEC_GZB_MIU_UP",
+          "track_line": "UP",
+          "station_code": "GZB",
+          "start_km": 26.0,
+          "end_km": 32.0,
+          "start_time": "D1 00:00",
+          "end_time": "D1 03:30",
+          "priority_score": 81.83,
+          "priority_class": "HIGH"
+        },
+        {
+          "task_id": "SMMS_KAG_001",
+          "task_name": "Point Machine 104A/B POH & Disconnection",
+          "department": "SMMS",
+          "section_id": "SEC_GZB_MIU_UP",
+          "track_line": "UP",
+          "station_code": "GZB",
+          "start_km": 25.8,
+          "end_km": 26.4,
+          "start_time": "D1 03:30",
+          "end_time": "D1 06:00",
+          "priority_score": 86.04,
+          "priority_class": "CRITICAL"
+        }
+      ],
+      "departments": [
+        "SMMS",
+        "TMS"
+      ],
+      "sections": [
+        "SEC_GZB_MIU_UP"
+      ],
+      "track_lines": [
+        "UP"
+      ],
+      "stations": [
+        "GZB"
+      ],
+      "priority_score": 86.04,
+      "conflicts": [],
+      "status": "SCHEDULED"
+    },
+    {
+      "block_id": "BLK_0004",
+      "start_time": "D1 00:00",
+      "end_time": "D1 04:30",
+      "duration_minutes": 270,
+      "fused": true,
+      "fusion_reason": "TMS_KAG_003 and SMMS_KAG_002 share a track km overlap - fusing them into one sequential block (TMS_KAG_003 then SMMS_KAG_002, 270 min total) avoids requesting two separate traffic blocks.",
+      "tasks": [
+        {
+          "task_id": "TMS_KAG_003",
+          "task_name": "Turnout 102 Diamond Crossing Overhaul",
+          "department": "TMS",
+          "section_id": "SEC_DER_AJR_UP",
+          "track_line": "UP",
+          "station_code": "DER",
+          "start_km": 42.0,
+          "end_km": 43.2,
+          "start_time": "D1 00:00",
+          "end_time": "D1 03:00",
+          "priority_score": 74.38,
+          "priority_class": "HIGH"
+        },
+        {
+          "task_id": "SMMS_KAG_002",
+          "task_name": "DC Track Circuit Relay Overhaul & Tuning",
+          "department": "SMMS",
+          "section_id": "SEC_DER_AJR_UP",
+          "track_line": "UP",
+          "station_code": "DER",
+          "start_km": 42.2,
+          "end_km": 43.0,
+          "start_time": "D1 03:00",
+          "end_time": "D1 04:30",
+          "priority_score": 78.29,
+          "priority_class": "HIGH"
+        }
+      ],
+      "departments": [
+        "SMMS",
+        "TMS"
+      ],
+      "sections": [
+        "SEC_DER_AJR_UP"
+      ],
+      "track_lines": [
+        "UP"
+      ],
+      "stations": [
+        "DER"
+      ],
+      "priority_score": 78.29,
+      "conflicts": [],
+      "status": "SCHEDULED"
+    },
+    {
+      "block_id": "BLK_0005",
+      "start_time": "D1 03:00",
+      "end_time": "D1 06:00",
+      "duration_minutes": 180,
+      "fused": false,
+      "fusion_reason": null,
+      "tasks": [
+        {
+          "task_id": "TMS_KAG_005",
+          "task_name": "CWR Destressing & Rail Tensor Clamping",
+          "department": "TMS",
+          "section_id": "SEC_KRJ_SOM_DN",
+          "track_line": "DN",
+          "station_code": "KRJ",
+          "start_km": 94.0,
+          "end_km": 98.0,
+          "start_time": "D1 03:00",
+          "end_time": "D1 06:00",
+          "priority_score": 71.77,
+          "priority_class": "HIGH"
+        }
+      ],
+      "departments": [
+        "TMS"
+      ],
+      "sections": [
+        "SEC_KRJ_SOM_DN"
+      ],
+      "track_lines": [
+        "DN"
+      ],
+      "stations": [
+        "KRJ"
+      ],
+      "priority_score": 71.77,
+      "conflicts": [],
+      "status": "SCHEDULED"
+    },
+    {
+      "block_id": "BLK_0006",
+      "start_time": "D1 03:00",
+      "end_time": "D1 05:00",
+      "duration_minutes": 120,
+      "fused": false,
+      "fusion_reason": null,
+      "tasks": [
+        {
+          "task_id": "SMMS_KAG_003",
+          "task_name": "MSDAC Digital Axle Counter Calibration",
+          "department": "SMMS",
+          "section_id": "SEC_DKDE_WAIR_DN",
+          "track_line": "DN",
+          "station_code": "DKDE",
+          "start_km": 61.0,
+          "end_km": 62.0,
+          "start_time": "D1 03:00",
+          "end_time": "D1 05:00",
+          "priority_score": 69.25,
+          "priority_class": "HIGH"
+        }
+      ],
+      "departments": [
+        "SMMS"
+      ],
+      "sections": [
+        "SEC_DKDE_WAIR_DN"
+      ],
+      "track_lines": [
+        "DN"
+      ],
+      "stations": [
+        "DKDE"
+      ],
+      "priority_score": 69.25,
+      "conflicts": [],
+      "status": "SCHEDULED"
+    },
+    {
+      "block_id": "BLK_0007",
+      "start_time": "D1 07:00",
+      "end_time": "D1 10:30",
+      "duration_minutes": 210,
+      "fused": true,
+      "fusion_reason": "TMS_KAG_001 and TMS_KAG_006 share a resource conflict - fusing them into one sequential block (TMS_KAG_001 then TMS_KAG_006, 210 min total) avoids requesting two separate traffic blocks.",
+      "tasks": [
+        {
+          "task_id": "TMS_KAG_001",
+          "task_name": "Emergency IMR Rail Flaw Renewal KM 26.2",
+          "department": "TMS",
+          "section_id": "SEC_GZB_MIU_UP",
+          "track_line": "UP",
+          "station_code": "GZB",
+          "start_km": 26.0,
+          "end_km": 26.5,
+          "start_time": "D1 07:00",
+          "end_time": "D1 09:00",
+          "priority_score": 91.14,
+          "priority_class": "CRITICAL"
+        },
+        {
+          "task_id": "TMS_KAG_006",
+          "task_name": "Emergency Weld Defect OBS Clamp Removal",
+          "department": "TMS",
+          "section_id": "SEC_SOM_ALJN_UP",
+          "track_line": "UP",
+          "station_code": "SOM",
+          "start_km": 118.5,
+          "end_km": 119.0,
+          "start_time": "D1 09:00",
+          "end_time": "D1 10:30",
+          "priority_score": 79.34,
+          "priority_class": "HIGH"
+        }
+      ],
+      "departments": [
+        "TMS"
+      ],
+      "sections": [
+        "SEC_GZB_MIU_UP",
+        "SEC_SOM_ALJN_UP"
+      ],
+      "track_lines": [
+        "UP"
+      ],
+      "stations": [
+        "GZB",
+        "SOM"
+      ],
+      "priority_score": 91.14,
+      "conflicts": [],
+      "status": "SCHEDULED"
+    },
+    {
+      "block_id": "BLK_0008",
+      "start_time": "D1 08:00",
+      "end_time": "D1 12:00",
+      "duration_minutes": 240,
+      "fused": false,
+      "fusion_reason": null,
+      "tasks": [
+        {
+          "task_id": "TMS_KAG_007",
+          "task_name": "Rail Grinding RGM Profile Restoration",
+          "department": "TMS",
+          "section_id": "SEC_ALJN_HRS_DN",
+          "track_line": "DN",
+          "station_code": "ALJN",
+          "start_km": 135.0,
+          "end_km": 142.0,
+          "start_time": "D1 08:00",
+          "end_time": "D1 12:00",
+          "priority_score": 77.07,
+          "priority_class": "HIGH"
+        }
+      ],
+      "departments": [
+        "TMS"
+      ],
+      "sections": [
+        "SEC_ALJN_HRS_DN"
+      ],
+      "track_lines": [
+        "DN"
+      ],
+      "stations": [
+        "ALJN"
+      ],
+      "priority_score": 77.07,
+      "conflicts": [],
+      "status": "SCHEDULED"
+    },
+    {
+      "block_id": "BLK_0009",
+      "start_time": "D1 10:00",
+      "end_time": "D1 15:00",
+      "duration_minutes": 300,
+      "fused": false,
+      "fusion_reason": null,
+      "tasks": [
+        {
+          "task_id": "TMS_KAG_004",
+          "task_name": "BCM Deep Screening of Track Bed",
+          "department": "TMS",
+          "section_id": "SEC_DKDE_WAIR_DN",
+          "track_line": "DN",
+          "station_code": "DKDE",
+          "start_km": 60.0,
+          "end_km": 64.0,
+          "start_time": "D1 10:00",
+          "end_time": "D1 15:00",
+          "priority_score": 71.75,
+          "priority_class": "HIGH"
+        }
+      ],
+      "departments": [
+        "TMS"
+      ],
+      "sections": [
+        "SEC_DKDE_WAIR_DN"
+      ],
+      "track_lines": [
+        "DN"
+      ],
+      "stations": [
+        "DKDE"
+      ],
+      "priority_score": 71.75,
+      "conflicts": [
+        {
+          "task_id": "TMS_KAG_004",
+          "train_no": "G-CEM-104",
+          "direction": "DN",
+          "same_line": true,
+          "priority_rank": 9,
+          "is_freight": true,
+          "severity": "MEDIUM",
+          "overlap_start": 732.1885521885522,
+          "overlap_end": 741.6161616161617,
+          "reason": "Train G-CEM-104 (freight, priority_rank=9, direction=DN) occupies km 60.0-64.0 of SEC_DKDE_WAIR_DN from D1 12:12 to D1 12:22"
+        }
+      ],
+      "status": "SCHEDULED"
+    }
+  ],
+  "scheduled_tasks": [
+    {
+      "task_id": "SMMS_KAG_004",
+      "block_id": "BLK_0001",
+      "fused": false,
+      "start_time": "D1 00:00",
+      "end_time": "D1 01:30",
+      "priority_score": 83.36,
+      "priority_class": "HIGH",
+      "department": "SMMS",
+      "section_id": "SEC_KRJ_SOM_DN",
+      "track_line": "DN",
+      "station_code": "KRJ"
+    },
+    {
+      "task_id": "SMMS_KAG_005",
+      "block_id": "BLK_0002",
+      "fused": false,
+      "start_time": "D1 00:00",
+      "end_time": "D1 03:00",
+      "priority_score": 76.45,
+      "priority_class": "HIGH",
+      "department": "SMMS",
+      "section_id": "SEC_ALJN_HRS_DN",
+      "track_line": "DN",
+      "station_code": "ALJN"
+    },
+    {
+      "task_id": "TMS_KAG_002",
+      "block_id": "BLK_0003",
+      "fused": true,
+      "start_time": "D1 00:00",
+      "end_time": "D1 03:30",
+      "priority_score": 81.83,
+      "priority_class": "HIGH",
+      "department": "TMS",
+      "section_id": "SEC_GZB_MIU_UP",
+      "track_line": "UP",
+      "station_code": "GZB"
+    },
+    {
+      "task_id": "SMMS_KAG_001",
+      "block_id": "BLK_0003",
+      "fused": true,
+      "start_time": "D1 03:30",
+      "end_time": "D1 06:00",
+      "priority_score": 86.04,
+      "priority_class": "CRITICAL",
+      "department": "SMMS",
+      "section_id": "SEC_GZB_MIU_UP",
+      "track_line": "UP",
+      "station_code": "GZB"
+    },
+    {
+      "task_id": "TMS_KAG_003",
+      "block_id": "BLK_0004",
+      "fused": true,
+      "start_time": "D1 00:00",
+      "end_time": "D1 03:00",
+      "priority_score": 74.38,
+      "priority_class": "HIGH",
+      "department": "TMS",
+      "section_id": "SEC_DER_AJR_UP",
+      "track_line": "UP",
+      "station_code": "DER"
+    },
+    {
+      "task_id": "SMMS_KAG_002",
+      "block_id": "BLK_0004",
+      "fused": true,
+      "start_time": "D1 03:00",
+      "end_time": "D1 04:30",
+      "priority_score": 78.29,
+      "priority_class": "HIGH",
+      "department": "SMMS",
+      "section_id": "SEC_DER_AJR_UP",
+      "track_line": "UP",
+      "station_code": "DER"
+    },
+    {
+      "task_id": "TMS_KAG_005",
+      "block_id": "BLK_0005",
+      "fused": false,
+      "start_time": "D1 03:00",
+      "end_time": "D1 06:00",
+      "priority_score": 71.77,
+      "priority_class": "HIGH",
+      "department": "TMS",
+      "section_id": "SEC_KRJ_SOM_DN",
+      "track_line": "DN",
+      "station_code": "KRJ"
+    },
+    {
+      "task_id": "SMMS_KAG_003",
+      "block_id": "BLK_0006",
+      "fused": false,
+      "start_time": "D1 03:00",
+      "end_time": "D1 05:00",
+      "priority_score": 69.25,
+      "priority_class": "HIGH",
+      "department": "SMMS",
+      "section_id": "SEC_DKDE_WAIR_DN",
+      "track_line": "DN",
+      "station_code": "DKDE"
+    },
+    {
+      "task_id": "TMS_KAG_001",
+      "block_id": "BLK_0007",
+      "fused": true,
+      "start_time": "D1 07:00",
+      "end_time": "D1 09:00",
+      "priority_score": 91.14,
+      "priority_class": "CRITICAL",
+      "department": "TMS",
+      "section_id": "SEC_GZB_MIU_UP",
+      "track_line": "UP",
+      "station_code": "GZB"
+    },
+    {
+      "task_id": "TMS_KAG_006",
+      "block_id": "BLK_0007",
+      "fused": true,
+      "start_time": "D1 09:00",
+      "end_time": "D1 10:30",
+      "priority_score": 79.34,
+      "priority_class": "HIGH",
+      "department": "TMS",
+      "section_id": "SEC_SOM_ALJN_UP",
+      "track_line": "UP",
+      "station_code": "SOM"
+    },
+    {
+      "task_id": "TMS_KAG_007",
+      "block_id": "BLK_0008",
+      "fused": false,
+      "start_time": "D1 08:00",
+      "end_time": "D1 12:00",
+      "priority_score": 77.07,
+      "priority_class": "HIGH",
+      "department": "TMS",
+      "section_id": "SEC_ALJN_HRS_DN",
+      "track_line": "DN",
+      "station_code": "ALJN"
+    },
+    {
+      "task_id": "TMS_KAG_004",
+      "block_id": "BLK_0009",
+      "fused": false,
+      "start_time": "D1 10:00",
+      "end_time": "D1 15:00",
+      "priority_score": 71.75,
+      "priority_class": "HIGH",
+      "department": "TMS",
+      "section_id": "SEC_DKDE_WAIR_DN",
+      "track_line": "DN",
+      "station_code": "DKDE"
+    }
+  ],
+  "unscheduled_tasks": [],
+  "conflicts": [
+    {
+      "type": "TRACK_KM_OVERLAP",
+      "severity": "CRITICAL",
+      "task_a": "TMS_KAG_001",
+      "task_b": "TMS_KAG_002",
+      "reason": "TMS_KAG_001 and TMS_KAG_002 structurally conflict (TRACK_KM_OVERLAP); resolved either by block fusion (sequential shared block) or by mutual-exclusion scheduling."
+    },
+    {
+      "type": "RESOURCE_CONFLICT",
+      "severity": "CRITICAL",
+      "task_a": "TMS_KAG_001",
+      "task_b": "TMS_KAG_006",
+      "reason": "TMS_KAG_001 and TMS_KAG_006 structurally conflict (RESOURCE_CONFLICT); resolved either by block fusion (sequential shared block) or by mutual-exclusion scheduling."
+    },
+    {
+      "type": "TRACK_KM_OVERLAP",
+      "severity": "CRITICAL",
+      "task_a": "TMS_KAG_001",
+      "task_b": "SMMS_KAG_001",
+      "reason": "TMS_KAG_001 and SMMS_KAG_001 structurally conflict (TRACK_KM_OVERLAP); resolved either by block fusion (sequential shared block) or by mutual-exclusion scheduling."
+    },
+    {
+      "type": "TRACK_KM_OVERLAP",
+      "severity": "CRITICAL",
+      "task_a": "TMS_KAG_002",
+      "task_b": "SMMS_KAG_001",
+      "reason": "TMS_KAG_002 and SMMS_KAG_001 structurally conflict (TRACK_KM_OVERLAP); resolved either by block fusion (sequential shared block) or by mutual-exclusion scheduling."
+    },
+    {
+      "type": "TRACK_KM_OVERLAP",
+      "severity": "CRITICAL",
+      "task_a": "TMS_KAG_003",
+      "task_b": "SMMS_KAG_002",
+      "reason": "TMS_KAG_003 and SMMS_KAG_002 structurally conflict (TRACK_KM_OVERLAP); resolved either by block fusion (sequential shared block) or by mutual-exclusion scheduling."
+    },
+    {
+      "type": "TRACK_KM_OVERLAP",
+      "severity": "CRITICAL",
+      "task_a": "TMS_KAG_004",
+      "task_b": "SMMS_KAG_003",
+      "reason": "TMS_KAG_004 and SMMS_KAG_003 structurally conflict (TRACK_KM_OVERLAP); resolved either by block fusion (sequential shared block) or by mutual-exclusion scheduling."
+    },
+    {
+      "type": "TRACK_KM_OVERLAP",
+      "severity": "CRITICAL",
+      "task_a": "TMS_KAG_005",
+      "task_b": "SMMS_KAG_004",
+      "reason": "TMS_KAG_005 and SMMS_KAG_004 structurally conflict (TRACK_KM_OVERLAP); resolved either by block fusion (sequential shared block) or by mutual-exclusion scheduling."
+    },
+    {
+      "type": "RESOURCE_CONFLICT",
+      "severity": "CRITICAL",
+      "task_a": "SMMS_KAG_002",
+      "task_b": "SMMS_KAG_004",
+      "reason": "SMMS_KAG_002 and SMMS_KAG_004 structurally conflict (RESOURCE_CONFLICT); resolved either by block fusion (sequential shared block) or by mutual-exclusion scheduling."
+    }
+  ],
+  "fusion": {
+    "fusable_pairs_evaluated": [
+      [
+        "TMS_KAG_001",
+        "TMS_KAG_002",
+        "TRACK_KM_OVERLAP"
+      ],
+      [
+        "TMS_KAG_001",
+        "TMS_KAG_006",
+        "RESOURCE_CONFLICT"
+      ],
+      [
+        "TMS_KAG_001",
+        "SMMS_KAG_001",
+        "TRACK_KM_OVERLAP"
+      ],
+      [
+        "TMS_KAG_002",
+        "SMMS_KAG_001",
+        "TRACK_KM_OVERLAP"
+      ],
+      [
+        "TMS_KAG_003",
+        "SMMS_KAG_002",
+        "TRACK_KM_OVERLAP"
+      ],
+      [
+        "TMS_KAG_004",
+        "SMMS_KAG_003",
+        "TRACK_KM_OVERLAP"
+      ],
+      [
+        "TMS_KAG_005",
+        "SMMS_KAG_004",
+        "TRACK_KM_OVERLAP"
+      ],
+      [
+        "SMMS_KAG_002",
+        "SMMS_KAG_004",
+        "RESOURCE_CONFLICT"
+      ]
+    ],
+    "fusion_rejections": [
+      {
+        "task_a": "TMS_KAG_004",
+        "task_b": "SMMS_KAG_003",
+        "reason_type": "TRACK_KM_OVERLAP",
+        "reason": "Combined duration 420min exceeds the 360min fusion cap; tasks will be scheduled independently instead."
+      }
+    ]
+  },
+  "metrics": {
+    "total_tasks": 12,
+    "scheduled_task_count": 12,
+    "unscheduled_task_count": 0,
+    "task_completion_rate_pct": 100.0,
+    "priority_weighted_completion_pct": 100.0,
+    "total_blocks": 9,
+    "fused_block_count": 3,
+    "fused_task_count": 6,
+    "blocks_saved_by_fusion": 3,
+    "fusable_pairs_evaluated": 8,
+    "fusion_candidates_created": 105,
+    "fusion_rejections": 1,
+    "total_required_maintenance_minutes": 1950,
+    "scheduled_maintenance_minutes": 1950,
+    "maintenance_backlog_minutes_remaining": 0,
+    "soft_train_conflicts_accepted": 1
+  },
+  "validation": {
+    "status": "APPROVED",
+    "violations": []
+  },
+  "meta": {
+    "team": "Techtonic",
+    "problem_statement_id": "26027",
+    "problem_statement_title": "AI-Powered Automatic Block Planning to Maximize Asset Availability for Train Operations on Indian Railways",
+    "generated_at_utc": "2026-09-10T08:59:05.864157+00:00",
+    "planning_horizon_minutes": 2880,
+    "planning_horizon_note": "Synthetic rolling horizon (no calendar date in source data)",
+    "candidate_step_minutes": 60,
+    "optimizer_status": "OPTIMAL",
+    "optimizer_objective_value": 9082.0,
+    "runtime_seconds": 0.744
+  },
+  "priority_scores": [
+    {
+      "task_id": "TMS_KAG_001",
+      "priority_score": 91.14,
+      "priority_class": "CRITICAL",
+      "reason_codes": [
+        "SAFETY_CRITICALITY_VERY_HIGH (9.9/10)",
+        "ASSET_DEGRADATION_SEVERE (9.5/10)",
+        "OVERDUE_AT_OR_BEYOND_CAP (4d overdue, DAILY cap=3d)",
+        "SEVERE_SPEED_RESTRICTION_IF_DEFERRED (20 km/h)",
+        "MAJOR_JUNCTION_STATION (station_code=GZB, has_yard)"
+      ],
+      "components": {
+        "safety": 99.0,
+        "degradation": 95.0,
+        "urgency": 100.0,
+        "operational_impact": 64.68,
+        "asset_importance": 77.86
+      }
+    },
+    {
+      "task_id": "TMS_KAG_002",
+      "priority_score": 81.83,
+      "priority_class": "HIGH",
+      "reason_codes": [
+        "SAFETY_CRITICALITY_HIGH (8.2/10)",
+        "ASSET_DEGRADATION_HIGH (8.4/10)",
+        "OVERDUE_AT_OR_BEYOND_CAP (12d overdue, DAILY cap=3d)",
+        "MAJOR_JUNCTION_STATION (station_code=GZB, has_yard)"
+      ],
+      "components": {
+        "safety": 82.0,
+        "degradation": 84.0,
+        "urgency": 100.0,
+        "operational_impact": 56.99,
+        "asset_importance": 77.86
+      }
+    },
+    {
+      "task_id": "TMS_KAG_003",
+      "priority_score": 74.38,
+      "priority_class": "HIGH",
+      "reason_codes": [
+        "SAFETY_CRITICALITY_HIGH (8.6/10)",
+        "ASSET_DEGRADATION_HIGH (8.1/10)",
+        "OVERDUE_APPROACHING_CAP (9d overdue, WEEKLY cap=14d)",
+        "SEVERE_SPEED_RESTRICTION_IF_DEFERRED (30 km/h)",
+        "MAJOR_JUNCTION_STATION (station_code=DER, has_yard)"
+      ],
+      "components": {
+        "safety": 86.0,
+        "degradation": 81.0,
+        "urgency": 64.29,
+        "operational_impact": 59.11,
+        "asset_importance": 63.57
+      }
+    },
+    {
+      "task_id": "TMS_KAG_004",
+      "priority_score": 71.75,
+      "priority_class": "HIGH",
+      "reason_codes": [
+        "SAFETY_CRITICALITY_HIGH (7.8/10)",
+        "ASSET_DEGRADATION_HIGH (8.8/10)",
+        "OVERDUE_APPROACHING_CAP (18d overdue, MONTHLY cap=30d)",
+        "HIGH_TRAFFIC_LOAD (gmt_accumulated=74.2, dataset_max=82.0)",
+        "SEVERE_SPEED_RESTRICTION_IF_DEFERRED (30 km/h)",
+        "MULTIPLE_BLOCK_TYPES_REQUIRED (2/3)"
+      ],
+      "components": {
+        "safety": 78.0,
+        "degradation": 88.0,
+        "urgency": 60.0,
+        "operational_impact": 78.03,
+        "asset_importance": 31.43
+      }
+    },
+    {
+      "task_id": "TMS_KAG_005",
+      "priority_score": 71.77,
+      "priority_class": "HIGH",
+      "reason_codes": [
+        "SAFETY_CRITICALITY_HIGH (8.4/10)",
+        "ASSET_DEGRADATION_HIGH (7.8/10)",
+        "HIGH_TRAFFIC_LOAD (gmt_accumulated=78.1, dataset_max=82.0)",
+        "MAJOR_JUNCTION_STATION (station_code=KRJ, has_yard)"
+      ],
+      "components": {
+        "safety": 84.0,
+        "degradation": 78.0,
+        "urgency": 50.0,
+        "operational_impact": 64.65,
+        "asset_importance": 70.71
+      }
+    },
+    {
+      "task_id": "TMS_KAG_006",
+      "priority_score": 79.34,
+      "priority_class": "HIGH",
+      "reason_codes": [
+        "SAFETY_CRITICALITY_VERY_HIGH (9.7/10)",
+        "ASSET_DEGRADATION_SEVERE (9.2/10)",
+        "OVERDUE_APPROACHING_CAP (2d overdue, DAILY cap=3d)",
+        "HIGH_TRAFFIC_LOAD (gmt_accumulated=82.0, dataset_max=82.0)",
+        "SEVERE_SPEED_RESTRICTION_IF_DEFERRED (30 km/h)"
+      ],
+      "components": {
+        "safety": 97.0,
+        "degradation": 92.0,
+        "urgency": 66.67,
+        "operational_impact": 70.09,
+        "asset_importance": 31.43
+      }
+    },
+    {
+      "task_id": "TMS_KAG_007",
+      "priority_score": 77.07,
+      "priority_class": "HIGH",
+      "reason_codes": [
+        "ASSET_DEGRADATION_HIGH (7.5/10)",
+        "OVERDUE_AT_OR_BEYOND_CAP (15d overdue, WEEKLY cap=14d)",
+        "NO_SPEED_RESTRICTION_DATA",
+        "MAJOR_JUNCTION_STATION (station_code=ALJN, has_yard)"
+      ],
+      "components": {
+        "safety": 71.0,
+        "degradation": 75.0,
+        "urgency": 100.0,
+        "operational_impact": 58.13,
+        "asset_importance": 85.0
+      }
+    },
+    {
+      "task_id": "SMMS_KAG_001",
+      "priority_score": 86.04,
+      "priority_class": "CRITICAL",
+      "reason_codes": [
+        "SAFETY_CRITICALITY_HIGH (8.9/10)",
+        "ASSET_DEGRADATION_HIGH (8.2/10)",
+        "OVERDUE_AT_OR_BEYOND_CAP (8d overdue, DAILY cap=3d)",
+        "NO_SPEED_RESTRICTION_DATA",
+        "MULTIPLE_BLOCK_TYPES_REQUIRED (2/3)",
+        "MAJOR_JUNCTION_STATION (station_code=GZB, has_yard)"
+      ],
+      "components": {
+        "safety": 89.0,
+        "degradation": 82.0,
+        "urgency": 100.0,
+        "operational_impact": 71.38,
+        "asset_importance": 77.86
+      }
+    },
+    {
+      "task_id": "SMMS_KAG_002",
+      "priority_score": 78.29,
+      "priority_class": "HIGH",
+      "reason_codes": [
+        "SAFETY_CRITICALITY_HIGH (7.8/10)",
+        "OVERDUE_AT_OR_BEYOND_CAP (11d overdue, DAILY cap=3d)",
+        "NO_SPEED_RESTRICTION_DATA",
+        "MULTIPLE_BLOCK_TYPES_REQUIRED (2/3)",
+        "MAJOR_JUNCTION_STATION (station_code=DER, has_yard)"
+      ],
+      "components": {
+        "safety": 78.0,
+        "degradation": 73.0,
+        "urgency": 100.0,
+        "operational_impact": 66.87,
+        "asset_importance": 63.57
+      }
+    },
+    {
+      "task_id": "SMMS_KAG_003",
+      "priority_score": 69.25,
+      "priority_class": "HIGH",
+      "reason_codes": [
+        "SAFETY_CRITICALITY_HIGH (8.5/10)",
+        "ASSET_DEGRADATION_HIGH (8.0/10)",
+        "HIGH_TRAFFIC_LOAD (gmt_accumulated=74.2, dataset_max=82.0)",
+        "NO_SPEED_RESTRICTION_DATA",
+        "MULTIPLE_BLOCK_TYPES_REQUIRED (2/3)"
+      ],
+      "components": {
+        "safety": 85.0,
+        "degradation": 80.0,
+        "urgency": 42.86,
+        "operational_impact": 78.58,
+        "asset_importance": 31.43
+      }
+    },
+    {
+      "task_id": "SMMS_KAG_004",
+      "priority_score": 83.36,
+      "priority_class": "HIGH",
+      "reason_codes": [
+        "SAFETY_CRITICALITY_HIGH (8.1/10)",
+        "ASSET_DEGRADATION_HIGH (7.9/10)",
+        "OVERDUE_AT_OR_BEYOND_CAP (5d overdue, DAILY cap=3d)",
+        "HIGH_TRAFFIC_LOAD (gmt_accumulated=78.1, dataset_max=82.0)",
+        "NO_SPEED_RESTRICTION_DATA",
+        "MULTIPLE_BLOCK_TYPES_REQUIRED (2/3)",
+        "MAJOR_JUNCTION_STATION (station_code=KRJ, has_yard)"
+      ],
+      "components": {
+        "safety": 81.0,
+        "degradation": 79.0,
+        "urgency": 100.0,
+        "operational_impact": 80.96,
+        "asset_importance": 70.71
+      }
+    },
+    {
+      "task_id": "SMMS_KAG_005",
+      "priority_score": 76.45,
+      "priority_class": "HIGH",
+      "reason_codes": [
+        "SAFETY_CRITICALITY_VERY_HIGH (9.2/10)",
+        "ASSET_DEGRADATION_HIGH (7.6/10)",
+        "NO_SPEED_RESTRICTION_DATA",
+        "MULTIPLE_BLOCK_TYPES_REQUIRED (2/3)",
+        "MAJOR_JUNCTION_STATION (station_code=ALJN, has_yard)"
+      ],
+      "components": {
+        "safety": 92.0,
+        "degradation": 76.0,
+        "urgency": 46.67,
+        "operational_impact": 74.8,
+        "asset_importance": 85.0
+      }
+    }
+  ]
+}
