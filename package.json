@@ -1,7 +1,7 @@
 {
-  "name": "railopt-ai-sih2026",
-  "version": "1.0.0",
-  "description": "RailOpt AI — AI-Powered Automatic Block Planning to Maximize Asset Availability for Train Operations on Indian Railways (SIH26027)",
+  "name": "trackshield-ai",
+  "version": "2.0.0",
+  "description": "TrackShield AI — AI-Powered Railway Block Planning & Asset Availability Platform for Indian Railways",
   "private": true,
   "workspaces": [
     "frontend"
@@ -17,6 +17,6 @@
     "run:ai": "python -m backend.app.services.run_ai",
     "pipeline": "python src/data_pipeline.py"
   },
-  "author": "Team Techtonic (Smart India Hackathon 2026)",
+  "author": "TrackShield AI Operations",
   "license": "MIT"
 }

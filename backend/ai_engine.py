@@ -1,6 +1,6 @@
 """
-ai_engine.py — RailOpt AI Intelligence & Prioritization Layer
-=============================================================
+ai_engine.py — TrackShield AI Intelligence & Prioritization Layer
+=================================================================
 Implements:
 1. AssetIntelligenceModel: Machine Learning failure risk predictor using Scikit-Learn
    trained on asset degradation, overdue days, GMT accumulated, defect severity, and speed restrictions.

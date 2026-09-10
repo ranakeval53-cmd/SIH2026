@@ -1,613 +1,344 @@
 import React, { useState, useEffect } from 'react';
 import { 
+  Shield, 
   Train, 
-  ShieldCheck, 
   User, 
   Lock, 
-  Eye, 
-  EyeOff, 
   ArrowRight, 
-  Sparkles, 
-  Camera, 
-  RefreshCw, 
   CheckCircle2, 
-  Zap,
-  Building2,
-  ChevronDown
+  RefreshCw, 
+  Eye, 
+  EyeOff,
+  Radio,
+  Clock,
+  Sparkles
 } from 'lucide-react';
 
-// Extensive, High-Resolution Indian Railways Photography Pool
 const RAILWAY_WALLPAPERS = [
   {
-    id: 'vande_bharat_sunrise',
-    url: '/wallpapers/vande_bharat_sunrise.jpg',
-    title: 'Vande Bharat Express on Northern Trunk Viaduct at Dawn',
-    location: 'NDLS - PRYJ Corridor • Bridge #42 Over Yamuna River',
-    photographer: 'Indian Railways Heritage & High-Speed Media'
+    url: '/wallpapers/vande_bharat_dawn.jpg',
+    fallback: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=1920&auto=format&fit=crop',
+    title: 'Vande Bharat Express on Northern Trunk Mainline',
+    location: 'Ghaziabad - Kanpur Trunk Corridor'
   },
   {
-    id: 'wap7_locomotive_morning',
-    url: '/wallpapers/wap7_locomotive_morning.jpg',
-    title: 'WAP-7 30201 Electric Locomotive on Misty Curve',
-    location: 'North Central Railway • 25kV AC Electrified Route',
-    photographer: 'Loco Operations & Rolling Stock Documentation'
+    url: '/wallpapers/wap7_western_ghats.jpg',
+    fallback: 'https://images.unsplash.com/photo-1515165562839-978bbcf18277?q=80&w=1920&auto=format&fit=crop',
+    title: 'WAP-7 30201 Electric Locomotive at Morning Dawn',
+    location: 'Northern Railway Electrified Trunk Section'
   },
   {
-    id: 'railway_junction_twilight',
     url: '/wallpapers/railway_junction_twilight.jpg',
-    title: 'Pt. Deen Dayal Upadhyaya (DDU) Interlocking & Catenary Yard',
-    location: 'KM 783.0 High-Density Trunk Junction • Electronic Interlocking',
-    photographer: 'Signalling & Telecom (S&T) Engineering Review'
-  },
-  {
-    id: 'vande_bharat_express_speed',
-    url: '/wallpapers/vande_bharat_express_speed.jpg',
-    title: 'Semi-High-Speed Vande Bharat on Elevated Viaduct Curve',
-    location: 'Delhi - Prayagraj - Pt. DDU Superfast Trunk',
-    photographer: 'Ministry of Railways High-Speed Rail Project'
-  },
-  {
-    id: 'track_geometry_dusk',
-    url: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=2000&q=85',
-    title: 'High-Density Trunk Mainline & Precision Track Geometry',
-    location: 'Northern Railway Mainline • Ballasted Concrete Sleepers',
-    photographer: 'Professional Track Infrastructure Archive'
-  },
-  {
-    id: 'catenary_twilight',
-    url: 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=2000&q=85',
-    title: 'Electrified 25kV OHE Catenary & Signaling Array at Twilight',
-    location: 'Ghaziabad - Dadri High-Speed Quadruple Track',
-    photographer: 'Indian Railways Corridor Perspective'
-  },
-  {
-    id: 'chenab_bridge_perspective',
-    url: 'https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&w=2000&q=85',
-    title: 'Indian Railways Engineering Mastery — Trunk Route Perspectives',
-    location: 'Northern Electrified Corridor Network',
-    photographer: 'Indian Railways Civil Engineering Documentation'
-  },
-  {
-    id: 'night_express_tracks',
-    url: 'https://images.unsplash.com/photo-1532105956626-9569c03602f6?auto=format&fit=crop&w=2000&q=85',
-    title: 'Illuminated High-Speed Train Crossing at Night',
-    location: 'Delhi Division High-Density Trunk Route',
-    photographer: 'National Rail Photography Collection'
-  }
-];
-
-// Official Indian Railways Personnel Profiles for Quick Selection
-const DEMO_PROFILES = [
-  {
-    id: 'sr_dom',
-    name: 'Sri Rajesh Sharma, IRTS',
-    role: 'Senior Divisional Operations Manager (Sr. DOM)',
-    department: 'Operating Branch',
-    division: 'Delhi Division (Northern Railway)',
-    initials: 'RS',
-    email: 'dom.delhi@indianrailways.gov.in',
-    authority: 'Sanctioning Authority & Corridor Regulation'
-  },
-  {
-    id: 'section_controller',
-    name: 'Sri Amit Verma',
-    role: 'Chief Section Controller (SCR)',
-    department: 'Control Office Application (COA)',
-    division: 'Prayagraj Control Room (North Central Railway)',
-    initials: 'AV',
-    email: 'controller.pryj@indianrailways.gov.in',
-    authority: 'Real-Time Train Dispatching & Punctuality'
-  },
-  {
-    id: 'sse_pway',
-    name: 'Er. Vikramaditya Singh',
-    role: 'Senior Section Engineer (P-Way / Track)',
-    department: 'Engineering (TMS)',
-    division: 'Aligarh Sub-Division (Northern Railway)',
-    initials: 'VS',
-    email: 'pway.aligarh@indianrailways.gov.in',
-    authority: 'Track USFD Flaw Remediation & Tamping Plans'
-  },
-  {
-    id: 'tpc_electrical',
-    name: 'Er. Neha Kulshrestha',
-    role: 'Traction Power Controller (TPC)',
-    department: 'Traction / OHE (TDMS)',
-    division: 'Kanpur Central SCADA Operating Cell',
-    initials: 'NK',
-    email: 'tpc.kanpur@indianrailways.gov.in',
-    authority: '25kV Substation De-energization & Earthing'
+    fallback: 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?q=80&w=1920&auto=format&fit=crop',
+    title: 'Pt. Deen Dayal Upadhyaya (DDU) Interlocking Yard',
+    location: 'East Central & Northern Trunk Confluence'
   }
 ];
 
 export default function LoginPage({ onLogin }) {
-  // Always get a fresh, new photo on every page load/reload
-  const [bgIndex, setBgIndex] = useState(() => {
+  const [email, setEmail] = useState('approver@ir.gov.in');
+  const [password, setPassword] = useState('TrackShield@2026');
+  const [showPassword, setShowPassword] = useState(false);
+  const [selectedPresetRole, setSelectedPresetRole] = useState('APPROVER');
+  const [isLoading, setIsLoading] = useState(false);
+  const [bgIndex, setBgIndex] = useState(0);
+
+  useEffect(() => {
     try {
-      const prev = sessionStorage.getItem('railopt_bg_idx');
+      const prev = sessionStorage.getItem('trackshield_bg_idx');
       let nextIdx = 0;
       if (prev !== null) {
-        // Increment sequentially so reload ALWAYS yields a new photograph
         nextIdx = (parseInt(prev, 10) + 1) % RAILWAY_WALLPAPERS.length;
       } else {
-        // Random initial start
         nextIdx = Math.floor(Math.random() * RAILWAY_WALLPAPERS.length);
       }
-      sessionStorage.setItem('railopt_bg_idx', nextIdx.toString());
-      return nextIdx;
+      setBgIndex(nextIdx);
+      sessionStorage.setItem('trackshield_bg_idx', nextIdx.toString());
     } catch {
-      return 0;
+      setBgIndex(0);
     }
-  });
+  }, []);
 
-  const [selectedProfile, setSelectedProfile] = useState(DEMO_PROFILES[0]);
-  const [username, setUsername] = useState(DEMO_PROFILES[0].email);
-  const [password, setPassword] = useState('RailOpt@2026');
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isPhotoFading, setIsPhotoFading] = useState(false);
-
-  const currentBg = RAILWAY_WALLPAPERS[bgIndex];
-
-  // Function to switch to a fresh new photo on demand
-  const handleGetNewPhoto = () => {
-    setIsPhotoFading(true);
-    setTimeout(() => {
-      setBgIndex((prev) => {
-        const next = (prev + 1) % RAILWAY_WALLPAPERS.length;
-        try {
-          sessionStorage.setItem('railopt_bg_idx', next.toString());
-        } catch (e) {
-          console.error(e);
-        }
-        return next;
-      });
-      setIsPhotoFading(false);
-    }, 200);
+  const handleRolePresetSelect = (roleKey) => {
+    setSelectedPresetRole(roleKey);
+    if (roleKey === 'APPROVER') {
+      setEmail('approver@ir.gov.in');
+      setPassword('TrackShield@2026');
+    } else if (roleKey === 'PLANNER') {
+      setEmail('planner@ir.gov.in');
+      setPassword('TrackShield@2026');
+    } else if (roleKey === 'DEPARTMENT') {
+      setEmail('engineer.tms@ir.gov.in');
+      setPassword('TrackShield@2026');
+    } else {
+      setEmail('admin.control@ir.gov.in');
+      setPassword('TrackShield@2026');
+    }
   };
 
-  // Change selected profile from dropdown
-  const handleRoleChange = (profileId) => {
-    const p = DEMO_PROFILES.find(x => x.id === profileId) || DEMO_PROFILES[0];
-    setSelectedProfile(p);
-    setUsername(p.email);
-    setPassword('RailOpt@2026');
-  };
-
-  // Handle Login submission
-  const handleSubmit = (e) => {
-    if (e) e.preventDefault();
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
     setIsLoading(true);
 
     setTimeout(() => {
-      setIsLoading(false);
+      let roleName = 'Senior Divisional Operations Manager (Sr. DOM)';
+      let officerName = 'Sri Rajesh Sharma, IRTS';
+      let division = 'Delhi Division';
+      let systemRole = 'APPROVER';
+
+      if (email.includes('planner')) {
+        roleName = 'Chief Corridor Controller';
+        officerName = 'Shri Amit Verma';
+        systemRole = 'PLANNER';
+      } else if (email.includes('engineer') || email.includes('tms')) {
+        roleName = 'Senior Section Engineer (P-Way)';
+        officerName = 'Er. K. P. Singh';
+        systemRole = 'DEPARTMENT_USER';
+      } else if (email.includes('admin')) {
+        roleName = 'Chief Corridor Operations Administrator';
+        officerName = 'Smt. Ananya Sen, IRTS';
+        systemRole = 'ADMIN';
+      }
+
       onLogin({
-        name: selectedProfile.name,
-        role: selectedProfile.role,
-        department: selectedProfile.department,
-        division: selectedProfile.division,
-        email: username,
-        initials: selectedProfile.initials,
-        authority: selectedProfile.authority,
-        loginTime: new Date().toISOString()
+        email,
+        name: officerName,
+        role: roleName,
+        systemRole: systemRole,
+        division: division
       });
+      setIsLoading(false);
     }, 450);
   };
 
+  const currentBg = RAILWAY_WALLPAPERS[bgIndex] || RAILWAY_WALLPAPERS[0];
+
   return (
     <div style={{
-      position: 'relative',
       minHeight: '100vh',
-      width: '100vw',
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'space-between',
+      position: 'relative',
       overflow: 'hidden',
-      color: '#ffffff',
-      fontFamily: 'var(--font-sans)'
+      background: '#F5F8FC'
     }}>
       
-      {/* Background Image Layer with dynamic smooth fade */}
+      {/* Dynamic Background Image with Smooth Enterprise Gradient Overlay */}
       <div 
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: `url(${currentBg.url})`,
+          backgroundImage: `url(${currentBg.url}), url(${currentBg.fallback})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center center',
-          transition: 'opacity 0.4s ease-in-out, filter 0.4s ease-in-out',
-          opacity: isPhotoFading ? 0.4 : 1,
-          filter: 'brightness(0.9)',
-          zIndex: 0
+          backgroundPosition: 'center',
+          filter: 'brightness(0.92)'
         }}
       />
-
-      {/* Atmospheric Contrast Overlay */}
       <div 
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(135deg, rgba(7, 17, 31, 0.88) 0%, rgba(7, 17, 31, 0.72) 50%, rgba(7, 17, 31, 0.92) 100%)',
-          zIndex: 1
-        }}
-      />
-      
-      {/* Subtle Micro-Grid */}
-      <div 
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: 'radial-gradient(rgba(56, 189, 248, 0.12) 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
-          opacity: 0.5,
-          zIndex: 1,
-          pointerEvents: 'none'
+          background: 'linear-gradient(135deg, rgba(7, 17, 31, 0.72) 0%, rgba(23, 105, 170, 0.55) 100%)',
+          backdropFilter: 'blur(3px)'
         }}
       />
 
-      {/* Top Header Bar */}
+      {/* Top Header */}
       <header style={{
         position: 'relative',
         zIndex: 10,
+        padding: '1.25rem 2rem',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '1.25rem 2rem',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-        background: 'rgba(7, 17, 31, 0.8)',
-        backdropFilter: 'blur(16px)'
+        justifyContent: 'space-between'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div style={{
-            width: '42px',
-            height: '42px',
-            borderRadius: '10px',
-            background: 'linear-gradient(135deg, #1769AA 0%, #38BDF8 100%)',
+            width: '38px',
+            height: '38px',
+            borderRadius: '9px',
+            background: 'var(--color-primary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 20px rgba(56, 189, 248, 0.4)'
+            color: '#FFFFFF'
           }}>
-            <Train size={24} color="#ffffff" />
+            <Shield size={22} />
           </div>
-
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <span style={{
-                fontSize: '1.3rem',
-                fontWeight: '800',
-                letterSpacing: '-0.025em',
-                background: 'linear-gradient(to right, #38BDF8, #818cf8)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent'
-              }}>
-                RailOpt AI
-              </span>
-              <span className="badge badge-tdms" style={{ fontSize: '0.68rem', padding: '0.15rem 0.5rem' }}>
-                SIH26027
-              </span>
-              <span style={{ fontSize: '0.78rem', color: '#94a3b8', borderLeft: '1px solid rgba(255,255,255,0.2)', paddingLeft: '0.6rem' }}>
-                Ministry of Railways
-              </span>
+            <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em' }}>
+              TrackShield AI
             </div>
-            <p style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 500 }}>
-              AI Automatic Block Planning & Corridor Optimization System • Team Techtonic
-            </p>
+            <div style={{ fontSize: '0.72rem', color: '#CBD5E1' }}>
+              Indian Railways Enterprise Decision Platform
+            </div>
           </div>
         </div>
 
-        {/* Live Corridor Status Indicator */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.65rem',
-          background: 'rgba(16, 28, 45, 0.85)',
-          border: '1px solid rgba(56, 189, 248, 0.25)',
-          padding: '0.4rem 0.9rem',
-          borderRadius: '8px'
-        }}>
-          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22C55E', boxShadow: '0 0 10px #22C55E' }} />
-          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#E8F0F8' }}>
-            NDLS ➔ PRYJ ➔ DDU TRUNK CORRIDOR
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#CBD5E1', fontSize: '0.75rem' }}>
+          <Radio size={12} color="#22C55E" />
+          <span>Northern & North Central Corridor Live</span>
         </div>
       </header>
 
-      {/* Main Content Area: Centered Login Card (Left Section Removed) */}
-      <main style={{
+      {/* Centered Enterprise Login Card */}
+      <div style={{
         position: 'relative',
         zIndex: 10,
         flex: 1,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '2rem 1.5rem'
+        padding: '1.5rem'
       }}>
-        
-        {/* Centered, Pristine Glassmorphic Login Card */}
-        <div style={{
+        <div className="enterprise-card" style={{
           width: '100%',
-          maxWidth: '460px',
-          background: 'rgba(16, 28, 45, 0.88)',
-          backdropFilter: 'blur(32px)',
-          borderRadius: '16px',
-          border: '1px solid rgba(56, 189, 248, 0.28)',
-          padding: '2.25rem',
-          boxShadow: '0 25px 60px rgba(0, 0, 0, 0.6), 0 0 35px rgba(23, 105, 170, 0.25)',
-          animation: 'fadeIn 0.35s ease'
+          maxWidth: '440px',
+          padding: '2.25rem 2rem',
+          background: '#FFFFFF',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.25)',
+          borderRadius: '16px'
         }}>
           
-          {/* Card Header */}
-          <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
             <div style={{
-              width: '52px',
-              height: '52px',
+              width: '48px',
+              height: '48px',
               borderRadius: '12px',
-              background: 'linear-gradient(135deg, rgba(23, 105, 170, 0.35), rgba(56, 189, 248, 0.25))',
-              border: '1px solid rgba(56, 189, 248, 0.4)',
+              background: 'rgba(23, 105, 170, 0.1)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 0.85rem auto',
-              boxShadow: '0 0 20px rgba(56, 189, 248, 0.25)'
+              margin: '0 auto 0.75rem auto',
+              color: 'var(--color-primary)'
             }}>
-              <ShieldCheck size={28} color="#38BDF8" />
+              <Train size={26} />
             </div>
-
-            <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#E8F0F8', letterSpacing: '-0.02em' }}>
-              Operating Authority Sign In
+            <h2 className="text-h2" style={{ fontSize: '1.35rem', color: '#172033' }}>
+              Corridor Officer Sign In
             </h2>
-            <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '0.25rem' }}>
-              Indian Railways Central Operations & Corridor Maintenance
+            <p className="text-sub" style={{ fontSize: '0.78rem', marginTop: '0.2rem' }}>
+              Access AI Block Planning & Sanction Authority
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.15rem' }}>
-            
-            {/* Quick Officer Role Selector */}
-            <div>
-              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#E8F0F8', marginBottom: '0.45rem', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
-                Select Officer Role (Demo Quick-Fill)
-              </label>
-              <div style={{ position: 'relative' }}>
-                <select
-                  value={selectedProfile.id}
-                  onChange={(e) => handleRoleChange(e.target.value)}
+          {/* Quick Role Switcher Buttons */}
+          <div style={{ marginBottom: '1.25rem' }}>
+            <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+              Select Operational Role:
+            </label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem' }}>
+              {[
+                { id: 'APPROVER', label: 'Sr. DOM (Approver)' },
+                { id: 'PLANNER', label: 'Planner (Operating)' },
+                { id: 'DEPARTMENT', label: 'Department User' },
+                { id: 'ADMIN', label: 'Corridor Admin' }
+              ].map(r => (
+                <button
+                  key={r.id}
+                  type="button"
+                  onClick={() => handleRolePresetSelect(r.id)}
                   style={{
-                    width: '100%',
-                    background: '#07111F',
-                    color: '#E8F0F8',
-                    border: '1px solid rgba(56, 189, 248, 0.3)',
-                    borderRadius: '8px',
-                    padding: '0.65rem 2rem 0.65rem 0.75rem',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    outline: 'none',
-                    appearance: 'none',
-                    cursor: 'pointer'
+                    padding: '0.4rem',
+                    borderRadius: '6px',
+                    fontSize: '0.72rem',
+                    fontWeight: selectedPresetRole === r.id ? 700 : 500,
+                    background: selectedPresetRole === r.id ? 'var(--color-primary)' : 'var(--bg-card-subtle)',
+                    color: selectedPresetRole === r.id ? '#FFFFFF' : 'var(--text-muted)',
+                    border: '1px solid var(--border-subtle)',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
                   }}
                 >
-                  {DEMO_PROFILES.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} — {p.role.split('(')[0]}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown size={16} color="#38BDF8" style={{ position: 'absolute', right: '12px', top: '13px', pointerEvents: 'none' }} />
-              </div>
+                  {r.label}
+                </button>
+              ))}
             </div>
+          </div>
 
-            {/* Active Authority Badge Box */}
-            <div style={{
-              background: 'rgba(23, 105, 170, 0.15)',
-              border: '1px solid rgba(56, 189, 248, 0.25)',
-              borderRadius: '8px',
-              padding: '0.6rem 0.85rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between'
-            }}>
-              <div>
-                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#38BDF8', display: 'block' }}>
-                  {selectedProfile.name}
-                </span>
-                <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>
-                  {selectedProfile.role} • {selectedProfile.division}
-                </span>
-              </div>
-              <span className="badge badge-success" style={{ fontSize: '0.65rem', padding: '0.15rem 0.45rem' }}>
-                AUTHORIZED
-              </span>
-            </div>
-
-            {/* Employee Email / ID */}
-            <div>
-              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#E8F0F8', marginBottom: '0.35rem' }}>
-                Official Railway Email / Employee ID
+          <form onSubmit={handleLoginSubmit}>
+            {/* Email Field */}
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.35rem' }}>
+                Official Railway Email:
               </label>
               <div style={{ position: 'relative' }}>
-                <User size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '13px' }} />
-                <input 
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                <User size={16} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-dim)' }} />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   style={{
                     width: '100%',
-                    background: '#07111F',
-                    border: '1px solid rgba(232, 240, 248, 0.15)',
+                    padding: '0.55rem 0.75rem 0.55rem 2.25rem',
                     borderRadius: '8px',
-                    padding: '0.65rem 0.75rem 0.65rem 2.4rem',
-                    color: '#E8F0F8',
-                    fontSize: '0.85rem',
-                    outline: 'none',
-                    transition: 'all 0.15s'
+                    border: '1px solid var(--border-card)',
+                    fontSize: '0.825rem',
+                    outline: 'none'
                   }}
-                  onFocus={(e) => e.target.style.borderColor = '#38BDF8'}
-                  onBlur={(e) => e.target.style.borderColor = 'rgba(232, 240, 248, 0.15)'}
                 />
               </div>
             </div>
 
-            {/* Password */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
-                <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#E8F0F8' }}>
-                  Password
-                </label>
-                <span style={{ fontSize: '0.7rem', color: '#38BDF8' }}>
-                  Default: RailOpt@2026
-                </span>
-              </div>
+            {/* Password Field */}
+            <div style={{ marginBottom: '1.25rem' }}>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.35rem' }}>
+                Password:
+              </label>
               <div style={{ position: 'relative' }}>
-                <Lock size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '13px' }} />
-                <input 
+                <Lock size={16} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-dim)' }} />
+                <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   style={{
                     width: '100%',
-                    background: '#07111F',
-                    border: '1px solid rgba(232, 240, 248, 0.15)',
+                    padding: '0.55rem 2.25rem 0.55rem 2.25rem',
                     borderRadius: '8px',
-                    padding: '0.65rem 2.4rem 0.65rem 2.4rem',
-                    color: '#E8F0F8',
-                    fontSize: '0.85rem',
-                    outline: 'none',
-                    transition: 'all 0.15s'
+                    border: '1px solid var(--border-card)',
+                    fontSize: '0.825rem',
+                    outline: 'none'
                   }}
-                  onFocus={(e) => e.target.style.borderColor = '#38BDF8'}
-                  onBlur={(e) => e.target.style.borderColor = 'rgba(232, 240, 248, 0.15)'}
                 />
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  style={{ position: 'absolute', right: '12px', top: '12px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#94a3b8' }}
+                  style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-dim)' }}
                 >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
             </div>
 
-            {/* Remember Me */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', cursor: 'pointer', color: '#94a3b8' }}>
-                <input 
-                  type="checkbox" 
-                  checked={rememberMe} 
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  style={{ accentColor: '#1769AA' }}
-                />
-                <span>Remember session</span>
-              </label>
-              <span style={{ color: '#64748b' }}>G&SR Para 4.12 Verified</span>
-            </div>
-
-            {/* Sign In Button */}
-            <button 
+            <button
               type="submit"
               disabled={isLoading}
               className="btn-primary"
-              style={{
-                width: '100%',
-                justifyContent: 'center',
-                padding: '0.75rem',
-                fontSize: '0.925rem',
-                fontWeight: 700,
-                marginTop: '0.35rem',
-                background: 'linear-gradient(135deg, #1769AA 0%, #0284c7 100%)',
-                boxShadow: '0 6px 20px rgba(23, 105, 170, 0.45)'
-              }}
+              style={{ width: '100%', padding: '0.65rem', fontSize: '0.875rem' }}
             >
-              {isLoading ? (
-                <>
-                  <RefreshCw size={18} className="animate-spin" />
-                  <span>Authenticating Corridor Session...</span>
-                </>
-              ) : (
-                <>
-                  <span>Enter Corridor Command Center</span>
-                  <ArrowRight size={18} />
-                </>
-              )}
+              <span>{isLoading ? 'Connecting to Corridor...' : 'Sign In to TrackShield AI'}</span>
+              <ArrowRight size={16} />
             </button>
           </form>
 
-          {/* Security Notice */}
-          <div style={{ marginTop: '1.25rem', paddingTop: '0.85rem', borderTop: '1px solid rgba(255,255,255,0.08)', textAlign: 'center' }}>
-            <p style={{ fontSize: '0.7rem', color: '#64748b' }}>
-              🔒 Protected by Indian Railways Central Operations Network • 256-Bit TLS
-            </p>
-          </div>
-
         </div>
+      </div>
 
-      </main>
-
-      {/* Bottom Wallpaper Controls & Credit Attribution Footer */}
+      {/* Footer */}
       <footer style={{
         position: 'relative',
         zIndex: 10,
+        padding: '0.75rem 2rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '1rem',
-        padding: '0.85rem 2rem',
-        background: 'rgba(7, 17, 31, 0.88)',
-        backdropFilter: 'blur(16px)',
-        borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-        fontSize: '0.75rem'
+        fontSize: '0.72rem',
+        color: '#CBD5E1'
       }}>
-        {/* Photo Attribution Information */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-          <div style={{
-            background: 'rgba(56, 189, 248, 0.15)',
-            padding: '0.3rem',
-            borderRadius: '6px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <Camera size={15} color="#38BDF8" />
-          </div>
-          <div>
-            <span style={{ fontWeight: 700, color: '#E8F0F8' }}>
-              {currentBg.title}
-            </span>
-            <span style={{ color: '#94a3b8', marginLeft: '0.5rem' }}>
-              • {currentBg.location}
-            </span>
-          </div>
-        </div>
-
-        {/* Dynamic Fresh Photo Switcher Button */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <span style={{ color: '#94a3b8', fontSize: '0.72rem' }}>
-            Always New Photos on Reload • #{bgIndex + 1} of {RAILWAY_WALLPAPERS.length}
-          </span>
-
-          <button
-            type="button"
-            onClick={handleGetNewPhoto}
-            className="btn-outline"
-            style={{
-              padding: '0.35rem 0.85rem',
-              fontSize: '0.725rem',
-              fontWeight: 600,
-              gap: '0.4rem',
-              background: 'rgba(255, 255, 255, 0.08)',
-              borderColor: 'rgba(56, 189, 248, 0.35)',
-              color: '#38BDF8'
-            }}
-            title="Fetch another professional Indian Railways photograph"
-          >
-            <RefreshCw size={13} color="#38BDF8" />
-            <span>✨ Get New Photo</span>
-          </button>
-        </div>
+        <span>Photo: {currentBg.title} ({currentBg.location})</span>
+        <span>TrackShield AI Platform 2.0</span>
       </footer>
 
     </div>

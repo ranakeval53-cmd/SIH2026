@@ -80,7 +80,7 @@ export default function SanctionModal({ block, onClose, onApprove, currentUser }
             JOINT CIRCULAR: CORRIDOR MAINTENANCE BLOCK SANCTION ORDER
           </h4>
           <p style={{ fontSize: '0.8rem', color: '#4b5563' }}>
-            Sanctioned under the authority of Sr. DOM / Operating Control (RailOpt AI Assisted)
+            Sanctioned under the authority of Sr. DOM / Operating Control (TrackShield AI Decision Support Assisted)
           </p>
         </div>
 

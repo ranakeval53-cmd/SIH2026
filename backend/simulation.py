@@ -1,6 +1,6 @@
 """
-simulation.py — RailOpt AI What-If Scenario Simulator
-=====================================================
+simulation.py — TrackShield AI What-If Scenario Simulator
+==========================================================
 Allows railway section controllers to simulate operational disruptions:
 1. EMERGENCY_RAIL_FLAW: Instant injection of critical IMR rail defect block.
 2. TRAIN_DELAY_CASCADE: 45-minute delay on Vande Bharat / Rajdhani train path.
