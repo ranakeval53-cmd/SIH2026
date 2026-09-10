@@ -397,16 +397,6 @@ export default function App() {
         />
       )}
 
-      {/* Footer */}
-      <footer style={{ borderTop: '1px solid var(--border-subtle)', padding: '1.25rem 2rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-dim)', background: 'var(--bg-card)' }}>
-        <p>
-          <strong>RailOpt AI</strong> — Developed for Smart India Hackathon 2026 • Problem Statement ID: <strong>SIH26027</strong>
-        </p>
-        <p style={{ marginTop: '0.25rem' }}>
-          Ministry of Railways • Government of India • Developed by Team <strong>Techtonic</strong>
-        </p>
-      </footer>
-
     </div>
   );
 }
