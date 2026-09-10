@@ -102,30 +102,30 @@ export default function ConflictMatrix({ conflictData, onTriggerFusion }) {
 
         {/* Right: Detected Spatial & Machine Conflicts */}
         <div>
-          <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <AlertOctagon size={18} color="#f59e0b" />
+          <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <AlertOctagon size={18} color="var(--color-warning)" />
             Detected Operational Conflicts ({conflicts.length})
           </h3>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
             {conflicts.slice(0, 6).map((conf, idx) => (
-              <div key={idx} className="glass-panel" style={{ padding: '1.15rem', borderLeft: '4px solid #f59e0b' }}>
+              <div key={idx} className="glass-panel" style={{ padding: '1.15rem', borderLeft: '4px solid var(--color-warning)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.35rem' }}>
                   <span className="badge badge-critical" style={{ fontSize: '0.65rem' }}>
                     {conf.type}
                   </span>
-                  <span style={{ fontSize: '0.7rem', color: '#64748b', fontFamily: 'JetBrains Mono' }}>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', fontFamily: 'JetBrains Mono' }}>
                     {conf.conflict_id}
                   </span>
                 </div>
 
-                <p style={{ fontSize: '0.8rem', color: '#e2e8f0', marginBottom: '0.5rem' }}>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-main)', marginBottom: '0.5rem' }}>
                   {conf.description}
                 </p>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.725rem', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '0.45rem' }}>
-                  <span style={{ color: '#94a3b8' }}>Involved: <strong>{conf.tasks_involved?.join(' & ')}</strong></span>
-                  <span style={{ color: '#38bdf8', fontWeight: 600 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.725rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.45rem' }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Involved: <strong>{conf.tasks_involved?.join(' & ')}</strong></span>
+                  <span style={{ color: 'var(--color-primary)', fontWeight: 600 }}>
                     💡 Rec: {conf.recommended_action}
                   </span>
                 </div>

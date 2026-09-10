@@ -137,59 +137,59 @@ export default function WhatIfSimulator({ scenarios, onRunSimulation }) {
               <span className="badge badge-success" style={{ fontSize: '0.75rem', marginBottom: '0.25rem' }}>
                 CP-SAT RE-OPTIMIZED IN 42ms
               </span>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#f8fafc' }}>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)' }}>
                 Simulation Impact Delta: {activeScenario.title}
               </h3>
             </div>
-            <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
-              Status: <strong style={{ color: '#34d399' }}>{simResult.simulation_status}</strong>
+            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+              Status: <strong style={{ color: 'var(--color-success)' }}>{simResult.simulation_status}</strong>
             </span>
           </div>
 
           {/* Delta Metrics Strip */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
             
-            <div style={{ background: 'rgba(15, 23, 42, 0.8)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Downtime Variance</p>
-              <h4 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fbbf24', marginTop: '0.2rem' }}>
+            <div style={{ background: 'var(--bg-card-subtle)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Downtime Variance</p>
+              <h4 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-warning)', marginTop: '0.2rem' }}>
                 {simResult.impact_delta?.downtime_difference_hours > 0 ? `+${simResult.impact_delta?.downtime_difference_hours}` : simResult.impact_delta?.downtime_difference_hours} hrs
               </h4>
-              <span style={{ fontSize: '0.7rem', color: '#64748b' }}>vs Baseline Schedule</span>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>vs Baseline Schedule</span>
             </div>
 
-            <div style={{ background: 'rgba(15, 23, 42, 0.8)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Block Utilization</p>
-              <h4 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#38bdf8', marginTop: '0.2rem' }}>
+            <div style={{ background: 'var(--bg-card-subtle)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Block Utilization</p>
+              <h4 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-primary)', marginTop: '0.2rem' }}>
                 {simResult.simulated_summary?.block_utilization_pct}%
               </h4>
-              <span style={{ fontSize: '0.7rem', color: '#34d399' }}>Protected Corridor Health</span>
+              <span style={{ fontSize: '0.7rem', color: 'var(--color-success)' }}>Protected Corridor Health</span>
             </div>
 
-            <div style={{ background: 'rgba(15, 23, 42, 0.8)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Train Delay Risk</p>
-              <h4 style={{ fontSize: '1.4rem', fontWeight: 800, color: simResult.impact_delta?.train_delay_risk_score === 'LOW' ? '#34d399' : '#fbbf24', marginTop: '0.2rem' }}>
+            <div style={{ background: 'var(--bg-card-subtle)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Train Delay Risk</p>
+              <h4 style={{ fontSize: '1.4rem', fontWeight: 800, color: simResult.impact_delta?.train_delay_risk_score === 'LOW' ? 'var(--color-success)' : 'var(--color-warning)', marginTop: '0.2rem' }}>
                 {simResult.impact_delta?.train_delay_risk_score}
               </h4>
-              <span style={{ fontSize: '0.7rem', color: '#64748b' }}>Zero Express Stalls</span>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>Zero Express Stalls</span>
             </div>
 
-            <div style={{ background: 'rgba(15, 23, 42, 0.8)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Conflicts Resolved</p>
-              <h4 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f472b6', marginTop: '0.2rem' }}>
+            <div style={{ background: 'var(--bg-card-subtle)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Conflicts Resolved</p>
+              <h4 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-fused)', marginTop: '0.2rem' }}>
                 {simResult.impact_delta?.conflicts_resolved} Auto-Cleared
               </h4>
-              <span style={{ fontSize: '0.7rem', color: '#c084fc' }}>Spatial & Machine Safety</span>
+              <span style={{ fontSize: '0.7rem', color: 'var(--color-smms)' }}>Spatial & Machine Safety</span>
             </div>
 
           </div>
 
           {/* Actions & Dispatch Instructions */}
-          <div style={{ background: 'rgba(2, 132, 199, 0.08)', padding: '1rem 1.25rem', borderRadius: '8px', border: '1px solid rgba(56, 189, 248, 0.2)' }}>
-            <h5 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#38bdf8', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <div style={{ background: 'var(--bg-card-subtle)', padding: '1rem 1.25rem', borderRadius: '8px', border: '1px solid var(--border-card)' }}>
+            <h5 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <ShieldCheck size={16} />
               AI Operating Dispatch Directives:
             </h5>
-            <ul style={{ paddingLeft: '1.25rem', fontSize: '0.8rem', color: '#e2e8f0', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+            <ul style={{ paddingLeft: '1.25rem', fontSize: '0.8rem', color: 'var(--text-main)', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
               {simResult.scenario_notes?.map((note, i) => (
                 <li key={i}>{note}</li>
               ))}

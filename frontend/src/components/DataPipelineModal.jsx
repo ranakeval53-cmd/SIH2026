@@ -51,11 +51,11 @@ export default function DataPipelineModal({ onRunPipeline }) {
       {/* Header */}
       <div className="glass-panel" style={{ padding: '1.25rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Database size={20} color="#10b981" />
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Database size={20} color="var(--color-success)" />
             Data Integration & Preprocessing Pipeline (ETL)
           </h2>
-          <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.15rem' }}>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
             Unified Ingestion from TMS, SMMS, TDMS, COA & Station Master • 100% Data Leakage Protection
           </p>
         </div>
@@ -72,7 +72,7 @@ export default function DataPipelineModal({ onRunPipeline }) {
       </div>
 
       {runResult && (
-        <div style={{ background: '#064e3b', border: '1px solid #059669', color: '#a7f3d0', padding: '0.75rem 1rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.825rem', fontWeight: 600 }}>
+        <div style={{ background: 'var(--bg-card-subtle)', border: '1px solid var(--color-success)', color: 'var(--color-success)', padding: '0.75rem 1rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.825rem', fontWeight: 600 }}>
           ✓ {runResult.message || "Pipeline executed successfully."}
         </div>
       )}
@@ -82,27 +82,27 @@ export default function DataPipelineModal({ onRunPipeline }) {
         
         {/* Connected Data Sources */}
         <div className="glass-panel" style={{ padding: '1.5rem' }}>
-          <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Server size={18} color="#38bdf8" />
+          <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Server size={18} color="var(--color-primary)" />
             Railway Operational Feeds Ingested
           </h3>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {feeds.map((f) => (
-              <div key={f.code} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', background: 'rgba(15, 23, 42, 0.6)', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <div key={f.code} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', background: 'var(--bg-card-subtle)', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: f.color, boxShadow: `0 0 8px ${f.color}` }} />
                   <div>
-                    <h5 style={{ fontSize: '0.85rem', fontWeight: 600, color: '#f8fafc' }}>{f.name}</h5>
-                    <span style={{ fontSize: '0.7rem', color: '#64748b' }}>{f.format}</span>
+                    <h5 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>{f.name}</h5>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>{f.format}</span>
                   </div>
                 </div>
 
                 <div style={{ textAlign: 'right' }}>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#38bdf8', fontFamily: 'JetBrains Mono' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-primary)', fontFamily: 'JetBrains Mono' }}>
                     {f.records} Records
                   </span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', justifyContent: 'flex-end', fontSize: '0.65rem', color: '#34d399', fontWeight: 600 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', justifyContent: 'flex-end', fontSize: '0.65rem', color: 'var(--color-success)', fontWeight: 600 }}>
                     <CheckCircle2 size={10} />
                     <span>{f.status}</span>
                   </div>
@@ -115,8 +115,8 @@ export default function DataPipelineModal({ onRunPipeline }) {
         {/* Validation Test Suite */}
         <div className="glass-panel" style={{ padding: '1.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <ShieldCheck size={18} color="#10b981" />
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <ShieldCheck size={18} color="var(--color-success)" />
               Automated Pipeline Integrity Checks
             </h3>
             <span className="badge badge-success" style={{ fontSize: '0.7rem' }}>
@@ -126,8 +126,8 @@ export default function DataPipelineModal({ onRunPipeline }) {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {validationChecks.map((check, idx) => (
-              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.45rem 0.6rem', background: 'rgba(15, 23, 42, 0.4)', borderRadius: '6px', fontSize: '0.78rem', color: '#cbd5e1' }}>
-                <CheckCircle2 size={14} color="#10b981" style={{ flexShrink: 0 }} />
+              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.45rem 0.6rem', background: 'var(--bg-card-subtle)', borderRadius: '6px', fontSize: '0.78rem', color: 'var(--text-main)' }}>
+                <CheckCircle2 size={14} color="var(--color-success)" style={{ flexShrink: 0 }} />
                 <span>{check}</span>
               </div>
             ))}
