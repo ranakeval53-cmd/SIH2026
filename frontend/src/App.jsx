@@ -9,6 +9,7 @@ import ApproverDashboard from './components/ApproverDashboard';
 import InstantProblemModal from './components/InstantProblemModal';
 import SanctionModal from './components/SanctionModal';
 import LoginPage from './components/LoginPage';
+import OperationsDashboard from './components/OperationsDashboard';
 
 const API_BASE = import.meta.env.VITE_API_BASE || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://127.0.0.1:8000' : '');
 
@@ -95,6 +96,40 @@ export default function App() {
 
   const handleSanctionModalAction = async (payload) => {
     const isReject = payload.action === 'REJECT' || payload.action === 'REVOKE';
+    const approverName = payload.controller_name || currentUser?.name || 'Sri Rajesh Sharma, IRTS';
+    const designation = payload.designation || currentUser?.role || 'Senior Divisional Operations Manager (Sr. DOM)';
+    const status = isReject ? 'REJECTED' : 'OFFICIALLY_SANCTIONED';
+
+    const record = {
+      sanction_id: `SANCTION_${payload.block_id}_${new Date().toISOString().slice(0,10).replace(/-/g,'')}`,
+      request_id: payload.block_id,
+      action: isReject ? 'REJECT' : 'APPROVE',
+      approver_name: approverName,
+      designation: designation,
+      timestamp: new Date().toISOString(),
+      comment: payload.remarks || (isReject ? 'Block rejected/revoked by Approver (Sr. DOM).' : 'Officially sanctioned under Indian Railways G&SR Para 4.12.'),
+      approval_status: status
+    };
+
+    // 1. Immediately persist to localStorage
+    try {
+      const savedSanctions = JSON.parse(localStorage.getItem('trackshield_local_sanctions') || '{}');
+      savedSanctions[payload.block_id] = record;
+      localStorage.setItem('trackshield_local_sanctions', JSON.stringify(savedSanctions));
+
+      const savedHistory = JSON.parse(localStorage.getItem('trackshield_local_history') || '[]');
+      savedHistory.unshift(record);
+      localStorage.setItem('trackshield_local_history', JSON.stringify(savedHistory));
+
+      const channel = new BroadcastChannel('trackshield_sync');
+      channel.postMessage({ type: 'SANCTION_UPDATED', record });
+      channel.close();
+    } catch (e) {
+      console.error(e);
+    }
+    window.dispatchEvent(new CustomEvent('trackshield_sanction_updated', { detail: record }));
+
+    // 2. Post to backend
     try {
       await fetch(`${API_BASE}/api/approvals/action`, {
         method: 'POST',
@@ -102,9 +137,9 @@ export default function App() {
         body: JSON.stringify({
           request_id: payload.block_id,
           action: isReject ? 'REJECT' : 'APPROVE',
-          approver_name: payload.controller_name || currentUser?.name || 'Sri Rajesh Sharma, IRTS',
-          designation: payload.designation || currentUser?.role || 'Senior Divisional Operations Manager (Sr. DOM)',
-          comment: payload.remarks || (isReject ? 'Block rejected/revoked by Approver (Sr. DOM).' : 'Officially sanctioned under Indian Railways G&SR Para 4.12.'),
+          approver_name: approverName,
+          designation: designation,
+          comment: record.comment,
           user_role: currentUser?.systemRole || currentUser?.role || 'APPROVER'
         })
       });
@@ -346,6 +381,7 @@ export default function App() {
                 onViewMemo={handleOpenMemo}
                 scheduleData={scheduleData}
                 onScheduleUpdated={fetchAllData}
+                activeTab="approver-dashboard"
               />
             )}
 
@@ -356,6 +392,7 @@ export default function App() {
                 onViewMemo={handleOpenMemo}
                 scheduleData={scheduleData}
                 onScheduleUpdated={fetchAllData}
+                activeTab="pending-requests"
               />
             )}
 
@@ -374,15 +411,14 @@ export default function App() {
             )}
 
             {activeTab === 'approval-history' && (
-              <div style={{ padding: '1.5rem', maxWidth: '1440px', margin: '0 auto' }}>
-                <ApproverDashboard 
-                  currentUser={currentUser}
-                  onApproveBlock={(b) => setSelectedBlock(b)}
-                  onViewMemo={handleOpenMemo}
-                  scheduleData={scheduleData}
-                  onScheduleUpdated={fetchAllData}
-                />
-              </div>
+              <ApproverDashboard 
+                currentUser={currentUser}
+                onApproveBlock={(b) => setSelectedBlock(b)}
+                onViewMemo={handleOpenMemo}
+                scheduleData={scheduleData}
+                onScheduleUpdated={fetchAllData}
+                activeTab="approval-history"
+              />
             )}
           </>
         )}
@@ -391,11 +427,14 @@ export default function App() {
         {mode === 'OPERATIONS' && (
           <>
             {activeTab === 'dashboard' && (
-              <KPIDashboard 
+              <OperationsDashboard 
                 kpis={kpis} 
                 onNavigate={(tab) => setActiveTab(tab)}
                 onTriggerOptimize={() => handleTriggerOptimize('DAILY')}
                 onTriggerFusion={handleTriggerFusion}
+                onOpenReportProblem={() => setIsReportProblemOpen(true)}
+                scheduleData={scheduleData}
+                onSelectBlock={(b) => setSelectedBlock(b)}
               />
             )}
 
@@ -437,14 +476,6 @@ export default function App() {
                 onNavigate={(tab) => setActiveTab(tab)}
                 onTriggerOptimize={() => handleTriggerOptimize('DAILY')}
                 onTriggerFusion={handleTriggerFusion}
-              />
-            )}
-
-            {activeTab === 'reports' && (
-              <DataFeedsPage 
-                datasetStatus={datasetStatus}
-                onRefreshDataset={handleRefreshDataset}
-                isRefreshing={isRefreshingData}
               />
             )}
           </>

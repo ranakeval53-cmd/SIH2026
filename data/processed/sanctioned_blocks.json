@@ -1,0 +1,15 @@
+{
+  "FUSED_BLK_GZB_01": {
+    "sanction_id": "SANCTION_FUSED_BLK_GZB_01_202609111004",
+    "request_id": "FUSED_BLK_GZB_01",
+    "action": "APPROVE",
+    "approver_name": "Er. K. P. Singh",
+    "designation": "Senior Section Engineer (P-Way)",
+    "timestamp": "2026-09-11T10:04:17.872265",
+    "comment": "Track certified safe under G&SR Para 4.12",
+    "modified_start_time": null,
+    "modified_duration_mins": null,
+    "approval_status": "OFFICIALLY_SANCTIONED",
+    "user_role": "DEPARTMENT_USER"
+  }
+}

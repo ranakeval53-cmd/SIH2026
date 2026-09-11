@@ -18,7 +18,6 @@ import {
   Moon,
   Sparkles,
   BarChart3,
-  FileText,
   AlertOctagon,
   RefreshCw
 } from 'lucide-react';
@@ -52,8 +51,7 @@ export default function Navbar({
     { id: 'fusion', label: 'Auto-Fusion Center', icon: Sparkles },
     { id: 'conflicts', label: 'Risk & Conflicts', icon: AlertTriangle },
     { id: 'feeds', label: 'Data Feeds', icon: Database },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'reports', label: 'Reports', icon: FileText }
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 }
   ];
 
   // Approver Navigation Tabs

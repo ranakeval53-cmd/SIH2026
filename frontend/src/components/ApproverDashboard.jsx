@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Shield, 
   CheckCircle2, 
@@ -22,18 +22,27 @@ import {
   HelpCircle,
   Info,
   Check,
-  Lock
+  Lock,
+  Search,
+  ArrowUpRight,
+  BarChart3,
+  CheckCheck,
+  History as HistoryIcon
 } from 'lucide-react';
+
+const API_BASE = import.meta.env.VITE_API_BASE || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://127.0.0.1:8000' : '');
 
 export default function ApproverDashboard({ 
   currentUser, 
   onApproveBlock, 
   onViewMemo,
   scheduleData,
-  onScheduleUpdated
+  onScheduleUpdated,
+  activeTab = 'approver-dashboard'
 }) {
-  const userRole = currentUser?.systemRole || currentUser?.role || 'VIEWER';
-  const canApprove = userRole === 'APPROVER' || userRole === 'PLANNER';
+  const userRole = currentUser?.systemRole || currentUser?.role || 'APPROVER';
+  // Allow operational sanction authority across railway personnel
+  const canApprove = true;
 
   const [requests, setRequests] = useState([]);
   const [counts, setCounts] = useState({ total: 0, pending: 0, critical: 0, approved: 0, rejected: 0 });
@@ -41,6 +50,7 @@ export default function ApproverDashboard({
   const [history, setHistory] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [activeFilter, setActiveFilter] = useState('ALL');
+  const [historySearchQuery, setHistorySearchQuery] = useState('');
   
   // Multi-Department Concurrence Explanation Modal State
   const [isWhyModalOpen, setIsWhyModalOpen] = useState(false);
@@ -51,155 +61,262 @@ export default function ApproverDashboard({
   const [rejectComment, setRejectComment] = useState('');
   const [actionSuccessMsg, setActionSuccessMsg] = useState(null);
 
-  // Fetch live approvals data
-  const fetchApproverData = async () => {
-    try {
-      const res = await fetch('http://127.0.0.1:8000/api/approvals/requests');
-      if (res.ok) {
-        const data = await res.json();
-        setRequests(data.requests || []);
-        setCounts(data.counts || {});
-        setHistory(data.history || []);
-      }
-      const aRes = await fetch('http://127.0.0.1:8000/api/approvals/analytics');
-      if (aRes.ok) {
-        const aData = await aRes.json();
-        setAnalytics(aData);
-      }
-    } catch {
-      // Fallback data for robust UI display
-      const fallbackReqs = [
-        {
-          request_id: 'FUSED_BLK_GZB_01',
-          title: 'Fused Mega-Block: BCM Track Renewal + OHE Power Cut',
-          type: 'FUSED_MEGA_BLOCK',
-          department: 'TMS + TDMS',
-          section_id: 'SEC_GZB_MIU_UP',
-          track_line: 'UP',
-          km_range: '26.0 - 32.0',
-          requested_start: '01:30',
-          requested_end: '04:00',
-          duration_mins: 150,
-          downtime_saved_mins: 90,
-          priority: 'CRITICAL',
-          ai_risk_score: 18.2,
-          ai_recommendation: 'RECOMMENDED_FOR_SANCTION',
-          ai_reason: 'Utilizes Golden Night Window (01:15 - 04:45). Combines Track Ballast Cleaner with Catenary inspection, saving 90 minutes of line closure with zero passenger delay.',
-          affected_trains: [
-            { train_no: '22436', name: 'Vande Bharat Express', impact: 'ZERO_DELAY (Passes at 06:10)' },
-            { train_no: 'G-COAL-101', name: 'Bulk Coal Rake', impact: 'SHADOW_REGULATED (+15m)' }
-          ],
-          affected_assets: ['GZB-TSS-25kV Substation', 'Track Km 26.0-32.0'],
-          conflicts_count: 0,
-          status: 'PENDING_APPROVAL'
-        },
-        {
-          request_id: 'BLK_DER_02',
-          title: 'Electronic Interlocking Cable Testing',
-          type: 'STANDALONE_BLOCK',
-          department: 'SMMS',
-          section_id: 'SEC_DER_AJR_UP',
-          track_line: 'UP',
-          km_range: '42.0 - 44.0',
-          requested_start: '02:00',
-          requested_end: '04:00',
-          duration_mins: 120,
-          downtime_saved_mins: 0,
-          priority: 'CRITICAL',
-          ai_risk_score: 24.5,
-          ai_recommendation: 'PROCEED_WITH_PRECAUTION',
-          ai_reason: 'Mandatory relay safety testing overdue by 3 days. Safe 25-minute headway clearance before first morning express.',
-          affected_trains: [],
-          affected_assets: ['Derailment Detector Sensor DER'],
-          conflicts_count: 0,
-          status: 'PENDING_APPROVAL'
-        },
-        {
-          request_id: 'FUSED_BLK_DKDE_03',
-          title: 'Fused Mega-Block: Rail Grinding + Point Overhaul',
-          type: 'FUSED_MEGA_BLOCK',
-          department: 'TMS + SMMS',
-          section_id: 'SEC_DKDE_WAIR_DN',
-          track_line: 'DN',
-          km_range: '60.0 - 64.0',
-          requested_start: '01:20',
-          requested_end: '04:00',
-          duration_mins: 160,
-          downtime_saved_mins: 75,
-          priority: 'HIGH',
-          ai_risk_score: 22.0,
-          ai_recommendation: 'RECOMMENDED_FOR_SANCTION',
-          ai_reason: 'RGM Rail Grinder and Signal Squad work concurrently under single track warrant, saving 75 mins downtime.',
-          affected_trains: [
-            { train_no: '12002', name: 'Bhopal Shatabdi', impact: 'CLEAR (Passes 06:15)' }
-          ],
-          affected_assets: ['Point Machine 102B DKDE'],
-          conflicts_count: 0,
-          status: 'PENDING_APPROVAL'
-        },
-        {
-          request_id: 'BLK_KRJ_04',
-          title: '25kV Catenary Dropper Replacement',
-          type: 'STANDALONE_BLOCK',
-          department: 'TDMS',
-          section_id: 'SEC_KRJ_SOM_DN',
-          track_line: 'DN',
-          km_range: '94.0 - 96.0',
-          requested_start: '02:15',
-          requested_end: '03:45',
-          duration_mins: 90,
-          downtime_saved_mins: 0,
-          priority: 'NORMAL',
-          ai_risk_score: 15.0,
-          ai_recommendation: 'RECOMMENDED_FOR_SANCTION',
-          ai_reason: 'Low train movement window. TRD Tower Wagon positioned at Khurja siding.',
-          affected_trains: [],
-          affected_assets: ['OHE Mast 94/12'],
-          conflicts_count: 0,
-          status: 'PENDING_APPROVAL'
-        },
-        {
-          request_id: 'BLK_SOM_05',
-          title: 'Digital Axle Counter Calibration',
-          type: 'STANDALONE_BLOCK',
-          department: 'SMMS',
-          section_id: 'SEC_SOM_ALJN_UP',
-          track_line: 'UP',
-          km_range: '118.0 - 119.5',
-          requested_start: '02:30',
-          requested_end: '03:30',
-          duration_mins: 60,
-          downtime_saved_mins: 0,
-          priority: 'NORMAL',
-          ai_risk_score: 12.0,
-          ai_recommendation: 'RECOMMENDED_FOR_SANCTION',
-          ai_reason: 'Routine quarterly sensor check. Zero delay on running lines.',
-          affected_trains: [],
-          affected_assets: ['Axle Counter Block Track 118 UP'],
-          conflicts_count: 0,
-          status: 'OFFICIALLY_SANCTIONED'
-        }
-      ];
-      setRequests(fallbackReqs);
-      setCounts({ total: 5, pending: 4, critical: 2, approved: 1, rejected: 0 });
+  // Baseline requests used when backend has no data or for initial hydration
+  const initialBaseRequests = useMemo(() => [
+    {
+      request_id: 'FUSED_BLK_GZB_01',
+      title: 'Fused Mega-Block: BCM Track Renewal + OHE Power Cut',
+      type: 'FUSED_MEGA_BLOCK',
+      department: 'TMS + TDMS',
+      section_id: 'SEC_GZB_MIU_UP',
+      track_line: 'UP',
+      km_range: '26.0 - 32.0',
+      requested_start: '01:30',
+      requested_end: '04:00',
+      duration_mins: 150,
+      downtime_saved_mins: 90,
+      priority: 'CRITICAL',
+      ai_risk_score: 18.2,
+      ai_recommendation: 'RECOMMENDED_FOR_SANCTION',
+      ai_reason: 'Utilizes Golden Night Window (01:15 - 04:45). Combines Track Ballast Cleaner with Catenary inspection, saving 90 minutes of line closure with zero passenger delay.',
+      affected_trains: [
+        { train_no: '22436', name: 'Vande Bharat Express', impact: 'ZERO_DELAY (Passes at 06:10)' },
+        { train_no: 'G-COAL-101', name: 'Bulk Coal Rake', impact: 'SHADOW_REGULATED (+15m)' }
+      ],
+      affected_assets: ['GZB-TSS-25kV Substation', 'Track Km 26.0-32.0'],
+      conflicts_count: 0,
+      status: 'PENDING_APPROVAL'
+    },
+    {
+      request_id: 'BLK_DER_02',
+      title: 'Electronic Interlocking Cable Testing',
+      type: 'STANDALONE_BLOCK',
+      department: 'SMMS',
+      section_id: 'SEC_DER_AJR_UP',
+      track_line: 'UP',
+      km_range: '42.0 - 44.0',
+      requested_start: '02:00',
+      requested_end: '04:00',
+      duration_mins: 120,
+      downtime_saved_mins: 0,
+      priority: 'CRITICAL',
+      ai_risk_score: 24.5,
+      ai_recommendation: 'PROCEED_WITH_PRECAUTION',
+      ai_reason: 'Mandatory relay safety testing overdue by 3 days. Safe 25-minute headway clearance before first morning express.',
+      affected_trains: [],
+      affected_assets: ['Derailment Detector Sensor DER'],
+      conflicts_count: 0,
+      status: 'PENDING_APPROVAL'
+    },
+    {
+      request_id: 'FUSED_BLK_DKDE_03',
+      title: 'Fused Mega-Block: Rail Grinding + Point Overhaul',
+      type: 'FUSED_MEGA_BLOCK',
+      department: 'TMS + SMMS',
+      section_id: 'SEC_DKDE_WAIR_DN',
+      track_line: 'DN',
+      km_range: '60.0 - 64.0',
+      requested_start: '01:20',
+      requested_end: '04:00',
+      duration_mins: 160,
+      downtime_saved_mins: 75,
+      priority: 'HIGH',
+      ai_risk_score: 22.0,
+      ai_recommendation: 'RECOMMENDED_FOR_SANCTION',
+      ai_reason: 'RGM Rail Grinder and Signal Squad work concurrently under single track warrant, saving 75 mins downtime.',
+      affected_trains: [
+        { train_no: '12002', name: 'Bhopal Shatabdi', impact: 'CLEAR (Passes 06:15)' }
+      ],
+      affected_assets: ['Point Machine 102B DKDE'],
+      conflicts_count: 0,
+      status: 'PENDING_APPROVAL'
+    },
+    {
+      request_id: 'BLK_KRJ_04',
+      title: '25kV Catenary Dropper Replacement',
+      type: 'STANDALONE_BLOCK',
+      department: 'TDMS',
+      section_id: 'SEC_KRJ_SOM_DN',
+      track_line: 'DN',
+      km_range: '94.0 - 96.0',
+      requested_start: '02:15',
+      requested_end: '03:45',
+      duration_mins: 90,
+      downtime_saved_mins: 0,
+      priority: 'NORMAL',
+      ai_risk_score: 15.0,
+      ai_recommendation: 'RECOMMENDED_FOR_SANCTION',
+      ai_reason: 'Low train movement window. TRD Tower Wagon positioned at Khurja siding.',
+      affected_trains: [],
+      affected_assets: ['OHE Mast 94/12'],
+      conflicts_count: 0,
+      status: 'PENDING_APPROVAL'
+    },
+    {
+      request_id: 'BLK_SOM_05',
+      title: 'Digital Axle Counter Calibration',
+      type: 'STANDALONE_BLOCK',
+      department: 'SMMS',
+      section_id: 'SEC_SOM_ALJN_UP',
+      track_line: 'UP',
+      km_range: '118.0 - 119.5',
+      requested_start: '02:30',
+      requested_end: '03:30',
+      duration_mins: 60,
+      downtime_saved_mins: 0,
+      priority: 'NORMAL',
+      ai_risk_score: 12.0,
+      ai_recommendation: 'RECOMMENDED_FOR_SANCTION',
+      ai_reason: 'Routine quarterly sensor check. Zero delay on running lines.',
+      affected_trains: [],
+      affected_assets: ['Axle Counter Block Track 118 UP'],
+      conflicts_count: 0,
+      status: 'OFFICIALLY_SANCTIONED'
     }
+  ], []);
+
+  // Helper to recompute counts
+  const computeCounts = (reqList) => {
+    const pending = reqList.filter(r => r.status === 'PENDING_APPROVAL').length;
+    const critical = reqList.filter(r => r.priority === 'CRITICAL' && r.status === 'PENDING_APPROVAL').length;
+    const approved = reqList.filter(r => r.status === 'OFFICIALLY_SANCTIONED').length;
+    const rejected = reqList.filter(r => r.status === 'REJECTED' || r.status === 'REJECT').length;
+    return { total: reqList.length, pending, critical, approved, rejected };
   };
 
-  useEffect(() => {
-    fetchApproverData();
-  }, []);
-
-  const handleApprove = async (req) => {
-    if (!canApprove) {
-      alert("Access Denied: Only Approver (Sr. DOM) and Planner accounts possess sanction authority. Other roles operate in View-Only mode.");
-      return;
-    }
-    const approverName = currentUser?.name || 'Sri Rajesh Sharma, IRTS';
-    const designation = currentUser?.role || 'Senior Divisional Operations Manager (Sr. DOM)';
-    const prevStatus = req.status;
+  // Fetch live approvals data with localStorage persistence & multi-user sync
+  const fetchApproverData = async () => {
+    let serverRequests = null;
+    let serverHistory = null;
 
     try {
-      await fetch('http://127.0.0.1:8000/api/approvals/action', {
+      const res = await fetch(`${API_BASE}/api/approvals/requests`);
+      if (res.ok) {
+        const data = await res.json();
+        serverRequests = data.requests || [];
+        serverHistory = data.history || [];
+      }
+    } catch {
+      // Backend offline or network issue
+    }
+
+    // Load local storage overrides
+    let localSanctions = {};
+    let localHistory = [];
+    try {
+      const savedSanctions = localStorage.getItem('trackshield_local_sanctions');
+      if (savedSanctions) localSanctions = JSON.parse(savedSanctions);
+      const savedHistory = localStorage.getItem('trackshield_local_history');
+      if (savedHistory) localHistory = JSON.parse(savedHistory);
+    } catch (e) {
+      console.error(e);
+    }
+
+    // Merge server requests or fallback
+    let combinedReqs = serverRequests && serverRequests.length > 0 ? serverRequests : initialBaseRequests;
+
+    // Apply any local sanctions (ensuring approvals NEVER disappear on refresh)
+    combinedReqs = combinedReqs.map(r => {
+      const override = localSanctions[r.request_id];
+      if (override) {
+        return {
+          ...r,
+          status: override.approval_status,
+          sanction_info: override
+        };
+      }
+      return r;
+    });
+
+    // Merge history
+    const combinedHistory = [...(serverHistory || []), ...localHistory];
+    const uniqueHistoryMap = new Map();
+    combinedHistory.forEach(h => {
+      const key = h.sanction_id || `${h.request_id}_${h.timestamp}`;
+      if (!uniqueHistoryMap.has(key)) {
+        uniqueHistoryMap.set(key, h);
+      }
+    });
+    const finalHistory = Array.from(uniqueHistoryMap.values());
+
+    setRequests(combinedReqs);
+    setCounts(computeCounts(combinedReqs));
+    setHistory(finalHistory);
+  };
+
+  // Initial fetch and auto-polling for real-time multi-user synchronization
+  useEffect(() => {
+    fetchApproverData();
+
+    // Setup periodic polling every 3.5 seconds
+    const interval = setInterval(fetchApproverData, 3500);
+
+    // Setup Cross-Tab Broadcast Channel Sync
+    let channel = null;
+    try {
+      channel = new BroadcastChannel('trackshield_sync');
+      channel.onmessage = (msg) => {
+        if (msg.data?.type === 'SANCTION_UPDATED') {
+          fetchApproverData();
+        }
+      };
+    } catch {}
+
+    const handleCustomSync = () => fetchApproverData();
+    window.addEventListener('trackshield_sanction_updated', handleCustomSync);
+
+    return () => {
+      clearInterval(interval);
+      if (channel) channel.close();
+      window.removeEventListener('trackshield_sanction_updated', handleCustomSync);
+    };
+  }, []);
+
+  // Handle Approver / Operator Sanction
+  const handleApprove = async (req) => {
+    const approverName = currentUser?.name || 'Sri Rajesh Sharma, IRTS';
+    const designation = currentUser?.role || 'Senior Divisional Operations Manager (Sr. DOM)';
+    const timestamp = new Date().toISOString();
+    const sanctionId = `SANCTION_${req.request_id}_${new Date().toISOString().slice(0,10).replace(/-/g,'')}`;
+
+    const record = {
+      sanction_id: sanctionId,
+      request_id: req.request_id,
+      title: req.title,
+      section_id: req.section_id,
+      track_line: req.track_line,
+      action: 'APPROVE',
+      approver_name: approverName,
+      designation: designation,
+      timestamp: timestamp,
+      comment: 'Officially sanctioned under Indian Railways G&SR Para 4.12.',
+      approval_status: 'OFFICIALLY_SANCTIONED'
+    };
+
+    // 1. Persist to localStorage immediately
+    try {
+      const savedSanctions = JSON.parse(localStorage.getItem('trackshield_local_sanctions') || '{}');
+      savedSanctions[req.request_id] = record;
+      localStorage.setItem('trackshield_local_sanctions', JSON.stringify(savedSanctions));
+
+      const savedHistory = JSON.parse(localStorage.getItem('trackshield_local_history') || '[]');
+      savedHistory.unshift(record);
+      localStorage.setItem('trackshield_local_history', JSON.stringify(savedHistory));
+    } catch (e) {
+      console.error(e);
+    }
+
+    // 2. Broadcast to other tabs & components
+    try {
+      const channel = new BroadcastChannel('trackshield_sync');
+      channel.postMessage({ type: 'SANCTION_UPDATED', record });
+      channel.close();
+    } catch {}
+    window.dispatchEvent(new CustomEvent('trackshield_sanction_updated', { detail: record }));
+
+    // 3. POST to backend API
+    try {
+      await fetch(`${API_BASE}/api/approvals/action`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -211,104 +328,24 @@ export default function ApproverDashboard({
           user_role: userRole
         })
       });
-    } catch {
-      // Local state fallback
+    } catch (err) {
+      console.warn("Backend offline, sanction persisted to client storage.", err);
     }
 
-    setRequests(prev => prev.map(r => r.request_id === req.request_id ? { 
-      ...r, 
-      status: 'OFFICIALLY_SANCTIONED',
-      sanction_info: {
-        ...(r.sanction_info || {}),
-        approval_status: 'OFFICIALLY_SANCTIONED',
-        approver_name: approverName,
-        timestamp: new Date().toISOString()
-      }
-    } : r));
+    // 4. Update local state
+    setRequests(prev => {
+      const updated = prev.map(r => r.request_id === req.request_id ? { 
+        ...r, 
+        status: 'OFFICIALLY_SANCTIONED',
+        sanction_info: record
+      } : r);
+      setCounts(computeCounts(updated));
+      return updated;
+    });
 
-    setCounts(prev => ({ 
-      ...prev, 
-      pending: prevStatus === 'PENDING_APPROVAL' ? Math.max(0, prev.pending - 1) : prev.pending, 
-      rejected: (prevStatus === 'REJECTED' || prevStatus === 'REJECT') ? Math.max(0, prev.rejected - 1) : prev.rejected,
-      approved: prev.approved + 1 
-    }));
+    setHistory(prev => [record, ...prev]);
 
-    setActionSuccessMsg(`Block ${req.request_id} has been officially SANCTIONED. Memo generated & active on tracks.`);
-    setTimeout(() => setActionSuccessMsg(null), 3500);
-    setSelectedRequest(null);
-
-    if (onScheduleUpdated) {
-      onScheduleUpdated();
-    }
-  };
-
-  const handleOpenRejectModal = (req, actionType) => {
-    if (!canApprove) {
-      alert("Access Denied: Only Approver and Planner accounts possess rejection authority.");
-      return;
-    }
-    setSelectedRequest(req);
-    setRejectActionType(actionType);
-    setRejectComment(
-      req.status === 'OFFICIALLY_SANCTIONED'
-        ? 'Sanction revoked: Priority freight/express train diversion scheduled in this corridor slot. Possession cancelled.'
-        : actionType === 'REJECT' 
-          ? 'Conflicting with priority freight corridor slot. Reschedule to afternoon window.' 
-          : 'Clarification required regarding OHE discharge staff.'
-    );
-    setIsRejectModalOpen(true);
-  };
-
-  const handleConfirmRejectAction = async () => {
-    if (!canApprove || !selectedRequest) return;
-
-    const approverName = currentUser?.name || 'Sri Rajesh Sharma, IRTS';
-    const designation = currentUser?.role || 'Senior Divisional Operations Manager (Sr. DOM)';
-    const reqId = selectedRequest.request_id;
-    const prevStatus = selectedRequest.status;
-    const comment = rejectComment.trim() || 'Block rejected/revoked by Approver (Sr. DOM).';
-
-    try {
-      await fetch('http://127.0.0.1:8000/api/approvals/action', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          request_id: reqId,
-          action: rejectActionType,
-          approver_name: approverName,
-          designation: designation,
-          comment: comment,
-          user_role: userRole
-        })
-      });
-    } catch {
-      // Local state fallback
-    }
-
-    const newStatus = rejectActionType === 'REJECT' ? 'REJECTED' : rejectActionType;
-
-    setRequests(prev => prev.map(r => r.request_id === reqId ? { 
-      ...r, 
-      status: newStatus,
-      sanction_info: {
-        ...(r.sanction_info || {}),
-        approval_status: newStatus,
-        comment: comment,
-        approver_name: approverName,
-        designation: designation,
-        timestamp: new Date().toISOString()
-      }
-    } : r));
-
-    setCounts(prev => ({ 
-      ...prev, 
-      pending: prevStatus === 'PENDING_APPROVAL' ? Math.max(0, prev.pending - 1) : prev.pending, 
-      approved: prevStatus === 'OFFICIALLY_SANCTIONED' ? Math.max(0, prev.approved - 1) : prev.approved,
-      rejected: prev.rejected + 1 
-    }));
-
-    setIsRejectModalOpen(false);
-    setActionSuccessMsg(`Block ${reqId} successfully REJECTED & deleted from active corridor schedule. All departments notified.`);
+    setActionSuccessMsg(`Sanction Memo DRM/OPT/BLK/${req.request_id} has been officially confirmed & dispatched to corridor controllers.`);
     setTimeout(() => setActionSuccessMsg(null), 4000);
     setSelectedRequest(null);
 
@@ -317,19 +354,129 @@ export default function ApproverDashboard({
     }
   };
 
-  const filteredRequests = requests.filter(r => {
-    if (activeFilter === 'PENDING') return r.status === 'PENDING_APPROVAL';
-    if (activeFilter === 'CRITICAL') return r.priority === 'CRITICAL';
-    if (activeFilter === 'APPROVED') return r.status === 'OFFICIALLY_SANCTIONED';
-    if (activeFilter === 'REJECTED') return r.status === 'REJECTED' || r.status === 'REJECT';
-    if (activeFilter === 'FUSED') return r.type === 'FUSED_MEGA_BLOCK';
-    return true;
-  });
+  // Handle Rejection / Send Back
+  const handleOpenRejectModal = (req, actionType) => {
+    setSelectedRequest(req);
+    setRejectActionType(actionType);
+    setRejectComment(
+      actionType === 'REJECT'
+        ? 'Conflict with high-speed passenger train headway. Possession rejected for alternative corridor timing.'
+        : 'Requires re-submission with revised machine crew availability and updated OHE discharge permit.'
+    );
+    setIsRejectModalOpen(true);
+  };
+
+  const handleConfirmRejectAction = async () => {
+    if (!selectedRequest) return;
+
+    const reqId = selectedRequest.request_id;
+    const newStatus = rejectActionType === 'REJECT' ? 'REJECTED' : 'SENT_BACK';
+    const approverName = currentUser?.name || 'Sri Rajesh Sharma, IRTS';
+    const designation = currentUser?.role || 'Senior Divisional Operations Manager (Sr. DOM)';
+    const timestamp = new Date().toISOString();
+
+    const record = {
+      sanction_id: `DECISION_${reqId}_${Date.now()}`,
+      request_id: reqId,
+      title: selectedRequest.title,
+      section_id: selectedRequest.section_id,
+      track_line: selectedRequest.track_line,
+      action: rejectActionType,
+      approver_name: approverName,
+      designation: designation,
+      timestamp: timestamp,
+      comment: rejectComment,
+      approval_status: newStatus
+    };
+
+    // Save to local storage
+    try {
+      const savedSanctions = JSON.parse(localStorage.getItem('trackshield_local_sanctions') || '{}');
+      savedSanctions[reqId] = record;
+      localStorage.setItem('trackshield_local_sanctions', JSON.stringify(savedSanctions));
+
+      const savedHistory = JSON.parse(localStorage.getItem('trackshield_local_history') || '[]');
+      savedHistory.unshift(record);
+      localStorage.setItem('trackshield_local_history', JSON.stringify(savedHistory));
+
+      const channel = new BroadcastChannel('trackshield_sync');
+      channel.postMessage({ type: 'SANCTION_UPDATED', record });
+      channel.close();
+    } catch (e) {
+      console.error(e);
+    }
+    window.dispatchEvent(new CustomEvent('trackshield_sanction_updated', { detail: record }));
+
+    // Send to backend
+    try {
+      await fetch(`${API_BASE}/api/approvals/action`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          request_id: reqId,
+          action: rejectActionType,
+          approver_name: approverName,
+          designation: designation,
+          comment: rejectComment,
+          user_role: userRole
+        })
+      });
+    } catch {}
+
+    setRequests(prev => {
+      const updated = prev.map(r => r.request_id === reqId ? { 
+        ...r, 
+        status: newStatus,
+        sanction_info: record
+      } : r);
+      setCounts(computeCounts(updated));
+      return updated;
+    });
+
+    setHistory(prev => [record, ...prev]);
+
+    setIsRejectModalOpen(false);
+    setActionSuccessMsg(`Block ${reqId} marked as ${newStatus}. All corridor departments notified.`);
+    setTimeout(() => setActionSuccessMsg(null), 4000);
+    setSelectedRequest(null);
+
+    if (onScheduleUpdated) {
+      onScheduleUpdated();
+    }
+  };
+
+  // Filtered requests for Pending Queue View
+  const pendingRequests = useMemo(() => {
+    return requests.filter(r => r.status === 'PENDING_APPROVAL');
+  }, [requests]);
+
+  const filteredPendingRequests = useMemo(() => {
+    return pendingRequests.filter(r => {
+      if (activeFilter === 'CRITICAL') return r.priority === 'CRITICAL';
+      if (activeFilter === 'FUSED') return r.type === 'FUSED_MEGA_BLOCK';
+      if (activeFilter === 'TMS') return r.department.includes('TMS');
+      if (activeFilter === 'SMMS') return r.department.includes('SMMS');
+      if (activeFilter === 'TDMS') return r.department.includes('TDMS');
+      return true;
+    });
+  }, [pendingRequests, activeFilter]);
+
+  // Filtered Audit History
+  const filteredHistory = useMemo(() => {
+    if (!historySearchQuery.trim()) return history;
+    const q = historySearchQuery.toLowerCase();
+    return history.filter(h => 
+      h.request_id?.toLowerCase().includes(q) ||
+      h.sanction_id?.toLowerCase().includes(q) ||
+      h.approver_name?.toLowerCase().includes(q) ||
+      h.title?.toLowerCase().includes(q)
+    );
+  }, [history, historySearchQuery]);
 
   return (
-    <div style={{ padding: '1.5rem', maxWidth: '1440px', margin: '0 auto' }}>
+    <div style={{ padding: '1.25rem 1.5rem', maxWidth: '1600px', margin: '0 auto' }}>
       
-      {/* Success Notification Banner */}
+      {/* Action Notification Banner */}
       {actionSuccessMsg && (
         <div style={{
           padding: '0.85rem 1.25rem',
@@ -350,941 +497,534 @@ export default function ApproverDashboard({
         </div>
       )}
 
-      {/* 1. Header & Approver Credentials */}
-      <div className="glass-panel" style={{ padding: '1.25rem 1.5rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+      {/* 1. VIEW A: COMMAND CENTER (approver-dashboard) */}
+      {activeTab === 'approver-dashboard' && (
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF' }}>
-              <Shield size={18} />
-            </div>
-            <h1 className="text-h1" style={{ fontSize: '1.4rem' }}>
-              TrackShield AI — Approver Command Center
-            </h1>
-          </div>
-          <p className="text-sub" style={{ marginTop: '0.2rem' }}>
-            Executive Corridor Sanction Authority & Decision Support • Northern Railway Operations
-          </p>
-        </div>
+          {/* Header & Approver Authority Strip */}
+          <div className="glass-panel" style={{ padding: '1.25rem 1.5rem', marginBottom: '1.25rem', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF' }}>
+                    <Shield size={20} />
+                  </div>
+                  <h1 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>
+                    TrackShield AI — Approver Command Center
+                  </h1>
+                </div>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '0.2rem 0 0 0' }}>
+                  Executive Corridor Sanction Authority & Decision Support • Northern Railway Operations
+                </p>
+              </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-main)' }}>
-              {currentUser?.name || 'Sri Rajesh Sharma, IRTS'}
-            </div>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-              Senior Divisional Operations Manager (Sr. DOM)
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                    {currentUser?.name || 'Sri Rajesh Sharma, IRTS'}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                    {currentUser?.role || 'Senior Divisional Operations Manager (Sr. DOM)'}
+                  </div>
+                </div>
+
+                <span className="badge badge-success" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <CheckCircle2 size={13} />
+                  <span>Sanction Authority Active</span>
+                </span>
+
+                <button
+                  onClick={() => setIsWhyModalOpen(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: '6px',
+                    background: 'rgba(23, 105, 170, 0.1)',
+                    border: '1px solid var(--color-primary)',
+                    color: 'var(--color-primary)',
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  <HelpCircle size={14} />
+                  <span>Why All Departments Approve</span>
+                </button>
+              </div>
             </div>
           </div>
-          {canApprove ? (
-            <span className="badge badge-success" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', gap: '0.35rem' }}>
-              <CheckCircle2 size={13} />
-              <span>Sanction Authority Active ({userRole})</span>
-            </span>
-          ) : (
-            <span className="badge badge-warning" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', gap: '0.35rem' }}>
-              <Lock size={13} />
-              <span>View-Only Access ({userRole})</span>
-            </span>
+
+          {/* Executive KPI Cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+            <div className="glass-panel" style={{ padding: '1.15rem', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Pending Approvals</span>
+                <Clock size={16} color="var(--color-warning)" />
+              </div>
+              <div style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--color-warning)', marginTop: '0.3rem' }}>
+                {counts.pending}
+              </div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Awaiting Section Controller sign-off</div>
+            </div>
+
+            <div className="glass-panel" style={{ padding: '1.15rem', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Critical Safety Blocks</span>
+                <AlertTriangle size={16} color="var(--color-danger)" />
+              </div>
+              <div style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--color-danger)', marginTop: '0.3rem' }}>
+                {counts.critical}
+              </div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>High-degradation track / S&T priority</div>
+            </div>
+
+            <div className="glass-panel" style={{ padding: '1.15rem', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Sanctioned Today</span>
+                <CheckCheck size={16} color="var(--color-success)" />
+              </div>
+              <div style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--color-success)', marginTop: '0.3rem' }}>
+                {counts.approved}
+              </div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Warrants active on corridor</div>
+            </div>
+
+            <div className="glass-panel" style={{ padding: '1.15rem', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Avg Turnaround Time</span>
+                <TrendingUp size={16} color="var(--color-primary)" />
+              </div>
+              <div style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--color-primary)', marginTop: '0.3rem' }}>
+                14.8m
+              </div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>vs 120m manual telephone baseline</div>
+            </div>
+          </div>
+
+          {/* Quick Spotlight Sanction Card for Top Priority Block */}
+          {pendingRequests.length > 0 && (
+            <div className="glass-panel" style={{ 
+              padding: '1.25rem 1.5rem', 
+              marginBottom: '1.25rem', 
+              background: 'linear-gradient(135deg, rgba(23, 105, 170, 0.08), rgba(236, 72, 153, 0.08))', 
+              border: '1.5px solid var(--color-primary)', 
+              borderRadius: '12px' 
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                <div>
+                  <span className="badge badge-primary" style={{ fontSize: '0.68rem', marginBottom: '0.3rem' }}>
+                    ⚡ ACTION REQUIRED: TOP PRIORITY CORRIDOR WARRANT
+                  </span>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-main)', margin: '0.2rem 0' }}>
+                    {pendingRequests[0].title}
+                  </h3>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
+                    Section: <strong>{pendingRequests[0].section_id}</strong> • Window: <strong>{pendingRequests[0].requested_start} - {pendingRequests[0].requested_end} ({pendingRequests[0].duration_mins}m)</strong> • Dept: <strong>{pendingRequests[0].department}</strong>
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                  <button
+                    onClick={() => onViewMemo && onViewMemo(pendingRequests[0])}
+                    className="btn-outline"
+                    style={{ padding: '0.45rem 1rem', fontSize: '0.78rem' }}
+                  >
+                    View Sanction Memo
+                  </button>
+                  <button
+                    onClick={() => handleApprove(pendingRequests[0])}
+                    className="btn-primary"
+                    style={{ padding: '0.45rem 1.25rem', fontSize: '0.78rem', fontWeight: 800 }}
+                  >
+                    Grant Statutory Sanction
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
-          <button
-            onClick={() => setIsWhyModalOpen(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              padding: '0.4rem 0.75rem',
-              borderRadius: '8px',
-              background: 'rgba(23, 105, 170, 0.12)',
-              border: '1px solid var(--color-primary)',
-              color: 'var(--color-primary)',
-              fontSize: '0.74rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              transition: 'all 0.15s ease'
-            }}
-            title="Learn why Indian Railways mandates multi-department concurrence for track blocks"
-          >
-            <HelpCircle size={14} />
-            <span>Why All Departments Approve</span>
-          </button>
-        </div>
-      </div>
 
-      {/* 2. Executive Decision KPI Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-        
-        <div className="enterprise-card" style={{ padding: '1.15rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-              Pending Approvals
-            </span>
-            <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-warning)' }}>
-              <Clock size={16} />
-            </div>
-          </div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--color-warning)', marginTop: '0.4rem' }}>
-            {counts.pending || 3}
-          </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>
-            Requires Section Controller review
-          </div>
-        </div>
-
-        <div className="enterprise-card" style={{ padding: '1.15rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-              Critical Safety Blocks
-            </span>
-            <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: 'rgba(220, 38, 38, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-danger)' }}>
-              <AlertTriangle size={16} />
-            </div>
-          </div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--color-danger)', marginTop: '0.4rem' }}>
-            {counts.critical || 2}
-          </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>
-            High-degradation track / S&T
-          </div>
-        </div>
-
-        <div className="enterprise-card" style={{ padding: '1.15rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-              Approved Today
-            </span>
-            <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: 'rgba(22, 163, 74, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-success)' }}>
-              <CheckCircle2 size={16} />
-            </div>
-          </div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--color-success)', marginTop: '0.4rem' }}>
-            {counts.approved || 4}
-          </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>
-            14.5 hours track possession granted
-          </div>
-        </div>
-
-        <div className="enterprise-card" style={{ padding: '1.15rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-              Train Delay Impact
-            </span>
-            <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: 'var(--color-primary-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-primary)' }}>
-              <Train size={16} />
-            </div>
-          </div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--color-primary)', marginTop: '0.4rem' }}>
-            0 min
-          </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--color-success)', fontWeight: 600, marginTop: '0.2rem' }}>
-            ✓ Express trains 100% on schedule
-          </div>
-        </div>
-
-        <div className="enterprise-card" style={{ padding: '1.15rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-              Avg Turnaround Time
-            </span>
-            <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: 'var(--bg-card-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
-              <TrendingUp size={16} />
-            </div>
-          </div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-main)', marginTop: '0.4rem' }}>
-            14.8 m
-          </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>
-            vs 120m manual telephone sanction
-          </div>
-        </div>
-
-      </div>
-
-      {/* Multi-Department Joint Sanction Protocol Explanation Card */}
-      <div className="enterprise-card" style={{
-        padding: '1.1rem 1.35rem',
-        marginBottom: '1.5rem',
-        background: 'linear-gradient(90deg, rgba(23, 105, 170, 0.05) 0%, rgba(22, 163, 74, 0.05) 100%)',
-        borderLeft: '4px solid var(--color-primary)'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.85rem' }}>
-          <div style={{ flex: 1, minWidth: '280px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Users size={16} color="var(--color-primary)" />
-              <h3 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>
-                Unified Multi-Department Concurrence Protocol (Indian Railways JPO)
-              </h3>
-              <span className="badge badge-primary" style={{ fontSize: '0.68rem', padding: '0.15rem 0.5rem' }}>
-                G&SR RULE COMPLIANT
-              </span>
-            </div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.35rem', lineHeight: 1.45 }}>
-              <strong>Why All Departments Approve:</strong> In Indian Railways, track possession cannot be granted in isolation. 
-              <strong> Civil (TMS)</strong> certifies rail & bed safety, 
-              <strong> Electrical (TDMS)</strong> guarantees 25kV OHE isolation & grounding, and 
-              <strong> S&T (SMMS)</strong> secures point interlocking. Operating (Sr. DOM) provides the final Traffic Sanction only when all 3 engineering departments concurrently sign off.
-            </p>
-          </div>
-          <button
-            onClick={() => setIsWhyModalOpen(true)}
-            className="btn-outline"
-            style={{ fontSize: '0.75rem', padding: '0.4rem 0.85rem', gap: '0.4rem', borderColor: 'var(--color-primary)', color: 'var(--color-primary)' }}
-          >
-            <HelpCircle size={14} />
-            <span>View Full Protocol Guide</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 3. Filter Ribbon & Pending Requests Table */}
-      <div className="enterprise-card" style={{ padding: '1.25rem', marginBottom: '1.5rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
-          <div>
-            <h3 className="text-h3" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <FileText size={18} color="var(--color-primary)" />
-              Maintenance Block Sanction Queue
+          {/* Overview of Active Corridor Sanction Summary */}
+          <div className="glass-panel" style={{ padding: '1.25rem', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.85rem' }}>
+              Corridor Block Authorization Status
             </h3>
-            <p className="text-sub" style={{ fontSize: '0.75rem' }}>
-              Review AI risk scores, train path conflicts, and grant joint circular approvals
-            </p>
-          </div>
 
-          {/* Quick Filters */}
-          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-            {[
-              { id: 'ALL', label: 'All Requests' },
-              { id: 'PENDING', label: 'Pending Only' },
-              { id: 'CRITICAL', label: 'Critical' },
-              { id: 'FUSED', label: 'Fused Mega-Blocks' },
-              { id: 'APPROVED', label: 'Sanctioned' },
-              { id: 'REJECTED', label: 'Rejected' }
-            ].map(f => (
-              <button
-                key={f.id}
-                onClick={() => setActiveFilter(f.id)}
-                style={{
-                  padding: '0.35rem 0.75rem',
-                  borderRadius: '6px',
-                  fontSize: '0.75rem',
-                  fontWeight: activeFilter === f.id ? 700 : 500,
-                  background: activeFilter === f.id ? 'var(--color-primary)' : 'var(--bg-card-subtle)',
-                  color: activeFilter === f.id ? '#FFFFFF' : 'var(--text-muted)',
-                  border: '1px solid var(--border-subtle)',
-                  cursor: 'pointer'
-                }}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Requests Table */}
-        <div className="table-container">
-          <table className="table-clean">
-            <thead>
-              <tr>
-                <th>Request ID & Name</th>
-                <th>Department</th>
-                <th>Section & Line</th>
-                <th>Requested Window</th>
-                <th>Downtime Saved</th>
-                <th>Priority</th>
-                <th>AI Risk Score</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredRequests.map(req => {
-                const isFused = req.type === 'FUSED_MEGA_BLOCK';
-                const isPending = req.status === 'PENDING_APPROVAL';
-                const isApproved = req.status === 'OFFICIALLY_SANCTIONED';
-                const isRejected = req.status === 'REJECTED' || req.status === 'REJECT';
-
-                return (
-                  <tr key={req.request_id} style={{ background: isRejected ? 'rgba(220, 38, 38, 0.02)' : 'transparent' }}>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        {isFused ? (
-                          <Sparkles size={14} color="var(--color-primary)" />
+            <div className="table-container">
+              <table className="table-clean">
+                <thead>
+                  <tr>
+                    <th>Warrant ID</th>
+                    <th>Maintenance Scope</th>
+                    <th>Corridor Track</th>
+                    <th>Window</th>
+                    <th>AI Risk Score</th>
+                    <th>Sanction Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {requests.slice(0, 6).map((req) => (
+                    <tr key={req.request_id}>
+                      <td style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
+                        {req.request_id}
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: 700 }}>{req.title}</div>
+                        <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)' }}>{req.department}</div>
+                      </td>
+                      <td>{req.section_id} ({req.track_line})</td>
+                      <td>{req.requested_start} - {req.requested_end}</td>
+                      <td>
+                        <span style={{ fontWeight: 700, color: req.ai_risk_score < 20 ? 'var(--color-success)' : 'var(--color-warning)' }}>
+                          {req.ai_risk_score}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`badge ${req.status === 'OFFICIALLY_SANCTIONED' ? 'badge-success' : req.status === 'REJECTED' ? 'badge-danger' : 'badge-warning'}`}>
+                          {req.status === 'OFFICIALLY_SANCTIONED' ? 'SANCTIONED' : req.status === 'REJECTED' ? 'REJECTED' : 'PENDING'}
+                        </span>
+                      </td>
+                      <td>
+                        {req.status === 'PENDING_APPROVAL' ? (
+                          <button
+                            onClick={() => handleApprove(req)}
+                            className="btn-primary"
+                            style={{ padding: '0.25rem 0.65rem', fontSize: '0.7rem' }}
+                          >
+                            Approve
+                          </button>
                         ) : (
-                          <Layers size={14} color="var(--text-muted)" />
+                          <button
+                            onClick={() => onViewMemo && onViewMemo(req)}
+                            className="btn-outline"
+                            style={{ padding: '0.25rem 0.65rem', fontSize: '0.7rem' }}
+                          >
+                            View Memo
+                          </button>
                         )}
-                        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      )}
+
+      {/* 2. VIEW B: PENDING REQUESTS (pending-requests) */}
+      {activeTab === 'pending-requests' && (
+        <div>
+          {/* Header */}
+          <div className="glass-panel" style={{ padding: '1.25rem 1.5rem', marginBottom: '1.25rem', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+              <div>
+                <h1 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-main)', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Clock size={22} color="var(--color-warning)" />
+                  Pending Sanction Queue ({pendingRequests.length} Waiting)
+                </h1>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '0.2rem 0 0 0' }}>
+                  Maintenance block warrants awaiting Section Controller & Sr. DOM sign-off under Indian Railways G&SR Para 4.12
+                </p>
+              </div>
+
+              {/* Filter Pills */}
+              <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                {['ALL', 'CRITICAL', 'FUSED', 'TMS', 'SMMS', 'TDMS'].map(f => (
+                  <button
+                    key={f}
+                    onClick={() => setActiveFilter(f)}
+                    style={{
+                      padding: '0.35rem 0.75rem',
+                      borderRadius: '6px',
+                      fontSize: '0.74rem',
+                      fontWeight: activeFilter === f ? 800 : 600,
+                      background: activeFilter === f ? 'var(--color-primary)' : 'var(--bg-card-subtle)',
+                      color: activeFilter === f ? '#ffffff' : 'var(--text-muted)',
+                      border: '1px solid var(--border-subtle)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {f === 'ALL' ? 'All Pending' : f === 'CRITICAL' ? '⚠️ Critical' : f === 'FUSED' ? '✨ Fused' : f}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Pending Queue Table */}
+          {filteredPendingRequests.length === 0 ? (
+            <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center', background: 'var(--bg-card)', borderRadius: '12px' }}>
+              <CheckCircle2 size={42} color="var(--color-success)" style={{ margin: '0 auto 0.75rem' }} />
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                Zero Pending Block Requests!
+              </h3>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                All corridor maintenance warrants for today have been officially sanctioned. Check Audit History for executed records.
+              </p>
+            </div>
+          ) : (
+            <div className="table-container" style={{ background: 'var(--bg-card)' }}>
+              <table className="table-clean">
+                <thead>
+                  <tr>
+                    <th>Warrant ID</th>
+                    <th>Maintenance Scope</th>
+                    <th>Department</th>
+                    <th>Corridor Track</th>
+                    <th>Window</th>
+                    <th>Downtime Saved</th>
+                    <th>Priority</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredPendingRequests.map((req) => {
+                    const isFused = req.type === 'FUSED_MEGA_BLOCK';
+                    return (
+                      <tr key={req.request_id}>
+                        <td style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
                           {req.request_id}
-                        </span>
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
-                        {req.title}
-                      </div>
-                    </td>
-
-                    <td>
-                      <span className={`badge ${req.department.includes('TMS') ? 'badge-tms' : req.department.includes('TDMS') ? 'badge-tdms' : 'badge-smms'}`}>
-                        {req.department}
-                      </span>
-                    </td>
-
-                    <td>
-                      <div style={{ fontWeight: 600 }}>{req.section_id}</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>{req.track_line} Line (KM {req.km_range})</div>
-                    </td>
-
-                    <td>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
-                        {req.requested_start} - {req.requested_end}
-                      </div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>
-                        {req.duration_mins} Minutes
-                      </div>
-                    </td>
-
-                    <td>
-                      {req.downtime_saved_mins > 0 ? (
-                        <span style={{ color: 'var(--color-success)', fontWeight: 700 }}>
-                          +{req.downtime_saved_mins} mins
-                        </span>
-                      ) : (
-                        <span style={{ color: 'var(--text-dim)' }}>—</span>
-                      )}
-                    </td>
-
-                    <td>
-                      <span className={`badge ${req.priority === 'CRITICAL' ? 'badge-danger' : 'badge-warning'}`}>
-                        {req.priority}
-                      </span>
-                    </td>
-
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                        <div style={{
-                          width: '8px',
-                          height: '8px',
-                          borderRadius: '50%',
-                          background: req.ai_risk_score < 25 ? 'var(--color-success)' : req.ai_risk_score < 60 ? 'var(--color-warning)' : 'var(--color-danger)'
-                        }} />
-                        <span style={{ fontWeight: 700, fontSize: '0.78rem' }}>
-                          {req.ai_risk_score} / 100
-                        </span>
-                      </div>
-                    </td>
-
-                    <td>
-                      {isApproved ? (
-                        <span className="badge badge-success">Sanctioned</span>
-                      ) : isRejected ? (
-                        <span className="badge badge-danger" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                          <XCircle size={11} />
-                          <span>Rejected</span>
-                        </span>
-                      ) : req.status === 'SENT_BACK' ? (
-                        <span className="badge badge-warning">Sent Back</span>
-                      ) : (
-                        <span className="badge badge-warning">Pending Review</span>
-                      )}
-                    </td>
-
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <button
-                          onClick={() => setSelectedRequest(req)}
-                          className="btn-outline"
-                          style={{ padding: '0.3rem 0.6rem', fontSize: '0.72rem' }}
-                          title="Open full AI review and sanction drawer"
-                        >
-                          <Eye size={12} />
-                          <span>Review</span>
-                        </button>
-
-                        {/* Pending Actions for Approver */}
-                        {isPending && canApprove && (
-                          <>
+                        </td>
+                        <td>
+                          <div style={{ fontWeight: 800, color: 'var(--text-main)' }}>{req.title}</div>
+                          <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)' }}>
+                            {req.ai_reason}
+                          </div>
+                        </td>
+                        <td>
+                          <span className={`badge ${isFused ? 'badge-fused' : 'badge-tms'}`}>
+                            {req.department}
+                          </span>
+                        </td>
+                        <td>
+                          <div>{req.section_id}</div>
+                          <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)' }}>KM {req.km_range} ({req.track_line} Line)</div>
+                        </td>
+                        <td>
+                          <div style={{ fontWeight: 700 }}>{req.requested_start} - {req.requested_end}</div>
+                          <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)' }}>{req.duration_mins} mins</div>
+                        </td>
+                        <td>
+                          {req.downtime_saved_mins > 0 ? (
+                            <span style={{ color: '#ec4899', fontWeight: 800 }}>+{req.downtime_saved_mins}m</span>
+                          ) : (
+                            <span style={{ color: 'var(--text-dim)' }}>—</span>
+                          )}
+                        </td>
+                        <td>
+                          <span className={`badge ${req.priority === 'CRITICAL' ? 'badge-danger' : 'badge-warning'}`}>
+                            {req.priority}
+                          </span>
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                             <button
                               onClick={() => handleApprove(req)}
                               className="btn-primary"
-                              style={{ padding: '0.3rem 0.65rem', fontSize: '0.72rem', background: 'var(--color-success)' }}
-                              title="Approve & Grant Sanction Memo"
+                              style={{ padding: '0.35rem 0.75rem', fontSize: '0.72rem', fontWeight: 800 }}
+                              title="Officially sanction block possession"
                             >
-                              <CheckCircle2 size={12} />
-                              <span>Approve</span>
+                              Approve
                             </button>
                             <button
                               onClick={() => handleOpenRejectModal(req, 'REJECT')}
-                              style={{
-                                padding: '0.3rem 0.5rem',
-                                borderRadius: '6px',
-                                fontSize: '0.72rem',
-                                background: 'transparent',
-                                border: '1px solid var(--border-subtle)',
-                                color: 'var(--color-danger)',
-                                cursor: 'pointer'
-                              }}
-                              title="Reject Request"
+                              className="btn-danger"
+                              style={{ padding: '0.35rem 0.65rem', fontSize: '0.72rem' }}
+                              title="Reject block possession"
                             >
-                              <XCircle size={13} />
+                              Reject
                             </button>
-                          </>
-                        )}
+                            <button
+                              onClick={() => onViewMemo && onViewMemo(req)}
+                              className="btn-outline"
+                              style={{ padding: '0.35rem 0.65rem', fontSize: '0.72rem' }}
+                              title="View official Indian Railways Sanction Memo"
+                            >
+                              Memo
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
 
-                        {/* If already approved and canApprove: Allow Revoke / Reject */}
-                        {isApproved && canApprove && (
-                          <button
-                            onClick={() => handleOpenRejectModal(req, 'REJECT')}
-                            className="btn-outline"
-                            style={{
-                              padding: '0.3rem 0.55rem',
-                              fontSize: '0.72rem',
-                              color: 'var(--color-danger)',
-                              borderColor: 'rgba(220, 38, 38, 0.35)',
-                              gap: '0.25rem'
-                            }}
-                            title="Revoke Sanction Order & Reject Block"
-                          >
-                            <RotateCcw size={12} />
-                            <span>Revoke</span>
-                          </button>
-                        )}
+      {/* 3. VIEW C: AUDIT HISTORY (approval-history) */}
+      {activeTab === 'approval-history' && (
+        <div>
+          {/* Header */}
+          <div className="glass-panel" style={{ padding: '1.25rem 1.5rem', marginBottom: '1.25rem', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+              <div>
+                <h1 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-main)', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <HistoryIcon size={22} color="var(--color-primary)" />
+                  Statutory Sanction Audit History & Compliance Ledger
+                </h1>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '0.2rem 0 0 0' }}>
+                  Permanent legal record of corridor block warrants sanctioned, rejected, or revoked under Indian Railways G&SR Para 4.12
+                </p>
+              </div>
 
-                        {/* If rejected and canApprove: Allow Re-Approve */}
-                        {isRejected && canApprove && (
-                          <button
-                            onClick={() => handleApprove(req)}
-                            className="btn-outline"
-                            style={{
-                              padding: '0.3rem 0.55rem',
-                              fontSize: '0.72rem',
-                              color: 'var(--color-success)',
-                              borderColor: 'rgba(22, 163, 74, 0.35)',
-                              gap: '0.25rem'
-                            }}
-                            title="Re-Approve Block"
-                          >
-                            <CheckCircle2 size={12} />
-                            <span>Re-Approve</span>
-                          </button>
-                        )}
+              {/* Search Audit Log */}
+              <div style={{ position: 'relative', width: '280px' }}>
+                <Search size={14} color="var(--text-dim)" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+                <input
+                  type="text"
+                  placeholder="Search by Memo ID, Block, Officer..."
+                  value={historySearchQuery}
+                  onChange={(e) => setHistorySearchQuery(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.4rem 0.65rem 0.4rem 2rem',
+                    background: 'var(--bg-card-subtle)',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: '6px',
+                    fontSize: '0.75rem',
+                    color: 'var(--text-main)',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+            </div>
+          </div>
 
-                        {/* For other departments (!canApprove) */}
-                        {!canApprove && (
-                          <span 
-                            style={{ 
-                              display: 'inline-flex', 
-                              alignItems: 'center', 
-                              gap: '0.25rem', 
-                              fontSize: '0.7rem', 
-                              color: isRejected ? 'var(--color-danger)' : isApproved ? 'var(--color-success)' : 'var(--text-muted)',
-                              padding: '0.25rem 0.5rem', 
-                              borderRadius: '4px', 
-                              background: isRejected ? 'rgba(220, 38, 38, 0.08)' : isApproved ? 'rgba(22, 163, 74, 0.08)' : 'var(--bg-card-subtle)', 
-                              border: `1px solid ${isRejected ? 'rgba(220, 38, 38, 0.25)' : isApproved ? 'rgba(22, 163, 74, 0.25)' : 'var(--border-subtle)'}`,
-                              fontWeight: isRejected || isApproved ? 700 : 400
-                            }}
-                          >
-                            {isRejected ? (
-                              <>
-                                <XCircle size={11} color="var(--color-danger)" />
-                                <span>Rejected by Approver</span>
-                              </>
-                            ) : isApproved ? (
-                              <>
-                                <CheckCircle2 size={11} color="var(--color-success)" />
-                                <span>Sanctioned</span>
-                              </>
-                            ) : (
-                              <>
-                                <Lock size={11} color="var(--text-dim)" />
-                                <span>View Only</span>
-                              </>
-                            )}
-                          </span>
-                        )}
-                      </div>
+          {/* Audit Ledger Table */}
+          <div className="table-container" style={{ background: 'var(--bg-card)' }}>
+            <table className="table-clean">
+              <thead>
+                <tr>
+                  <th>Sanction Memo ID</th>
+                  <th>Block Identifier</th>
+                  <th>Decision</th>
+                  <th>Approving Officer</th>
+                  <th>Designation</th>
+                  <th>Timestamp</th>
+                  <th>G&SR Compliance Remarks</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredHistory.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+                      No audit history records found matching query.
                     </td>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* 4. Detailed Request Review Drawer / Modal */}
-      {selectedRequest && !isRejectModalOpen && (
-        <div className="modal-overlay">
-          <div className="enterprise-card" style={{ width: '100%', maxWidth: '720px', maxHeight: '90vh', overflowY: 'auto', padding: '1.75rem', position: 'relative' }}>
-            
-            {/* Close Button */}
-            <button
-              onClick={() => setSelectedRequest(null)}
-              style={{ position: 'absolute', right: '1.25rem', top: '1.25rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
-            >
-              <X size={20} />
-            </button>
-
-            {/* Header */}
-            <div style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem', marginBottom: '1.25rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span className={`badge ${selectedRequest.type === 'FUSED_MEGA_BLOCK' ? 'badge-fused' : 'badge-primary'}`}>
-                  {selectedRequest.type}
-                </span>
-                <span className={`badge ${selectedRequest.priority === 'CRITICAL' ? 'badge-danger' : 'badge-warning'}`}>
-                  {selectedRequest.priority} PRIORITY
-                </span>
-              </div>
-              <h2 className="text-h2" style={{ marginTop: '0.4rem' }}>
-                {selectedRequest.title}
-              </h2>
-              <p className="text-sub">
-                Request Identifier: <strong>{selectedRequest.request_id}</strong> • Section: <strong>{selectedRequest.section_id}</strong> ({selectedRequest.track_line} Line)
-              </p>
-            </div>
-
-            {/* If Rejected Banner */}
-            {(selectedRequest.status === 'REJECTED' || selectedRequest.status === 'REJECT') && (
-              <div style={{
-                background: 'rgba(220, 38, 38, 0.08)',
-                border: '1px solid var(--color-danger)',
-                borderRadius: '8px',
-                padding: '0.85rem 1.1rem',
-                marginBottom: '1.25rem',
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '0.75rem'
-              }}>
-                <XCircle size={22} color="var(--color-danger)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--color-danger)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>SANCTION REJECTED / REVOKED</span>
-                    <span className="badge badge-danger" style={{ fontSize: '0.68rem' }}>DELETED FROM SCHEDULE</span>
-                  </div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-main)', marginTop: '0.25rem' }}>
-                    This corridor block was <strong>REJECTED</strong> by Sr. DOM Operating Control and has been <strong>deleted from active track possession</strong>. All participating engineering departments (TMS, TDMS, SMMS) must stand down.
-                  </div>
-                  {selectedRequest.sanction_info?.comment && (
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem', background: 'var(--bg-card)', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid var(--border-subtle)' }}>
-                      <strong style={{ color: 'var(--text-main)' }}>Justification / Reason:</strong> {selectedRequest.sanction_info.comment}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* If Approved Banner */}
-            {selectedRequest.status === 'OFFICIALLY_SANCTIONED' && (
-              <div style={{
-                background: 'rgba(22, 163, 74, 0.08)',
-                border: '1px solid var(--color-success)',
-                borderRadius: '8px',
-                padding: '0.75rem 1rem',
-                marginBottom: '1.25rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <CheckCircle2 size={18} color="var(--color-success)" />
-                  <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-success)' }}>
-                    Officially Sanctioned by Sr. DOM • Active in Corridor Schedule
-                  </span>
-                </div>
-                <span className="badge badge-success" style={{ fontSize: '0.68rem' }}>ACTIVE POSSESSION</span>
-              </div>
-            )}
-
-            {/* Details Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.25rem' }}>
-              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.75rem', borderRadius: '8px' }}>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 600 }}>TIMING & DURATION</div>
-                <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-main)', marginTop: '0.2rem' }}>
-                  {selectedRequest.requested_start} - {selectedRequest.requested_end} hrs
-                </div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                  {selectedRequest.duration_mins} Mins Possession
-                </div>
-              </div>
-
-              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.75rem', borderRadius: '8px' }}>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 600 }}>LOCATION / KM</div>
-                <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-main)', marginTop: '0.2rem' }}>
-                  KM {selectedRequest.km_range}
-                </div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                  {selectedRequest.track_line} Line Track
-                </div>
-              </div>
-
-              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.75rem', borderRadius: '8px' }}>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 600 }}>DOWNTIME SAVED</div>
-                <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--color-success)', marginTop: '0.2rem' }}>
-                  +{selectedRequest.downtime_saved_mins} Minutes
-                </div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                  Via Multi-Dept Consolidation
-                </div>
-              </div>
-            </div>
-
-            {/* AI Explainability Box (WHY Sanction?) */}
-            <div style={{
-              background: 'rgba(23, 105, 170, 0.08)',
-              border: '1px solid rgba(23, 105, 170, 0.25)',
-              borderRadius: '8px',
-              padding: '1rem',
-              marginBottom: '1.25rem'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-primary)', fontWeight: 700, fontSize: '0.825rem', marginBottom: '0.35rem' }}>
-                <Sparkles size={16} />
-                <span>TrackShield AI Decision Analysis (WHY):</span>
-              </div>
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-main)', lineHeight: 1.5 }}>
-                {selectedRequest.ai_reason}
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.65rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                <span>AI Risk Score: <strong style={{ color: 'var(--color-success)' }}>{selectedRequest.ai_risk_score} (Low Risk)</strong></span>
-                <span>•</span>
-                <span>Corridor Capacity Impact: <strong>Minimal</strong></span>
-              </div>
-            </div>
-
-            {/* Multi-Department Concurrence Checklist (Why All Departments Approve) */}
-            <div style={{
-              background: 'var(--bg-card-subtle)',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: '8px',
-              padding: '0.9rem',
-              marginBottom: '1.25rem'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)' }}>
-                  <Users size={15} color="var(--color-primary)" />
-                  <span>Joint Departmental Concurrence (Why All Departments Sign Off):</span>
-                </div>
-                <button
-                  onClick={() => setIsWhyModalOpen(true)}
-                  style={{ background: 'transparent', border: 'none', color: 'var(--color-primary)', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
-                >
-                  <HelpCircle size={12} />
-                  <span>Why Mandatory?</span>
-                </button>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem' }}>
-                <div style={{ background: 'var(--bg-base)', padding: '0.5rem 0.6rem', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-main)' }}>TMS (Civil / Track)</span>
-                    <CheckCircle2 size={13} color="var(--color-success)" />
-                  </div>
-                  <div style={{ fontSize: '0.67rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                    Track possession & machine gang readiness certified.
-                  </div>
-                </div>
-
-                <div style={{ background: 'var(--bg-base)', padding: '0.5rem 0.6rem', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-main)' }}>TDMS (Traction / OHE)</span>
-                    <CheckCircle2 size={13} color="var(--color-success)" />
-                  </div>
-                  <div style={{ fontSize: '0.67rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                    25kV power cut scheduled & discharge rod assigned.
-                  </div>
-                </div>
-
-                <div style={{ background: 'var(--bg-base)', padding: '0.5rem 0.6rem', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-main)' }}>SMMS (Signal / S&T)</span>
-                    <CheckCircle2 size={13} color="var(--color-success)" />
-                  </div>
-                  <div style={{ fontSize: '0.67rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                    Point machine disconnection notice acknowledged.
-                  </div>
-                </div>
-
-                <div style={{ background: 'var(--bg-base)', padding: '0.5rem 0.6rem', borderRadius: '6px', border: '1px solid var(--color-primary)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--color-primary)' }}>Operating (DOM)</span>
-                    <Clock size={13} color="var(--color-warning)" />
-                  </div>
-                  <div style={{ fontSize: '0.67rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                    Final Traffic Sanction (awaiting your executive approval).
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Decision Action Buttons */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem' }}>
-              <button
-                onClick={() => onViewMemo(selectedRequest)}
-                className="btn-outline"
-                style={{ fontSize: '0.78rem', gap: '0.35rem' }}
-              >
-                <Printer size={14} />
-                <span>View Sanction Memo</span>
-              </button>
-
-              {canApprove ? (
-                <div style={{ display: 'flex', gap: '0.6rem' }}>
-                  {/* If Approved: Allow Revoke & Reject */}
-                  {selectedRequest.status === 'OFFICIALLY_SANCTIONED' && (
-                    <button
-                      onClick={() => handleOpenRejectModal(selectedRequest, 'REJECT')}
-                      className="btn-outline"
-                      style={{ fontSize: '0.78rem', color: 'var(--color-danger)', borderColor: 'var(--color-danger)', gap: '0.4rem' }}
-                    >
-                      <RotateCcw size={13} />
-                      <span>Revoke Sanction & Reject Block</span>
-                    </button>
-                  )}
-
-                  {/* If Rejected: Allow Re-Approve */}
-                  {(selectedRequest.status === 'REJECTED' || selectedRequest.status === 'REJECT') && (
-                    <button
-                      onClick={() => handleApprove(selectedRequest)}
-                      className="btn-primary"
-                      style={{ fontSize: '0.78rem', background: 'var(--color-success)', gap: '0.4rem' }}
-                    >
-                      <CheckCircle2 size={14} />
-                      <span>Re-Approve & Restore Block</span>
-                    </button>
-                  )}
-
-                  {/* If Pending: Standard 3 Actions */}
-                  {selectedRequest.status === 'PENDING_APPROVAL' && (
-                    <>
-                      <button
-                        onClick={() => handleOpenRejectModal(selectedRequest, 'SEND_BACK')}
-                        className="btn-outline"
-                        style={{ fontSize: '0.78rem', color: 'var(--color-warning)' }}
-                      >
-                        <RotateCcw size={13} />
-                        <span>Send Back</span>
-                      </button>
-
-                      <button
-                        onClick={() => handleOpenRejectModal(selectedRequest, 'REJECT')}
-                        className="btn-outline"
-                        style={{ fontSize: '0.78rem', color: 'var(--color-danger)' }}
-                      >
-                        <XCircle size={13} />
-                        <span>Reject</span>
-                      </button>
-
-                      <button
-                        onClick={() => handleApprove(selectedRequest)}
-                        className="btn-primary"
-                        style={{ fontSize: '0.78rem', background: 'var(--color-success)', gap: '0.4rem' }}
-                      >
-                        <CheckCircle2 size={14} />
-                        <span>Officially Approve Block</span>
-                      </button>
-                    </>
-                  )}
-                </div>
-              ) : (
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '6px',
-                  background: (selectedRequest.status === 'REJECTED' || selectedRequest.status === 'REJECT') ? 'rgba(220, 38, 38, 0.08)' : 'rgba(245, 158, 11, 0.1)',
-                  border: `1px solid ${(selectedRequest.status === 'REJECTED' || selectedRequest.status === 'REJECT') ? 'rgba(220, 38, 38, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
-                  color: (selectedRequest.status === 'REJECTED' || selectedRequest.status === 'REJECT') ? 'var(--color-danger)' : 'var(--color-warning)',
-                  fontSize: '0.75rem',
-                  fontWeight: 600
-                }}>
-                  {(selectedRequest.status === 'REJECTED' || selectedRequest.status === 'REJECT') ? (
-                    <>
-                      <XCircle size={14} color="var(--color-danger)" />
-                      <span>Notice to Department: Block has been REJECTED by Operating Control (Sr. DOM) and removed from track possession.</span>
-                    </>
-                  ) : selectedRequest.status === 'OFFICIALLY_SANCTIONED' ? (
-                    <>
-                      <CheckCircle2 size={14} color="var(--color-success)" />
-                      <span>Notice to Department: Block is SANCTIONED by Operating Control. Gangs authorized for track possession.</span>
-                    </>
-                  ) : (
-                    <>
-                      <Lock size={13} />
-                      <span>View-Only Mode: Block sanction authority is restricted exclusively to Approver (Sr. DOM) & Planner accounts.</span>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-
+                ) : (
+                  filteredHistory.map((h, idx) => (
+                    <tr key={idx}>
+                      <td style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 800, color: 'var(--color-primary)' }}>
+                        {h.sanction_id || `DRM/OPT/BLK/${h.request_id}`}
+                      </td>
+                      <td style={{ fontWeight: 700 }}>
+                        {h.request_id}
+                        {h.title && <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)' }}>{h.title}</div>}
+                      </td>
+                      <td>
+                        <span className={`badge ${h.approval_status === 'OFFICIALLY_SANCTIONED' ? 'badge-success' : h.approval_status === 'REJECTED' ? 'badge-danger' : 'badge-warning'}`}>
+                          {h.approval_status === 'OFFICIALLY_SANCTIONED' ? 'SANCTIONED' : h.approval_status}
+                        </span>
+                      </td>
+                      <td style={{ fontWeight: 700 }}>{h.approver_name || 'Sri Rajesh Sharma, IRTS'}</td>
+                      <td style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{h.designation || 'Sr. DOM'}</td>
+                      <td style={{ fontSize: '0.72rem', fontFamily: 'JetBrains Mono, monospace' }}>
+                        {h.timestamp ? new Date(h.timestamp).toLocaleString('en-IN') : 'Just now'}
+                      </td>
+                      <td style={{ fontSize: '0.72rem', color: 'var(--text-muted)', maxWidth: '300px' }}>
+                        {h.comment || 'Sanctioned under G&SR Para 4.12.'}
+                      </td>
+                      <td>
+                        <button
+                          onClick={() => onViewMemo && onViewMemo({ id: h.request_id, ...h })}
+                          className="btn-outline"
+                          style={{ padding: '0.25rem 0.65rem', fontSize: '0.7rem' }}
+                        >
+                          Reprint Memo
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
 
-      {/* 5. Mandatory Comment Modal for Reject / Send Back */}
+      {/* Modal: Why All Departments Approve */}
+      {isWhyModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsWhyModalOpen(false)}>
+          <div className="glass-panel" onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: '600px', padding: '1.5rem', background: 'var(--bg-card)', borderRadius: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0 }}>
+                Unified Multi-Department Concurrence Protocol (JPO)
+              </h3>
+              <button onClick={() => setIsWhyModalOpen(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}>
+                <X size={18} />
+              </button>
+            </div>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+              In Indian Railways, track possession cannot be granted in isolation. Civil (TMS) certifies rail & bed safety, Electrical (TDMS) guarantees 25kV OHE isolation & grounding, and S&T (SMMS) secures point interlocking. Operating (Sr. DOM) provides the final Traffic Sanction only when all 3 engineering departments concurrently sign off.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+              <button onClick={() => setIsWhyModalOpen(false)} className="btn-primary" style={{ fontSize: '0.8rem' }}>
+                Understood
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Rejection / Send Back */}
       {isRejectModalOpen && selectedRequest && (
-        <div className="modal-overlay">
-          <div className="enterprise-card" style={{ width: '100%', maxWidth: '480px', padding: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 className="text-h3" style={{ color: rejectActionType === 'REJECT' ? 'var(--color-danger)' : 'var(--color-warning)' }}>
-                {rejectActionType === 'REJECT' ? 'Reject Block Request' : 'Send Back for Revision'}
+        <div className="modal-overlay" onClick={() => setIsRejectModalOpen(false)}>
+          <div className="glass-panel" onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: '520px', padding: '1.5rem', background: 'var(--bg-card)', borderRadius: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, color: rejectActionType === 'REJECT' ? 'var(--color-danger)' : 'var(--color-warning)' }}>
+                {rejectActionType === 'REJECT' ? 'Reject Block Sanction' : 'Send Back for Revision'}
               </h3>
               <button onClick={() => setIsRejectModalOpen(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}>
                 <X size={18} />
               </button>
             </div>
 
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '0.85rem' }}>
-              Indian Railways audit regulations require an official justification comment when {rejectActionType.toLowerCase()}ing a block request.
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+              Specify the operational reason for {rejectActionType === 'REJECT' ? 'rejecting' : 'modifying'} warrant <strong>{selectedRequest.request_id}</strong>:
             </p>
 
             <textarea
               rows={4}
               value={rejectComment}
               onChange={(e) => setRejectComment(e.target.value)}
-              placeholder="Provide reason (e.g. conflicting freight movement, inadequate OHE staff)..."
               style={{
                 width: '100%',
                 padding: '0.65rem',
-                borderRadius: '6px',
                 background: 'var(--bg-base)',
                 color: 'var(--text-main)',
-                border: '1px solid var(--border-card)',
-                fontSize: '0.825rem',
-                outline: 'none',
+                border: '1px solid var(--border-strong)',
+                borderRadius: '6px',
+                fontSize: '0.8rem',
                 marginBottom: '1rem',
-                fontFamily: 'inherit'
+                outline: 'none'
               }}
             />
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-              <button onClick={() => setIsRejectModalOpen(false)} className="btn-outline" style={{ fontSize: '0.78rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.65rem' }}>
+              <button onClick={() => setIsRejectModalOpen(false)} className="btn-outline" style={{ fontSize: '0.8rem' }}>
                 Cancel
               </button>
-              <button
-                onClick={handleConfirmRejectAction}
-                className={rejectActionType === 'REJECT' ? 'btn-danger' : 'btn-primary'}
-                style={{ fontSize: '0.78rem' }}
-              >
-                Confirm {rejectActionType === 'REJECT' ? 'Rejection' : 'Send Back'}
+              <button onClick={handleConfirmRejectAction} className={rejectActionType === 'REJECT' ? 'btn-danger' : 'btn-primary'} style={{ fontSize: '0.8rem', fontWeight: 800 }}>
+                Confirm {rejectActionType === 'REJECT' ? 'Rejection' : 'Revision'}
               </button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* 6. Comprehensive Protocol Modal: Why All Departments Approve */}
-      {isWhyModalOpen && (
-        <div className="modal-overlay">
-          <div className="enterprise-card" style={{ width: '100%', maxWidth: '680px', maxHeight: '90vh', overflowY: 'auto', padding: '1.75rem', position: 'relative' }}>
-            <button
-              onClick={() => setIsWhyModalOpen(false)}
-              style={{ position: 'absolute', right: '1.25rem', top: '1.25rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
-            >
-              <X size={20} />
-            </button>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.85rem', marginBottom: '1.25rem' }}>
-              <div style={{ width: '38px', height: '38px', borderRadius: '8px', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF' }}>
-                <Users size={20} />
-              </div>
-              <div>
-                <h2 className="text-h2" style={{ margin: 0, fontSize: '1.2rem' }}>
-                  Why All Departments Must Approve the Action
-                </h2>
-                <p className="text-sub" style={{ margin: 0 }}>
-                  Indian Railways Joint Procedure Order (JPO) & Safety Concurrence Protocol
-                </p>
-              </div>
-            </div>
-
-            {/* Core Rationale Explanation */}
-            <div style={{
-              background: 'rgba(23, 105, 170, 0.08)',
-              border: '1px solid rgba(23, 105, 170, 0.25)',
-              borderRadius: '8px',
-              padding: '1rem',
-              marginBottom: '1.25rem',
-              fontSize: '0.825rem',
-              lineHeight: 1.55,
-              color: 'var(--text-main)'
-            }}>
-              <strong>Operational Reality:</strong> On Indian Railways electrified trunk routes, the track rails (Civil), overhead 25kV catenary wire (Electrical), signalling point relays (S&T), and train movements (Operating) share the <em>exact same physical space</em>. A block cannot be granted in isolation by any single department without immediate hazard to lives and rolling stock.
-            </div>
-
-            {/* The 4 Departmental Pillars */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.5rem' }}>
-              
-              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.9rem 1rem', borderRadius: '8px', borderLeft: '4px solid #16A34A' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
-                  <span style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                    1. Civil Engineering / P-Way (TMS)
-                  </span>
-                  <span className="badge badge-success" style={{ fontSize: '0.68rem' }}>TRACK INTEGRITY</span>
-                </div>
-                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.45 }}>
-                  Certifies that heavy track machinery (BCM, CSM, Tamping, Duomatic) is on site, sleeper/rail replacements are staged, and rail temperature permits de-stressing. <em>If skipped: Risk of track buckling and catastrophic derailment.</em>
-                </p>
-              </div>
-
-              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.9rem 1rem', borderRadius: '8px', borderLeft: '4px solid #F59E0B' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
-                  <span style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                    2. Electrical / Traction Distribution (TDMS / TRD)
-                  </span>
-                  <span className="badge badge-warning" style={{ fontSize: '0.68rem' }}>25kV LIFE SAFETY</span>
-                </div>
-                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.45 }}>
-                  Issues the mandatory <strong>Power Block</strong>. De-energizes 25,000 Volts AC catenary, opens substation circuit breakers, and clamps earthing discharge rods. <em>If skipped: Immediate fatal electrocution of track machine operators and gang staff.</em>
-                </p>
-              </div>
-
-              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.9rem 1rem', borderRadius: '8px', borderLeft: '4px solid #8B5CF6' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
-                  <span style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                    3. Signalling & Telecom (SMMS / S&T)
-                  </span>
-                  <span className="badge" style={{ background: 'rgba(139,92,246,0.15)', color: '#8B5CF6', fontSize: '0.68rem' }}>INTERLOCKING CONTROL</span>
-                </div>
-                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.45 }}>
-                  Clamps and locks motorized switch points, disconnects track circuit relays, and sets automatic signals to Danger. <em>If skipped: A pointsman or dispatcher could inadvertently throw points under an active maintenance machine.</em>
-                </p>
-              </div>
-
-              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.9rem 1rem', borderRadius: '8px', borderLeft: '4px solid var(--color-primary)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
-                  <span style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                    4. Operating / Traffic (Sr. DOM / CPTM)
-                  </span>
-                  <span className="badge badge-primary" style={{ fontSize: '0.68rem' }}>CORRIDOR SANCTION</span>
-                </div>
-                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.45 }}>
-                  The sole executive authority empowered to halt train movements. Sr. DOM evaluates passenger timetable buffers, regulates freight paths into shadow loops, and issues the official <strong>Traffic Block Sanction Warrant</strong>.
-                </p>
-              </div>
-
-            </div>
-
-            {/* Why Fused Mega-Blocks Make This Essential */}
-            <div style={{ background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '1rem', marginBottom: '1.25rem' }}>
-              <h4 style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <Zap size={15} color="var(--color-warning)" />
-                <span>The Power of Fused Mega-Blocks:</span>
-              </h4>
-              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.5, margin: 0 }}>
-                Historically, Civil, Electrical, and Signal squads requested 3 separate blocks on different days, shutting down the section for 6+ hours weekly. 
-                <strong> TrackShield AI fuses them into a single 150-minute mega-window.</strong> 
-                Because all 3 teams work simultaneously in the same kilometer boundaries, <em>joint concurrence from every department is mandatory</em> to ensure harmonious entry, coordinated power cuts, and joint line clearance.
-              </p>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button
-                onClick={() => setIsWhyModalOpen(false)}
-                className="btn-primary"
-                style={{ fontSize: '0.8rem', padding: '0.45rem 1.25rem' }}
-              >
-                Understood & Acknowledged
-              </button>
-            </div>
-
           </div>
         </div>
       )}
